@@ -1,0 +1,9 @@
+use-project /foolib : externals/foolib ;
+use-project /barlib : externals/barlib ;
+
+exe basicprj_b2 : 
+    [ glob src/cu/*.cpp ] 
+    /foolib//foolib/<link>static
+    /barlib//barlib/<link>static :
+    <include>include 
+    <include>. ;
