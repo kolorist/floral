@@ -2,7 +2,13 @@
 #define __FLORAL_H__
 
 #include <stdaliases.h>
+////////////////////////////////////////////////
+#include <gpds/vec.h>
+#include <gpds/mat.h>
+#include <gpds/geometry.h>
 
+#include <math/intersect.h>
+////////////////////////////////////////////////
 #include <types/type_traits.h>
 #include <types/type_list.h>
 
