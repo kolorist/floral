@@ -1,0 +1,7 @@
+# floral
+
+project
+    : usage-requirements
+    <include>include ;
+
+alias floral : ;
