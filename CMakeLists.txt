@@ -3,6 +3,7 @@ cmake_minimum_required (VERSION 3.0)
 project (floral C CXX)
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
+include_directories("${PROJECT_SOURCE_DIR}")
 
 file(GLOB_RECURSE file_list
 	"${PROJECT_SOURCE_DIR}/include/*.h"
