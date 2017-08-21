@@ -31,16 +31,6 @@ namespace floral {
 			Rows[1][0] = rows[1][0]; Rows[1][1] = rows[1][1]; Rows[1][2] = m12;
 			Rows[2][0] = rows[2][0]; Rows[2][1] = rows[2][1]; Rows[2][2] = m22;
 		}
-		/*
-		mat3x3(const DType m00, const DType m01, const DType m02,
-			   const DType m10, const DType m11, const DType m12,
-			   const DType m20, const DType m21, const DType m22)
-		{
-			Rows[0][0] = m00; Rows[0][1] = m01; Rows[0][2] = m02;
-			Rows[1][0] = m10; Rows[1][1] = m11; Rows[1][2] = m12;
-			Rows[2][0] = m20; Rows[2][1] = m21; Rows[2][2] = m22;
-		}
-		*/
 
 		explicit mat3x3(const DType val)
 		{
@@ -49,6 +39,16 @@ namespace floral {
 			Rows[1][1] = val;
 			Rows[2][2] = val;
 		}
+
+		////////////////////////////////////////
+		const DType get_determinant() const 
+		{
+			return (Rows[0][0] * (Rows[1][1] * Rows [2][2] - Rows[2][1] * Rows[1][2])
+					- Rows[0][1] * (Rows[1][0] * Rows[2][2] - Rows[2][0] * Rows[1][2])
+					+ Rows[0][2] * (Rows[1][0] * Rows[2][1] - Rows[2][0] * Rows[1][1]));
+		}
+
+		////////////////////////////////////////
 
 		const bool operator==(const mat3x3& other) {
 			return (Rows[0][0] == other[0][0] && Rows[0][1] == other[0][1] && Rows[0][2] == other[0][2] &&
@@ -93,6 +93,23 @@ namespace floral {
 			Rows[2][2] = val;
 			Rows[3][3] = val;
 		}
+		
+		////////////////////////////////////////
+		const DType get_determinant() const
+		{
+			DType d00 = Rows[2][2] * Rows[3][3] - Rows[3][2] * Rows[2][3];
+			DType d01 = Rows[2][1] * Rows[3][3] - Rows[3][1] * Rows[2][3]; // d10
+			DType d02 = Rows[2][1] * Rows[3][2] - Rows[3][2] * Rows[2][2];
+			DType d11 = Rows[2][0] * Rows[3][3] - Rows[3][0] * Rows[2][3];
+			DType d12 = Rows[2][0] * Rows[2][3] - Rows[3][0] * Rows[2][2];
+
+			DType d0;
+			DType d1;
+			DType d2;
+			DType d3;
+		}
+
+		////////////////////////////////////////
 
 		const bool operator==(const mat4x4& other) {
 			return (Rows[0][0] == other[0][0] && Rows[0][1] == other[0][1] && Rows[0][2] == other[0][2] && Rows[0][3] == other[0][3] &&
