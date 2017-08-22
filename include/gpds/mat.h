@@ -48,7 +48,6 @@ namespace floral {
 		}
 
 		////////////////////////////////////////
-		template <class>
 		mat3x3 operator*(const mat3x3& other) const {
 			DType r00 = Rows[0][0] * other[0][0] + Rows[0][1] * other[1][0] + Rows[0][2] * other[2][0];
 			DType r01 = Rows[0][0] * other[0][1] + Rows[0][1] * other[1][1] + Rows[0][2] * other[2][1];
@@ -69,32 +68,28 @@ namespace floral {
 			return tMat;
 		}
 
-		template <class SType>
-		mat3x3 operator*(const SType scalar) const {
+		mat3x3 operator*(const DType scalar) const {
 			return mat3x3(
 					{Rows[0][0] * scalar, Rows[0][1] * scalar, Rows[0][2] * scalar},
 					{Rows[1][0] * scalar, Rows[1][1] * scalar, Rows[1][2] * scalar},
 					{Rows[2][0] * scalar, Rows[2][1] * scalar, Rows[2][2] * scalar});
 		}
 
-		template <class SType>
-		mat3x3 operator*=(const SType scalar) {
+		mat3x3 operator*=(const DType scalar) {
 			Rows[0][0] *= scalar; Rows[0][1] *= scalar; Rows[0][2] *= scalar;
 			Rows[1][0] *= scalar; Rows[1][1] *= scalar; Rows[1][2] *= scalar;
 			Rows[2][0] *= scalar; Rows[2][1] *= scalar; Rows[2][2] *= scalar;
 			return (*this);
 		}
 
-		template <class SType>
-		mat3x3 operator/(const SType scalar) {
+		mat3x3 operator/(const DType scalar) {
 			return mat3x3(
 					{Rows[0][0] / scalar, Rows[0][1] / scalar, Rows[0][2] / scalar},
 					{Rows[1][0] / scalar, Rows[1][1] / scalar, Rows[1][2] / scalar},
 					{Rows[2][0] / scalar, Rows[2][1] / scalar, Rows[2][2] / scalar});
 		}
 
-		template <class SType>
-		mat3x3 operator/=(const SType scalar) {
+		mat3x3 operator/=(const DType scalar) {
 			Rows[0][0] /= scalar; Rows[0][1] /= scalar; Rows[0][2] /= scalar;
 			Rows[1][0] /= scalar; Rows[1][1] /= scalar; Rows[1][2] /= scalar;
 			Rows[2][0] /= scalar; Rows[2][1] /= scalar; Rows[2][2] /= scalar;
@@ -194,7 +189,10 @@ namespace floral {
 
 		mat4x4(const mat4x4& other)
 		{
-			memcpy(Rows, other.Rows, sizeof(Rows));
+			Rows[0][0] = other[0][0]; Rows[0][1] = other[0][1]; Rows[0][2] = other[0][2]; Rows[0][3] = other[0][3];
+			Rows[1][0] = other[1][0]; Rows[1][1] = other[1][1]; Rows[1][2] = other[1][2]; Rows[1][3] = other[1][3];
+			Rows[2][0] = other[2][0]; Rows[2][1] = other[2][1]; Rows[2][2] = other[2][2]; Rows[2][3] = other[2][3];
+			Rows[3][0] = other[3][0]; Rows[3][1] = other[3][1]; Rows[3][2] = other[3][2]; Rows[3][3] = other[3][3];
 		}
 		
 		////////////////////////////////////////
@@ -284,28 +282,34 @@ namespace floral {
 		}
 
 		////////////////////////////////////////
+		mat4x4 operator*(const DType scalar) const {
+			return mat4x4(
+					{Rows[0][0] * scalar, Rows[0][1] * scalar, Rows[0][2] * scalar, Rows[0][3] * scalar},
+					{Rows[1][0] * scalar, Rows[1][1] * scalar, Rows[1][2] * scalar, Rows[1][3] * scalar},
+					{Rows[2][0] * scalar, Rows[2][1] * scalar, Rows[2][2] * scalar, Rows[2][3] * scalar},
+					{Rows[3][0] * scalar, Rows[3][1] * scalar, Rows[3][2] * scalar, Rows[3][3] * scalar});
+		}
 
-		template <class>
 		mat4x4 operator*(const mat4x4& other) const {
-			DType r00 = Rows[0][0] * other[0][0] + Rows[0][1] * other[1][0] + Rows[0][2] * other[2][0] + Rows[0][3] * Rows[3][0];
-			DType r01 = Rows[0][0] * other[0][1] + Rows[0][1] * other[1][1] + Rows[0][2] * other[2][1] + Rows[0][3] * Rows[3][1];
-			DType r02 = Rows[0][0] * other[0][2] + Rows[0][1] * other[1][2] + Rows[0][2] * other[2][2] + Rows[0][3] * Rows[3][2];
-			DType r03 = Rows[0][0] * other[0][3] + Rows[0][1] * other[1][3] + Rows[0][2] * other[2][3] + Rows[0][3] * Rows[3][3];
+			DType r00 = Rows[0][0] * other[0][0] + Rows[0][1] * other[1][0] + Rows[0][2] * other[2][0] + Rows[0][3] * other[3][0];
+			DType r01 = Rows[0][0] * other[0][1] + Rows[0][1] * other[1][1] + Rows[0][2] * other[2][1] + Rows[0][3] * other[3][1];
+			DType r02 = Rows[0][0] * other[0][2] + Rows[0][1] * other[1][2] + Rows[0][2] * other[2][2] + Rows[0][3] * other[3][2];
+			DType r03 = Rows[0][0] * other[0][3] + Rows[0][1] * other[1][3] + Rows[0][2] * other[2][3] + Rows[0][3] * other[3][3];
 
-			DType r10 = Rows[1][0] * other[0][0] + Rows[1][1] * other[1][0] + Rows[1][2] * other[2][0] + Rows[1][3] * Rows[3][0];
-			DType r11 = Rows[1][0] * other[0][1] + Rows[1][1] * other[1][1] + Rows[1][2] * other[2][1] + Rows[1][3] * Rows[3][1];
-			DType r12 = Rows[1][0] * other[0][2] + Rows[1][1] * other[1][2] + Rows[1][2] * other[2][2] + Rows[1][3] * Rows[3][2];
-			DType r13 = Rows[1][0] * other[0][3] + Rows[1][1] * other[1][3] + Rows[1][2] * other[2][3] + Rows[1][3] * Rows[3][3];
+			DType r10 = Rows[1][0] * other[0][0] + Rows[1][1] * other[1][0] + Rows[1][2] * other[2][0] + Rows[1][3] * other[3][0];
+			DType r11 = Rows[1][0] * other[0][1] + Rows[1][1] * other[1][1] + Rows[1][2] * other[2][1] + Rows[1][3] * other[3][1];
+			DType r12 = Rows[1][0] * other[0][2] + Rows[1][1] * other[1][2] + Rows[1][2] * other[2][2] + Rows[1][3] * other[3][2];
+			DType r13 = Rows[1][0] * other[0][3] + Rows[1][1] * other[1][3] + Rows[1][2] * other[2][3] + Rows[1][3] * other[3][3];
 
-			DType r20 = Rows[2][0] * other[0][0] + Rows[2][1] * other[1][0] + Rows[2][2] * other[2][0] + Rows[2][3] * Rows[3][0];
-			DType r21 = Rows[2][0] * other[0][1] + Rows[2][1] * other[1][1] + Rows[2][2] * other[2][1] + Rows[2][3] * Rows[3][1];
-			DType r22 = Rows[2][0] * other[0][2] + Rows[2][1] * other[1][2] + Rows[2][2] * other[2][2] + Rows[2][3] * Rows[3][2];
-			DType r22 = Rows[2][0] * other[0][3] + Rows[2][1] * other[1][3] + Rows[2][2] * other[2][3] + Rows[2][3] * Rows[3][3];
+			DType r20 = Rows[2][0] * other[0][0] + Rows[2][1] * other[1][0] + Rows[2][2] * other[2][0] + Rows[2][3] * other[3][0];
+			DType r21 = Rows[2][0] * other[0][1] + Rows[2][1] * other[1][1] + Rows[2][2] * other[2][1] + Rows[2][3] * other[3][1];
+			DType r22 = Rows[2][0] * other[0][2] + Rows[2][1] * other[1][2] + Rows[2][2] * other[2][2] + Rows[2][3] * other[3][2];
+			DType r23 = Rows[2][0] * other[0][3] + Rows[2][1] * other[1][3] + Rows[2][2] * other[2][3] + Rows[2][3] * other[3][3];
 
-			DType r30 = Rows[3][0] * other[0][0] + Rows[3][1] * other[1][0] + Rows[3][2] * other[2][0] + Rows[3][3] * Rows[3][0];
-			DType r31 = Rows[3][0] * other[0][1] + Rows[3][1] * other[1][1] + Rows[3][2] * other[2][1] + Rows[3][3] * Rows[3][1];
-			DType r32 = Rows[3][0] * other[0][2] + Rows[3][1] * other[1][2] + Rows[3][2] * other[2][2] + Rows[3][3] * Rows[3][2];
-			DType r32 = Rows[3][0] * other[0][3] + Rows[3][1] * other[1][3] + Rows[3][2] * other[2][3] + Rows[3][3] * Rows[3][3];
+			DType r30 = Rows[3][0] * other[0][0] + Rows[3][1] * other[1][0] + Rows[3][2] * other[2][0] + Rows[3][3] * other[3][0];
+			DType r31 = Rows[3][0] * other[0][1] + Rows[3][1] * other[1][1] + Rows[3][2] * other[2][1] + Rows[3][3] * other[3][1];
+			DType r32 = Rows[3][0] * other[0][2] + Rows[3][1] * other[1][2] + Rows[3][2] * other[2][2] + Rows[3][3] * other[3][2];
+			DType r33 = Rows[3][0] * other[0][3] + Rows[3][1] * other[1][3] + Rows[3][2] * other[2][3] + Rows[3][3] * other[3][3];
 
 			mat4x4 tMat(
 					{r00, r01, r02, r03},
@@ -315,17 +319,7 @@ namespace floral {
 			return tMat;
 		}
 
-		template <class SType>
-		mat4x4 operator*(const SType scalar) const {
-			return mat4x4(
-					{Rows[0][0] * scalar, Rows[0][1] * scalar, Rows[0][2] * scalar, Rows[0][3] * scalar},
-					{Rows[1][0] * scalar, Rows[1][1] * scalar, Rows[1][2] * scalar, Rows[1][3] * scalar},
-					{Rows[2][0] * scalar, Rows[2][1] * scalar, Rows[2][2] * scalar, Rows[2][3] * scalar},
-					{Rows[3][0] * scalar, Rows[3][1] * scalar, Rows[3][2] * scalar, Rows[3][3] * scalar});
-		}
-
-		template <class SType>
-		mat4x4 operator*=(const SType scalar) const {
+		mat4x4 operator*=(const DType scalar) const {
 			Rows[0][0] *= scalar; Rows[0][1] *= scalar; Rows[0][2] *= scalar; Rows[0][3] *= scalar;
 			Rows[1][0] *= scalar; Rows[1][1] *= scalar; Rows[1][2] *= scalar; Rows[1][3] *= scalar;
 			Rows[2][0] *= scalar; Rows[2][1] *= scalar; Rows[2][2] *= scalar; Rows[2][3] *= scalar;
@@ -333,8 +327,7 @@ namespace floral {
 			return (*this);
 		}
 
-		template <class SType>
-		mat4x4 operator/(const SType scalar) {
+		mat4x4 operator/(const DType scalar) {
 			return mat4x4(
 					{Rows[0][0] / scalar, Rows[0][1] / scalar, Rows[0][2] / scalar, Rows[0][3] / scalar},
 					{Rows[1][0] / scalar, Rows[1][1] / scalar, Rows[1][2] / scalar, Rows[1][3] / scalar},
@@ -342,15 +335,13 @@ namespace floral {
 					{Rows[3][0] / scalar, Rows[3][1] / scalar, Rows[3][2] / scalar, Rows[3][3] / scalar});
 		}
 
-		template <class SType>
-		mat4x4 operator/=(const SType scalar) {
+		mat4x4 operator/=(const DType scalar) {
 			Rows[0][0] /= scalar; Rows[0][1] /= scalar; Rows[0][2] /= scalar; Rows[0][3] /= scalar;
 			Rows[1][0] /= scalar; Rows[1][1] /= scalar; Rows[1][2] /= scalar; Rows[1][3] /= scalar;
 			Rows[2][0] /= scalar; Rows[2][1] /= scalar; Rows[2][2] /= scalar; Rows[2][3] /= scalar;
 			Rows[3][0] /= scalar; Rows[3][1] /= scalar; Rows[3][2] /= scalar; Rows[3][3] /= scalar;
 			return (*this);
 		}
-
 
 		const bool operator==(const mat4x4& other) {
 			return (Rows[0][0] == other[0][0] && Rows[0][1] == other[0][1] && Rows[0][2] == other[0][2] && Rows[0][3] == other[0][3] &&
@@ -405,35 +396,11 @@ namespace floral {
 	template <class VDType, class MDType>
 	vec4<VDType> operator*(const vec4<VDType>& v, const mat4x4<MDType>& m) {
 		return vec4<VDType>(
-				v.x * m[0][0] + v.x * m[1][0] + v.x * m[2][0] + v.w * m[3][0],
-				v.y * m[0][1] + v.y * m[1][1] + v.y * m[2][1] + v.w * m[3][1],
-				v.z * m[0][2] + v.z * m[1][2] + v.z * m[2][2] + v.w * m[3][2],
-				v.z * m[0][3] + v.z * m[1][3] + v.z * m[2][3] + v.w * m[3][3]
+				v.x * m[0][0] + v.x * m[1][0] + v.x * m[2][0] + v.x * m[3][0],
+				v.y * m[0][1] + v.y * m[1][1] + v.y * m[2][1] + v.y * m[3][1],
+				v.z * m[0][2] + v.z * m[1][2] + v.z * m[2][2] + v.z * m[3][2],
+				v.w * m[0][3] + v.w * m[1][3] + v.w * m[2][3] + v.w * m[3][3]
 				);
-	}
-	// [3;3] x [3;3] = [3;3]
-	template <class DType>
-	mat3x3<DType> operator*(const mat3x3<DType>& lhs, const mat3x3<DType>& rhs) {
-		vec3<DType> r1(lhs[0][0], lhs[0][1], lhs[0][2]);
-		vec3<DType> r2(lhs[1][0], lhs[1][1], lhs[1][2]);
-		vec3<DType> r3(lhs[2][0], lhs[2][1], lhs[2][2]);
-		return mat3x3<DType>(
-					r1 * rhs,
-					r2 * rhs,
-					r3 * rhs);
-	}
-	// [4;4] x [4;4] = [4;4]
-	template <class DType>
-	mat4x4<DType> operator*(const mat4x4<DType>& lhs, const mat4x4<DType>& rhs) {
-		vec4<DType> r1(lhs[0][0], lhs[0][1], lhs[0][2], lhs[0][3]);
-		vec4<DType> r2(lhs[1][0], lhs[1][1], lhs[1][2], lhs[1][3]);
-		vec4<DType> r3(lhs[2][0], lhs[2][1], lhs[2][2], lhs[2][3]);
-		vec4<DType> r4(lhs[3][0], lhs[3][1], lhs[3][2], lhs[3][3]);
-		return mat4x4<DType>(
-					r1 * rhs,
-					r2 * rhs,
-					r3 * rhs,
-					r4 * rhs);
 	}
 }
 

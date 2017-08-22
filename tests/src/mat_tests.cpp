@@ -2,6 +2,8 @@
 
 #include <floral.h>
 
+#include <iostream>
+
 TEST_CASE("mat3", "mat3x3") {
 	using namespace floral;
 
@@ -95,4 +97,10 @@ TEST_CASE("mat4", "mat4x4") {
 			{0.0f, 0.0f, 4.0f, -1.0f},
 			{0.0f, 0.0f, 0.0f, 1.0f});
 	REQUIRE( (cm6r.get_transpose() == cm6rt) );
+
+	mat4x4f cm6iden(1.0f);
+	mat4x4f cm6mul = cm6r * cm6ri;
+	REQUIRE( cm6mul[0][0] == 1.0f );
+	REQUIRE( cm6mul[0][1] == 0.0f );
+	REQUIRE( (cm6mul == cm6iden) );
 };
