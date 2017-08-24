@@ -7,6 +7,7 @@
 #include <gpds/mat.h>
 #include <gpds/geometry.h>
 
+#include <math/utils.h>
 #include <math/intersect.h>
 ////////////////////////////////////////////////
 #include <types/type_traits.h>
