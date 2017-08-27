@@ -3,6 +3,9 @@
 
 #include <stdaliases.h>
 ////////////////////////////////////////////////
+#include <containers/array.h>
+
+////////////////////////////////////////////////
 #include <gpds/vec.h>
 #include <gpds/mat.h>
 #include <gpds/geometry.h>
