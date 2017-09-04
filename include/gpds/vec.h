@@ -165,7 +165,7 @@ namespace floral {
 		}
 		vec3 cross(const vec3& other) {
 			// xyzzy
-			return vec2(
+			return vec3(
 					y * other.z - z * other.y,
 					z * other.x - x * other.z,
 					x * other.y - y * other.x);

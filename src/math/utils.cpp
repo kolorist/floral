@@ -23,4 +23,28 @@ namespace floral {
 		t1 = C / q;
 		return true;
 	}
+	
+	const u32 compute_crc32_naive(const_cstr nullTerminatedStr)
+	{
+		static const u32 k_CRCWidth = 32;
+		static const u32 k_CRCTopBit = 1 << (k_CRCWidth - 1);
+		static const u32 k_Polynomial = 0xD8;
+
+		const u32 strLen = strlen(nullTerminatedStr);
+		u32 remainder = 0;
+
+		for (u32 byte = 0; byte < strLen; byte++) {
+			remainder ^= (nullTerminatedStr[byte] << (k_CRCWidth - 8));
+			for (u8 bit = 8; bit > 0; bit--) {
+				if (remainder & k_CRCTopBit) {
+					remainder = (remainder << 1) ^ k_Polynomial;
+				}
+				else {
+					remainder = (remainder << 1);
+				}
+			}
+		}
+
+		return remainder;
+	}
 }

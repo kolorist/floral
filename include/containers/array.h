@@ -1,7 +1,7 @@
 #ifndef __FLORAL_ARRAY_H__
 #define __FLORAL_ARRAY_H__
 
-#include <macros.h>
+#include <assertions.h>
 #include <stdaliases.h>
 
 namespace floral {
