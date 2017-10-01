@@ -13,12 +13,32 @@ namespace floral {
 		return tMat;
 	}
 
+	mat4x4f construct_translation3d(const vec3f& delta)
+	{
+		mat4x4f tMat = mat4x4f(1.0f);
+		tMat[0][3] = delta.x;
+		tMat[1][3] = delta.y;
+		tMat[2][3] = delta.z;
+		// TODO: move sematic?
+		return tMat;
+	}
+
 	mat4x4f construct_scaling3d(f32 scaleX, f32 scaleY, f32 scaleZ)
 	{
 		mat4x4f tMat;
 		tMat[0][0] = scaleX;
 		tMat[1][1] = scaleY;
 		tMat[2][2] = scaleZ;
+		tMat[3][3] = 1.0f;
+		return tMat;
+	}
+
+	mat4x4f construct_scaling3d(const vec3f& scale)
+	{
+		mat4x4f tMat;
+		tMat[0][0] = scale.x;
+		tMat[1][1] = scale.y;
+		tMat[2][2] = scale.z;
 		tMat[3][3] = 1.0f;
 		return tMat;
 	}

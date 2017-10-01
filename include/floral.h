@@ -14,6 +14,7 @@
 ////////////////////////////////////////////////
 #include <math/utils.h>
 #include <math/intersect.h>
+#include <math/transform.h>
 ////////////////////////////////////////////////
 #include <types/type_traits.h>
 #include <types/type_list.h>
