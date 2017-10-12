@@ -4,6 +4,9 @@
 #include <assertions.h>
 #include <stdaliases.h>
 
+// NOTE: 	as a trade-off for high performance, those array implementations are considered un-safe
+//			for both single-threaded (range check, type check) and multi-threaded (synchronization) purposes
+
 namespace floral {
 	// FIXME: template type naming convention
 	template <class _T, class _Allocator>
@@ -214,8 +217,17 @@ namespace floral {
 			, m_MyAllocator(nullptr)
 			, m_Data(nullptr)
 		{ }
+		
+		explicit dynamic_array(_Allocator* myAllocator)
+			: m_Capacity(0)
+			, m_Size(0)
+			, m_MyAllocator(myAllocator)
+			, m_Data(nullptr)
+		{
+			
+		}
 
-		explicit dynamic_array(const u32 capacity, _Allocator* myAllocator)
+		dynamic_array(const u32 capacity, _Allocator* myAllocator)
 			: m_Capacity(capacity)
 			, m_Size(0)
 			, m_MyAllocator(myAllocator)
@@ -299,12 +311,12 @@ namespace floral {
 
 		// operator overloading
 		reference_type operator[](const u32 index) {
-			ASSERT_MSG((int)index >= 0 && index < m_Size, "Array access violation (out of range)");
+			ASSERT_MSG((int)index >= 0 && index < m_Capacity, "Array access violation (out of range)");
 			return m_Data[index];
 		}
 
 		const_reference_type operator[](const u32 index) const {
-			ASSERT_MSG((int)index >= 0 && index < m_Size, "Array access violation (out of range)");
+			ASSERT_MSG((int)index >= 0 && index < m_Capacity, "Array access violation (out of range)");
 			return m_Data[index];
 		}
 
@@ -374,8 +386,11 @@ namespace floral {
 		}
 
 
-	private:
+	public:
 		void Resize(const u32 newCapacity) {
+			if (newCapacity <= m_Capacity)
+				return;
+		
 			pointer_type data = m_MyAllocator->AllocateArray<value_type>(newCapacity);
 			for (u32 i = 0; i < newCapacity; i++) {
 				data[i] = zero_value;
@@ -384,8 +399,11 @@ namespace floral {
 			for (u32 i = 0; i < m_Size; i++) {
 				data[i] = m_Data[i];
 			}
+			// free old data
+			if (m_Data)
+				m_MyAllocator->Free(m_Data);
+			
 			m_Capacity = newCapacity;
-			m_MyAllocator->Free(m_Data);
 			m_Data = data;
 		}
 
