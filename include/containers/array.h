@@ -311,12 +311,12 @@ namespace floral {
 
 		// operator overloading
 		reference_type operator[](const u32 index) {
-			ASSERT_MSG((int)index >= 0 && index < m_Capacity, "Array access violation (out of range)");
+			ASSERT_MSG((int)index >= 0 && index < m_Size, "Array access violation (out of range)");
 			return m_Data[index];
 		}
 
 		const_reference_type operator[](const u32 index) const {
-			ASSERT_MSG((int)index >= 0 && index < m_Capacity, "Array access violation (out of range)");
+			ASSERT_MSG((int)index >= 0 && index < m_Size, "Array access violation (out of range)");
 			return m_Data[index];
 		}
 
@@ -387,6 +387,27 @@ namespace floral {
 
 
 	public:
+	
+		void ResizeEx(const u32 newSize) {
+			if (newSize > m_Capacity) {
+				pointer_type data = m_MyAllocator->AllocateArray<value_type>(newSize);
+				for (u32 i = 0; i < newSize; i++) {
+					data[i] = zero_value;
+				}
+				// copy data
+				for (u32 i = 0; i < m_Size; i++) {
+					data[i] = m_Data[i];
+				}
+				// free old data
+				if (m_Data)
+					m_MyAllocator->Free(m_Data);
+				m_Capacity = newSize;
+				m_Data = data;
+			}
+
+			m_Size = newSize;
+		}
+	
 		void Resize(const u32 newCapacity) {
 			if (newCapacity <= m_Capacity)
 				return;
