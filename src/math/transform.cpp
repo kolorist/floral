@@ -1,5 +1,7 @@
 #include "math/transform.h"
 
+#include <math/utils.h>
+
 #include <math.h>
 
 namespace floral {
@@ -108,5 +110,35 @@ namespace floral {
 		tMat[1][0] = m[0][1]; tMat[1][1] = m[1][1]; tMat[1][2] = m[2][1];
 		tMat[2][0] = m[0][2]; tMat[2][1] = m[1][2]; tMat[2][2] = m[2][2];
 		return tMat;
+	}
+
+	mat4x4f construct_orthographic(const f32 left, const f32 right, const f32 top, const f32 bottom, const f32 near, const f32 far)
+	{
+		mat4x4f pMat;
+		pMat[0][0] = 2.0f / (right - left);		pMat[0][3] = (right + left) / 2.0f;
+		pMat[1][1] = 2.0f / (top - bottom);		pMat[1][3] = (top + bottom) / 2.0f;
+		pMat[2][2] = -2.0f / (far - near);		pMat[2][3] = -(far + near) / 2.0f;
+		pMat[3][3] = 1.0f;
+		return pMat;
+	}
+
+	// TODO: note that this is symetric view, where abs(left) == abs(right) and abs(top) == abs(bottom)
+	// we have to reduce the computation as much as posible to minimize floating point calculation errors
+	mat4x4f construct_perspective(const f32 near, const f32 far, const f32 fov, const f32 aspectRatio)
+	{
+		mat4x4f pMat;
+		// near and far must be positive (distance to the view point)
+		f32 fovRad = to_radians(fov);
+		f32 tanHalfFov = tanf(fovRad / 2.0f);
+		f32 right = near * tanHalfFov;
+		f32 left = -right;
+		f32 top = right / aspectRatio;
+		f32 bottom = -top;
+		pMat[0][0] = 2.0f * near / (right - left);	pMat[0][2] = (right + left) / (right - left);
+		pMat[1][1] = 2.0f * near / (top - bottom);	pMat[1][2] = (top + bottom) / (top - bottom);
+		pMat[2][2] = - (far + near) / (far - near);	pMat[2][3] = - (2.0f * near * far) / (far - near);
+		pMat[3][2] = -1.0f;
+
+		return pMat;
 	}
 }

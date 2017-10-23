@@ -21,6 +21,12 @@ namespace floral {
 	mat3x3f construct_invert(const mat3x3f& m);
 	mat4x4f construct_transpose(const mat4x4f& m);
 	mat3x3f construct_transpose(const mat3x3f& m);
+
+	// projection matrix construction
+	mat4x4f construct_orthographic(const f32 left, const f32 right, const f32 top, const f32 bottom, const f32 near, const f32 far);
+	// fov (degrees)
+	// near and far must be positive
+	mat4x4f construct_perspective(const f32 near, const f32 far, const f32 fov, const f32 aspectRatio);
 }
 
 #endif // __FLORAL_TRANSFORM_H__
