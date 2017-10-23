@@ -112,6 +112,11 @@ namespace floral {
 		return tMat;
 	}
 
+	mat4x4f construct_lookat(const vec3f& upDir, const vec3f& camPos, const vec3f& lookAtDir)
+	{
+		mat4x4f t = construct_translation3d(-camPos);
+	}
+
 	mat4x4f construct_orthographic(const f32 left, const f32 right, const f32 top, const f32 bottom, const f32 near, const f32 far)
 	{
 		mat4x4f pMat;
@@ -124,6 +129,8 @@ namespace floral {
 
 	// TODO: note that this is symetric view, where abs(left) == abs(right) and abs(top) == abs(bottom)
 	// we have to reduce the computation as much as posible to minimize floating point calculation errors
+	// NOTE: this fov value is horizontal field of view, normally renderer use vertical field of view but we
+	// will see what may happen with this kind of setup
 	mat4x4f construct_perspective(const f32 near, const f32 far, const f32 fov, const f32 aspectRatio)
 	{
 		mat4x4f pMat;
