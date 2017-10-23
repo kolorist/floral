@@ -8,9 +8,9 @@ namespace floral {
 	mat4x4f construct_translation3d(f32 deltaX, f32 deltaY, f32 deltaZ)
 	{
 		mat4x4f tMat = mat4x4f(1.0f);
-		tMat[0][3] = deltaX;
-		tMat[1][3] = deltaY;
-		tMat[2][3] = deltaZ;
+		tMat[3][0] = deltaX;
+		tMat[3][1] = deltaY;
+		tMat[3][2] = deltaZ;
 		// TODO: move sematic?
 		return tMat;
 	}
@@ -18,9 +18,9 @@ namespace floral {
 	mat4x4f construct_translation3d(const vec3f& delta)
 	{
 		mat4x4f tMat = mat4x4f(1.0f);
-		tMat[0][3] = delta.x;
-		tMat[1][3] = delta.y;
-		tMat[2][3] = delta.z;
+		tMat[3][0] = delta.x;
+		tMat[3][1] = delta.y;
+		tMat[3][2] = delta.z;
 		// TODO: move sematic?
 		return tMat;
 	}
@@ -114,7 +114,13 @@ namespace floral {
 
 	mat4x4f construct_lookat(const vec3f& upDir, const vec3f& camPos, const vec3f& lookAtDir)
 	{
-		mat4x4f t = construct_translation3d(-camPos);
+		mat4x4f lMat;
+		vec3f rightDir = vec3f::cross(upDir, lookAtDir);
+		lMat[0][0] = rightDir.x;	lMat[0][1] = upDir.x;	lMat[0][2] = lookAtDir.x;
+		lMat[1][0] = rightDir.y;	lMat[1][1] = upDir.y;	lMat[1][2] = lookAtDir.y;
+		lMat[2][0] = rightDir.z;	lMat[2][1] = upDir.z;	lMat[2][2] = lookAtDir.z;
+		lMat[3][0] = camPos.x;		lMat[3][1] = camPos.y;	lMat[3][2] = camPos.z;
+		return lMat;
 	}
 
 	mat4x4f construct_orthographic(const f32 left, const f32 right, const f32 top, const f32 bottom, const f32 near, const f32 far)

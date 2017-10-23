@@ -170,6 +170,14 @@ namespace floral {
 					z * other.x - x * other.z,
 					x * other.y - y * other.x);
 		}
+		
+		static vec3 cross(const vec3& lhs, const vec3& rhs) {
+			return vec3(
+					lhs.y * rhs.z - lhs.z * rhs.y,
+					lhs.z * rhs.x - lhs.x * rhs.z,
+					lhs.x * rhs.y - lhs.y * rhs.x);
+		}
+		
 		// length
 		const DType length() const {
 			return sqrt(x * x + y * y + z * z);
