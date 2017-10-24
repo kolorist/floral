@@ -4,6 +4,19 @@
 
 #include <math.h>
 
+// way of matrix - vector multiplication
+// opengl:
+// 	a b c d			x			ax + by + cz + dw
+// 	e f g h	  mul	y	equal	ex + fy + gz + hw
+// 	i j k l			z			ix + jy + kz + lw
+// 	m n o p			w			mx + ny + oz + pw
+//
+// cpu:
+// 	a e i m
+// 	b f j n
+// 	c g k o
+// 	d h l p
+
 namespace floral {
 	mat4x4f construct_translation3d(f32 deltaX, f32 deltaY, f32 deltaZ)
 	{
@@ -114,13 +127,16 @@ namespace floral {
 
 	mat4x4f construct_lookat(const vec3f& upDir, const vec3f& camPos, const vec3f& lookAtDir)
 	{
-		mat4x4f lMat;
-		vec3f rightDir = vec3f::cross(upDir, lookAtDir);
-		lMat[0][0] = rightDir.x;	lMat[0][1] = upDir.x;	lMat[0][2] = lookAtDir.x;
-		lMat[1][0] = rightDir.y;	lMat[1][1] = upDir.y;	lMat[1][2] = lookAtDir.y;
-		lMat[2][0] = rightDir.z;	lMat[2][1] = upDir.z;	lMat[2][2] = lookAtDir.z;
-		lMat[3][0] = camPos.x;		lMat[3][1] = camPos.y;	lMat[3][2] = camPos.z;
-		return lMat;
+		mat4x4f tMat;
+		tMat = construct_translation3d(-camPos);
+		mat4x4f lMat(1.0f);
+		vec3f lookAtDirNorm = -lookAtDir.normalize();
+		vec3f rightDirNorm = vec3f::cross(upDir, -lookAtDir).normalize();
+		vec3f topDirNorm = vec3f::cross(-lookAtDir, rightDirNorm).normalize();
+		lMat[0][0] = rightDirNorm.x;	lMat[0][1] = topDirNorm.x;	lMat[0][2] = lookAtDirNorm.x;
+		lMat[1][0] = rightDirNorm.y;	lMat[1][1] = topDirNorm.y;	lMat[1][2] = lookAtDirNorm.y;
+		lMat[2][0] = rightDirNorm.z;	lMat[2][1] = topDirNorm.z;	lMat[2][2] = lookAtDirNorm.z;
+		return (tMat * lMat);	// translate first then rotate the coordinate
 	}
 
 	mat4x4f construct_orthographic(const f32 left, const f32 right, const f32 top, const f32 bottom, const f32 near, const f32 far)
@@ -143,14 +159,18 @@ namespace floral {
 		// near and far must be positive (distance to the view point)
 		f32 fovRad = to_radians(fov);
 		f32 tanHalfFov = tanf(fovRad / 2.0f);
-		f32 right = near * tanHalfFov;
-		f32 left = -right;
-		f32 top = right / aspectRatio;
+		//f32 right = near * tanHalfFov;
+		f32 top = near * tanHalfFov;
+		//f32 left = -right;
 		f32 bottom = -top;
-		pMat[0][0] = 2.0f * near / (right - left);	pMat[0][2] = (right + left) / (right - left);
-		pMat[1][1] = 2.0f * near / (top - bottom);	pMat[1][2] = (top + bottom) / (top - bottom);
-		pMat[2][2] = - (far + near) / (far - near);	pMat[2][3] = - (2.0f * near * far) / (far - near);
-		pMat[3][2] = -1.0f;
+		//f32 top = right / aspectRatio;
+		f32 right = top * aspectRatio;
+		//f32 bottom = -top;
+		f32 left = -right;
+		pMat[0][0] = 2.0f * near / (right - left);
+		pMat[1][1] = 2.0f * near / (top - bottom);
+		pMat[2][2] = - (far + near) / (far - near);	pMat[3][2] = - (2.0f * near * far) / (far - near);
+		pMat[2][3] = -1.0f;
 
 		return pMat;
 	}
