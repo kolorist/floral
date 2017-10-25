@@ -390,8 +390,19 @@ namespace floral {
 	
 		void ResizeEx(const u32 newSize) {
 			if (newSize > m_Capacity) {
-				pointer_type data = m_MyAllocator->AllocateArray<value_type>(newSize);
-				for (u32 i = 0; i < newSize; i++) {
+				// run-time reallocate => round (up) to the nearest power of 2
+				// http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+				u32 po2Size = newSize;
+				po2Size--;
+				po2Size |= po2Size >> 1;
+				po2Size |= po2Size >> 2;
+				po2Size |= po2Size >> 4;
+				po2Size |= po2Size >> 8;
+				po2Size |= po2Size >> 16;
+				po2Size++;
+
+				pointer_type data = m_MyAllocator->AllocateArray<value_type>(po2Size);
+				for (u32 i = 0; i < po2Size; i++) {
 					data[i] = zero_value;
 				}
 				// copy data
@@ -401,7 +412,7 @@ namespace floral {
 				// free old data
 				if (m_Data)
 					m_MyAllocator->Free(m_Data);
-				m_Capacity = newSize;
+				m_Capacity = po2Size;
 				m_Data = data;
 			}
 

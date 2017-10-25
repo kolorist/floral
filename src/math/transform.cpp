@@ -136,7 +136,7 @@ namespace floral {
 		lMat[0][0] = rightDirNorm.x;	lMat[0][1] = topDirNorm.x;	lMat[0][2] = lookAtDirNorm.x;
 		lMat[1][0] = rightDirNorm.y;	lMat[1][1] = topDirNorm.y;	lMat[1][2] = lookAtDirNorm.y;
 		lMat[2][0] = rightDirNorm.z;	lMat[2][1] = topDirNorm.z;	lMat[2][2] = lookAtDirNorm.z;
-		return (tMat * lMat);	// translate first then rotate the coordinate
+		return (lMat * tMat);	// rotate first then translate the coordinate
 	}
 
 	mat4x4f construct_orthographic(const f32 left, const f32 right, const f32 top, const f32 bottom, const f32 near, const f32 far)
@@ -159,14 +159,14 @@ namespace floral {
 		// near and far must be positive (distance to the view point)
 		f32 fovRad = to_radians(fov);
 		f32 tanHalfFov = tanf(fovRad / 2.0f);
-		//f32 right = near * tanHalfFov;
-		f32 top = near * tanHalfFov;
-		//f32 left = -right;
-		f32 bottom = -top;
-		//f32 top = right / aspectRatio;
-		f32 right = top * aspectRatio;
-		//f32 bottom = -top;
+		f32 right = near * tanHalfFov;
+		//f32 top = near * tanHalfFov;
 		f32 left = -right;
+		//f32 bottom = -top;
+		f32 top = right / aspectRatio;
+		//f32 right = top * aspectRatio;
+		f32 bottom = -top;
+		//f32 left = -right;
 		pMat[0][0] = 2.0f * near / (right - left);
 		pMat[1][1] = 2.0f * near / (top - bottom);
 		pMat[2][2] = - (far + near) / (far - near);	pMat[3][2] = - (2.0f * near * far) / (far - near);
