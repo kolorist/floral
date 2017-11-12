@@ -141,8 +141,19 @@ namespace floral {
 			return (*this);
 		}
 
+		vec3& operator*=(const f32 scalar) {
+			x *= scalar;
+			y *= scalar;
+			z *= scalar;
+			return (*this);
+		}
+
 		vec3 operator*(const vec3& other) const {
 			return vec3(x * other.x, y * other.y, z * other.z);
+		}
+
+		vec3 operator*(const f32 scalar) const {
+			return vec3(x * scalar, y * scalar, z * scalar);
 		}
 
 		vec3 operator/=(const vec3& other) {
@@ -163,6 +174,10 @@ namespace floral {
 		const DType dot(const vec3& other) {
 			return (x * other.x + y * other.y + z * other.z);
 		}
+		static const f32 dot(const vec3& lhs, const vec3& rhs) {
+			return (lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z);
+		}
+
 		vec3 cross(const vec3& other) {
 			// xyzzy
 			return vec3(
@@ -289,6 +304,13 @@ namespace floral {
 	using vec3i = vec3<s32>;
 	using vec4f = vec4<f32>;
 	using vec4i = vec4<s32>;
+
+	////////////////////////////////////////////
+	template <class DType>
+	vec3<DType> operator*(const f32& scalar, const vec3<DType>& v) {
+		return vec3<DType>(v.x * scalar, v.y * scalar, v.z * scalar);
+	}
+	// TODO: we should move other static function: scalar mul, cross, dot,... outside of the vector classes
 };
 
 #endif // __FLORAL_VEC_H__
