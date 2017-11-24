@@ -1,6 +1,7 @@
 #include "cmds/path.h"
 
 #include <cstring>
+#include <stdio.h>
 
 #include <stdaliases.h>
 #include <math/utils.h>
@@ -8,58 +9,75 @@
 namespace floral {
 	
 	path::path()
-		: m_CRC32(0)
-		, m_IsFile(false)
 	{
-		memset(m_PathStr, 0, sizeof(m_PathStr));
-		memset(m_FileName, 0, sizeof(m_FileName));
-		memset(m_CurrentDir, 0, sizeof(m_CurrentDir));
-		memset(m_FileNameNoExt, 0, sizeof(m_FileNameNoExt));
+		EmptyPath();
 	}
 
 	path::path(const_cstr pathNullTerminated)
 		: path()
 	{
-		ComputeInfos(pathNullTerminated);
+		UpdatePath(pathNullTerminated);
 	}
 
-	path::~path()
-	{
-		// nothing
-	}
+	path::path(const path& other)
+		: path(other.pm_PathStr)
+	{ }
 
 	const bool path::operator==(const path& other) const
 	{
 		return (m_CRC32 == other.m_CRC32);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	void path::ComputeInfos(const_cstr newPath)
+	void path::UpdatePath(const_cstr newPath)
 	{
 		m_CRC32 = compute_crc32_naive(newPath);
-		strcpy_s(m_PathStr, sizeof(m_PathStr), newPath);
+		strcpy_s(pm_PathStr, sizeof(pm_PathStr), newPath);
 
 		// is file?
-		s32 idx = strlen(m_PathStr) - 1;
-		while (idx >= 0 && m_PathStr[idx] != '.' && m_PathStr[idx] != '/') idx--;
-		if (idx >= 0 && m_PathStr[idx] == '.') m_IsFile = true;
+		s32 idx = strlen(pm_PathStr) - 1;
+		while (idx >= 0 && pm_PathStr[idx] != '.' && pm_PathStr[idx] != '/') idx--;
+		if (idx >= 0 && pm_PathStr[idx] == '.') pm_IsFile = true;
 
-		if (m_IsFile) {
-			while (idx >= 0 && m_PathStr[idx] != '/') idx--;
-			strcpy_s(m_FileName, sizeof(m_FileName), &m_PathStr[idx + 1]);
-			strcpy_s(m_FileNameNoExt, sizeof(m_FileName), &m_PathStr[idx + 1]);
-			s32 dotPos = strlen(m_FileNameNoExt) - 1;
-			while (dotPos >= 0 && m_FileNameNoExt[dotPos] != '.') dotPos--;
-			memset(&m_FileNameNoExt[dotPos], 0, strlen(m_FileNameNoExt) - dotPos);
-			strcpy_s(m_CurrentDir, sizeof(m_CurrentDir), m_PathStr);
-			// TOOD (fixme): when specifing a file in current directory without "./" part, the current dir will show up as empty string
-			memset(&m_CurrentDir[idx], 0, strlen(m_PathStr) - idx);
-			if (strlen(m_CurrentDir) == 0) 
-				strcpy_s(m_CurrentDir, sizeof(m_CurrentDir), ".");
+		if (pm_IsFile) {
+			while (idx >= 0 && pm_PathStr[idx] != '/') idx--;
+			strcpy_s(pm_FileName, sizeof(pm_FileName), &pm_PathStr[idx + 1]);
+			strcpy_s(pm_FileNameNoExt, sizeof(pm_FileName), &pm_PathStr[idx + 1]);
+			s32 dotPos = strlen(pm_FileNameNoExt) - 1;
+			while (dotPos >= 0 && pm_FileNameNoExt[dotPos] != '.') dotPos--;
+			memset(&pm_FileNameNoExt[dotPos], 0, strlen(pm_FileNameNoExt) - dotPos);
+			strcpy_s(pm_CurrentDir, sizeof(pm_CurrentDir), pm_PathStr);
+			memset(&pm_CurrentDir[idx], 0, strlen(pm_PathStr) - idx);
+			if (strlen(pm_CurrentDir) == 0) 
+				strcpy_s(pm_CurrentDir, sizeof(pm_CurrentDir), ".");
 		}
 		else {
-			strcpy_s(m_CurrentDir, sizeof(m_CurrentDir), m_PathStr);
+			strcpy_s(pm_CurrentDir, sizeof(pm_CurrentDir), pm_PathStr);
 		}
 	}
 
+	void path::EmptyPath()
+	{
+		m_CRC32 = 0;
+		pm_IsFile = false;
+		memset(pm_PathStr, 0, sizeof(pm_PathStr));
+		memset(pm_FileName, 0, sizeof(pm_FileName));
+		memset(pm_CurrentDir, 0, sizeof(pm_CurrentDir));
+		memset(pm_FileNameNoExt, 0, sizeof(pm_FileNameNoExt));
+	}
+
+	////////////////////////////////////////////
+	void combine_path(path& lhs, const path& rhs)
+	{
+		c8 tmpPath[1024];
+		memset(tmpPath, 0, sizeof(tmpPath));
+
+		if (lhs.pm_PathStr[0] == 0) {
+			sprintf(tmpPath, "%s", rhs.pm_PathStr);
+			lhs.UpdatePath(tmpPath);
+		}
+		else {
+			sprintf(tmpPath, "%s/%s", lhs.pm_PathStr, rhs.pm_PathStr);
+			lhs.UpdatePath(tmpPath);
+		}
+	}
 }

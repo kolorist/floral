@@ -4,33 +4,32 @@
 #include <stdaliases.h>
 
 namespace floral {
-	class path {
+	struct path {
 	public:
 		path();
 		explicit path(const_cstr pathNullTerminated);
-		~path();
+		explicit path(const path& other);
 
-		const_cstr									ToCStr() const						{ return m_PathStr; }
-		const_cstr									GetFileName() const					{ return m_FileName; }
-		const_cstr									GetFileNameNoExt() const			{ return m_FileNameNoExt; }
-		const_cstr									GetCurrentDir() const				{ return m_CurrentDir; }
+		const bool								IsFile() const						{ return pm_IsFile; }
+		const bool								IsDir() const						{ return !pm_IsFile; }
 
-		const bool									IsFile() const						{ return m_IsFile; }
-		const bool									IsDir() const						{ return !m_IsFile; }
+		const bool								operator==(const path& other) const;
 
-		const bool									operator==(const path& other) const;
+		void									UpdatePath(const_cstr newPath);
+		void									EmptyPath();
 
 	private:
-		void										ComputeInfos(const_cstr newPath);
+		u32										m_CRC32;
 
-	private:
-		u32											m_CRC32;
-		c8											m_PathStr[1024];
-		c8											m_FileName[256];
-		c8											m_FileNameNoExt[256];
-		c8											m_CurrentDir[1024];
-		bool										m_IsFile;
+	public:
+		c8										pm_PathStr[1024];
+		c8										pm_FileName[256];
+		c8										pm_FileNameNoExt[256];
+		c8										pm_CurrentDir[1024];
+		bool									pm_IsFile;
 	};
+	////////////////////////////////////////////
+	void										combine_path(path& lhs, const path& rhs);
 }
 
 #endif // __FLORAL_PATH_H__
