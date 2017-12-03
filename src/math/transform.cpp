@@ -159,18 +159,22 @@ namespace floral {
 		// near and far must be positive (distance to the view point)
 		f32 fovRad = to_radians(fov);
 		f32 tanHalfFov = tanf(fovRad / 2.0f);
+#if 0
 		f32 right = near * tanHalfFov;
-		//f32 top = near * tanHalfFov;
 		f32 left = -right;
-		//f32 bottom = -top;
 		f32 top = right / aspectRatio;
-		//f32 right = top * aspectRatio;
 		f32 bottom = -top;
-		//f32 left = -right;
 		pMat[0][0] = 2.0f * near / (right - left);
 		pMat[1][1] = 2.0f * near / (top - bottom);
 		pMat[2][2] = - (far + near) / (far - near);	pMat[3][2] = - (2.0f * near * far) / (far - near);
 		pMat[2][3] = -1.0f;
+#else
+		pMat[0][0] = 1.0f / tanHalfFov;
+		pMat[1][1] = aspectRatio / tanHalfFov;
+		pMat[2][2] = - (far + near) / (far - near);
+		pMat[3][2] = - (2.0f * near * far) / (far - near);
+		pMat[2][3] = -1.0f;
+#endif
 
 		return pMat;
 	}
