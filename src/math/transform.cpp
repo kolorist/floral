@@ -94,6 +94,33 @@ namespace floral {
 		return tMat;
 	}
 
+	mat4x4f construct_axis_rotation3d(const vec3f& axis, const f32 angle)
+	{
+		mat4x4f tMat;
+		f32 c = cosf(angle);
+		f32 s = sinf(angle);
+
+		vec3f ax = axis.normalize();
+
+		tMat[0][0] = c + (1 - c)      * ax.x     * ax.x;
+		tMat[0][1] = (1 - c) * ax.x * ax.y + s * ax.z;
+		tMat[0][2] = (1 - c) * ax.x * ax.z - s * ax.y;
+		tMat[0][3] = 0;
+
+		tMat[1][0] = (1 - c) * ax.y * ax.x - s * ax.z;
+		tMat[1][1] = c + (1 - c) * ax.y * ax.y;
+		tMat[1][2] = (1 - c) * ax.y * ax.z + s * ax.x;
+		tMat[1][3] = 0;
+
+		tMat[2][0] = (1 - c) * ax.z * ax.x + s * ax.y;
+		tMat[2][1] = (1 - c) * ax.z * ax.y - s * ax.x;
+		tMat[2][2] = c + (1 - c) * ax.z * ax.z;
+		tMat[2][3] = 0;
+
+		tMat[3][3] = 1.0f;
+		return tMat;
+	}
+
 	mat4x4f construct_invert(const mat4x4f& m)
 	{
 		mat4x4f tMat;
