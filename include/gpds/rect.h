@@ -37,7 +37,21 @@ namespace floral {
 	/*---Axis Aligned Bounding Box---*/
 	template <class DType>
 	struct aabb {
+		aabb()
+		{ }
 
+		aabb(const aabb& other)
+			: min_corner(other.min_corner)
+			, max_corner(other.max_corner)
+		{ }
+
+		aabb(const vec3<DType>& v0, const vec3<DType>& v1)
+			: min_corner(v0)
+			, max_corner(v1)
+		{ }
+
+		vec3<DType>								min_corner;
+		vec3<DType>								max_corner;
 	};
 
 	/*---Oriented Bounding Box---*/
@@ -47,6 +61,8 @@ namespace floral {
 
 	using rect2f = rect<f32>;
 	using rect2i = rect<s32>;
+
+	using aabb3f = aabb<f32>;
 }
 
 #endif // __FLORAL_RECT_H__
