@@ -12,6 +12,7 @@
 #include <gpds/rect.h>
 ////////////////////////////////////////////////
 #include <cmds/path.h>
+#include <cmds/crc_string.h>
 ////////////////////////////////////////////////
 #include <math/utils.h>
 #include <math/intersect.h>
