@@ -57,12 +57,28 @@ namespace floral {
 	/*---Oriented Bounding Box---*/
 	template <class DType>
 	struct obb {
+		obb()
+		{ }
+
+		obb(const obb& other)
+			: position(other.position)
+			, half_size(other.half_size)
+		{
+			axis[0] = other.axis[0];
+			axis[1] = other.axis[1];
+			axis[2] = other.axis[2];
+		}
+
+		vec3<DType>								position;
+		vec3<DType>								half_size;
+		vec3<DType>								axis[3];
 	};
 
 	using rect2f = rect<f32>;
 	using rect2i = rect<s32>;
 
 	using aabb3f = aabb<f32>;
+	using oob3f = obb<f32>;
 }
 
 #endif // __FLORAL_RECT_H__
