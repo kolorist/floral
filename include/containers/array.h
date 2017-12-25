@@ -58,7 +58,8 @@ namespace floral {
 
 		~fixed_array()
 		{
-			m_MyAllocator->Free(m_Data);
+			if (m_Data)
+				m_MyAllocator->Free(m_Data);
 		}
 
 		void PushBack(const_reference_type v) {
@@ -156,6 +157,11 @@ namespace floral {
 		void Sort()
 		{
 			Partition<__CompareFunc>(0, m_Size - 1);
+		}
+
+		void ResizeEx(const u32 newSize) {
+			ASSERT_MSG(newSize <= m_Capacity, "Invalid new size!");
+			m_Size = newSize;
 		}
 
 	private:
