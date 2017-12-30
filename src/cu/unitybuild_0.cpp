@@ -5,3 +5,9 @@
 
 #include "src/math/utils.cpp"
 #include "src/math/transform.cpp"
+
+#include "src/thread/Thread.cpp"
+#include "src/thread/WindowsThread.cpp"
+#include "src/thread/Mutex.cpp"
+#include "src/thread/WindowsMutex.cpp"
+#include "src/thread/WindowsConditionVariable.cpp"

@@ -18,6 +18,10 @@
 #include <math/intersect.h>
 #include <math/transform.h>
 ////////////////////////////////////////////////
+#include <thread/Thread.h>
+#include <thread/Mutex.h>
+#include <thread/ConditionVariable.h>
+////////////////////////////////////////////////
 #include <types/type_traits.h>
 #include <types/type_list.h>
 
