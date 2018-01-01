@@ -4,34 +4,29 @@
 #include <stdaliases.h>
 
 #if defined(PLATFORM_WINDOWS)
-#include "WindowsMutex.h"
+#include "windows_mutex.h"
 #elif defined(PLATFORM_POSIX)
-#include "PosixMutex.h"
+#include "posix_mutex.h"
 #endif
 
 namespace floral {
 
 #if defined(PLATFORM_WINDOWS)
-	typedef WindowsMutex						Mutex;
+	typedef windows_mutex						mutex;
 #elif defined(PLATFORM_POSIX)
-	typedef PosixMutex							Mutex;
+	typedef posix_mutex							mutex;
 #endif
 
-	struct LockGuard {
-		LockGuard();
-		~LockGuard();
-		Mutex									pm_Mutex;
+	typedef mutex*								mutex_ptr_t;
+	typedef mutex&								mutex_ref_t;
+
+	struct lock_guard {
+		lock_guard(mutex_ref_t mtx);
+		~lock_guard();
+
+		mutex_ref_t								ref_mutex;
 	};
 
-	typedef Mutex*								MutexPtr;
-	typedef Mutex&								MutexRef;
-
-	////////////////////////////////////////////
-	void										InitMutex(MutexRef mtx);
-	void										LockMutex(MutexRef mtx);
-	void										UnlockMutex(MutexRef mtx);
-	void										ReleaseMutex(MutexRef mtx);
-	////////////////////////////////////////////
 }
 
 #endif // __FLORAL_MUTEX_H__

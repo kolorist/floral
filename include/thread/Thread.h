@@ -3,29 +3,26 @@
 
 #include <stdaliases.h>
 
-#include "ThreadBase.h"
+#include "thread_base.h"
 #if defined(PLATFORM_WINDOWS)
-#include "WindowsThread.h"
+#include "windows_thread.h"
 #elif defined(PLATFORM_POSIX)
-#include "PosixThread.h"
+#include "posix_thread.h"
 #endif
 
 namespace floral {
 
 #if defined(PLATFORM_WINDOWS)
-	typedef WindowsThread						Thread;
+	typedef windows_thread						thread;
 #elif defined(PLATFORM_POSIX)
-	typedef PosixThread							Thread;
+	typedef posix_thread						thread;
 #endif
 
-	typedef Thread*								ThreadPtr;
-	typedef Thread&								ThreadRef;
+	typedef thread*								thread_ptr_t;
+	typedef thread&								thread_ref_t;
 
 	////////////////////////////////////////////
-	void										InitThread(ThreadRef rThread);
-	void										StartThread(ThreadRef pThread);
-	void										WaitForThread(ThreadRef rThread);
-	void										ReleaseThread(ThreadRef rThread);
+	void										wait_for_thread(thread_ref_t rThread);
 	////////////////////////////////////////////
 
 }

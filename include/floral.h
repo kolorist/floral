@@ -4,7 +4,7 @@
 #include <stdaliases.h>
 ////////////////////////////////////////////////
 #include <containers/array.h>
-
+#include <containers/queue.h>
 ////////////////////////////////////////////////
 #include <gpds/vec.h>
 #include <gpds/mat.h>
@@ -18,9 +18,9 @@
 #include <math/intersect.h>
 #include <math/transform.h>
 ////////////////////////////////////////////////
-#include <thread/Thread.h>
-#include <thread/Mutex.h>
-#include <thread/ConditionVariable.h>
+#include <thread/thread.h>
+#include <thread/mutex.h>
+#include <thread/condition_variable.h>
 ////////////////////////////////////////////////
 #include <types/type_traits.h>
 #include <types/type_list.h>

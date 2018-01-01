@@ -6,8 +6,8 @@
 #include "src/math/utils.cpp"
 #include "src/math/transform.cpp"
 
-#include "src/thread/Thread.cpp"
-#include "src/thread/WindowsThread.cpp"
-#include "src/thread/Mutex.cpp"
-#include "src/thread/WindowsMutex.cpp"
-#include "src/thread/WindowsConditionVariable.cpp"
+#include "src/thread/thread.cpp"
+#include "src/thread/windows_thread.cpp"
+#include "src/thread/mutex.cpp"
+#include "src/thread/windows_mutex.cpp"
+#include "src/thread/windows_condition_variable.cpp"

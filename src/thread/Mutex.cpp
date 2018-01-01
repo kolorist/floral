@@ -1,15 +1,14 @@
 #include "thread/Mutex.h"
 
 namespace floral {
-	LockGuard::LockGuard()
+	lock_guard::lock_guard(mutex_ref_t mtx)
+		: ref_mutex(mtx)
 	{
-		InitMutex(pm_Mutex);
-		LockMutex(pm_Mutex);
+		ref_mutex.lock();
 	}
 
-	LockGuard::~LockGuard()
+	lock_guard::~lock_guard()
 	{
-		UnlockMutex(pm_Mutex);
-		ReleaseMutex(pm_Mutex);
+		ref_mutex.unlock();
 	}
 }
