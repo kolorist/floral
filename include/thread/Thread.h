@@ -23,6 +23,7 @@ namespace floral {
 
 	////////////////////////////////////////////
 	void										wait_for_thread(thread_ref_t rThread);
+	void										set_current_thread_name(const_cstr name);
 	////////////////////////////////////////////
 
 }

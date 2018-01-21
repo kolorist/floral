@@ -54,7 +54,7 @@ namespace floral {
 
 			value_type wait_and_pop() {
 				head_mtx.lock();
-				while (head_noe == get_tail()) {
+				while (head_node == get_tail()) {
 					data_condvar.wait(data_condvar_mtx);
 				}
 				queue_node_ptr oldHead = head_node;

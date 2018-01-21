@@ -37,5 +37,25 @@ namespace floral {
 	{
 		WaitForSingleObject(rThread.thread_handle, INFINITE);
 	}
+
+	void set_current_thread_name(const_cstr name)
+	{
+		THREADNAME_INFO info;
+		info.dwType = 0x1000;
+		info.szName = name;
+		info.dwThreadID = -1;					// -1 means calling thread
+		info.dwFlags = 0;
+
+		__try
+		{
+			RaiseException(MS_VC_EXCEPTION,
+					0,
+					sizeof(info)/sizeof(ULONG_PTR),
+					(ULONG_PTR*)&info);
+		}
+		__except(EXCEPTION_EXECUTE_HANDLER)
+		{
+		}
+	}
 	////////////////////////////////////////////
 }
