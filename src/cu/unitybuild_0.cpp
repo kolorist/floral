@@ -11,3 +11,5 @@
 #include "src/thread/mutex.cpp"
 #include "src/thread/windows_mutex.cpp"
 #include "src/thread/windows_condition_variable.cpp"
+
+#include "src/assert/assert.cpp"

@@ -24,6 +24,8 @@
 ////////////////////////////////////////////////
 #include <types/type_traits.h>
 #include <types/type_list.h>
+////////////////////////////////////////////////
+#include <assert/assert.h>
 
 #include <function/functor.h>
 #include <function/simple_callback.h>
