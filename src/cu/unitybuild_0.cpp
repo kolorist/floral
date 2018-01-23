@@ -13,3 +13,4 @@
 #include "src/thread/windows_condition_variable.cpp"
 
 #include "src/assert/assert.cpp"
+#include "src/assert/StackWalker.cpp"
