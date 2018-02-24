@@ -34,9 +34,19 @@ namespace floral {
 		static queue_node<value_type>			sentinel_node;
 
 		public:
+			queue_mt_lockbased()
+				: my_allocator(nullptr)
+			{ }
+		
 			queue_mt_lockbased(allocator_ptr_type myAllocator)
-				: my_allocator(myAllocator)
 			{
+				assign_allocator(myAllocator);
+			}
+			
+			void assign_allocator(allocator_ptr_type myAllocator)
+			{
+				my_allocator = myAllocator;
+				// TODO: assert for my_allocator
 				head_node = my_allocator->Allocate<queue_node<value_type>>();
 				tail_node = head_node;			// tail == head means the queue is empty
 			}
