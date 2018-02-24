@@ -1,2 +1,6 @@
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#include <floral.h>
+
+int main(void)
+{
+	return 0;
+}
