@@ -5,6 +5,7 @@
 #include <commctrl.h>
 
 #include <assert/StackWalker.h>
+#include <thread/mutex.h>
 
 // use this pragma in order to enable visual style v6 by generating application manifest
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
@@ -16,8 +17,13 @@ namespace floral {
 	static bool g_stack_walker_init				= false;
 	static StackWalker							g_stack_walker;
 
+	static mutex								g_stacktrace_mtx;
+
 	void get_stack_trace(cstr stackTraceBuffer)
 	{
+		// StackWalker is not thread-safe, we have to guard it to prevent race-condition
+		floral::lock_guard traceGuard(g_stacktrace_mtx);
+
 		if (!g_stack_walker_init) {
 			g_stack_walker.LoadModules();
 			g_stack_walker_init = true;
