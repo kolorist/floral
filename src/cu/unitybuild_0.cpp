@@ -14,3 +14,5 @@
 
 #include "src/assert/assert.cpp"
 #include "src/assert/StackWalker.cpp"
+
+#include "src/io/nativeio.cpp"
