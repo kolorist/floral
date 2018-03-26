@@ -26,7 +26,9 @@
 #include <types/type_list.h>
 ////////////////////////////////////////////////
 #include <assert/assert.h>
-
+//----------------------------------------------
+#include <io/nativeio.h>
+//----------------------------------------------
 #include <function/functor.h>
 #include <function/simple_callback.h>
 

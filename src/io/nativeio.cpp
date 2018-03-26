@@ -2,6 +2,30 @@
 
 namespace floral {
 
+	file_stream::File_stream()
+		: rpos(0)
+		, buffer(nullptr)
+	{
+	}
+
+	file_stream::~file_stream()
+	{
+	}
+
+	u8 file_stream::read_byte()
+	{
+		u8 retVal = buffer[rpos];
+		rpos++;
+		return retVal;
+	}
+
+	c8 file_stream::read_char()
+	{
+		c8 retVal = buffer[rpos];
+		rpos++;
+		return retVal;
+	}
+
 	file_info open_file(const_cstr filePath)
 	{
 		file_info newFile;
@@ -19,6 +43,14 @@ namespace floral {
 	{
 		DWORD bytesRead = 0;
 		ReadFile(fileInfo.file_handle, buffer, fileInfo.file_size, &bytesRead, 0);
+	}
+
+	void read_all_file(file_info& fileInfo, file_stream& fileStream)
+	{
+		DWORD bytesRead = 0;
+		fileStream.info = fileInfo;
+		fileStream.rpos = 0;
+		ReadFile(fileInfo.file_handle, fileStream.buffer, fileInfo.file_size, &byteRead, 0);
 	}
 
 	void mmap_all_file(file_info& fileInfo, voidptr buffer)
