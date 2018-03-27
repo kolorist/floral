@@ -27,18 +27,23 @@ namespace floral {
 			~file_stream();
 
 			u8									read_byte();
+			void								unread_byte();
 			c8									read_char();
+
+			const bool							is_eos();
 
 		public:
 			file_info							info;
-			u32									rpos;
+			u64									rpos;
 			u8*									buffer;
 	};
 
+	// -----------------------------------------
+
 	file_info									open_file(const_cstr filePath);
-	void										read_all_file(file_info& fileInfo, voidptr buffer);
-	void										read_all_file(file_info& fileInfo, file_stream& fileStream);
-	void										mmap_all_file(file_info& fileInfo, voidptr buffer);
+	void										read_all_file(const file_info& fileInfo, voidptr buffer);
+	void										read_all_file(const file_info& fileInfo, file_stream& fileStream);
+	void										mmap_all_file(const file_info& fileInfo, voidptr buffer);
 	void										close_file(file_info& fileInfo);
 }
 
