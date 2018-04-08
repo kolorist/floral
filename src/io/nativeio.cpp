@@ -31,9 +31,17 @@ namespace floral {
 		return retVal;
 	}
 
+	const u64 file_stream::read_to_buffer(voidptr o_buffer, const u64 i_size)
+	{
+		const u64 copySize = (i_size > (info.file_size - rpos)) ? (info.file_size - rpos) : i_size;
+		memcpy((u8*)o_buffer, &buffer[rpos], copySize);
+		rpos += copySize;
+		return copySize;
+	}
+
 	const bool file_stream::is_eos()
 	{
-		return (rpos >= info.file_size + 1);
+		return (rpos >= info.file_size);
 	}
 
 	// -----------------------------------------

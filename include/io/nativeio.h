@@ -29,6 +29,7 @@ namespace floral {
 			u8									read_byte();
 			void								unread_byte();
 			c8									read_char();
+			const u64							read_to_buffer(voidptr o_buffer, const u64 i_size);
 
 			const bool							is_eos();
 
