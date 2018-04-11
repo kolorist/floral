@@ -27,12 +27,13 @@ typedef double                                  f64;
 typedef u32										size32;
 typedef u64										size64;
 #if defined(PLATFORM_WINDOWS)
-#	if defined(_WIN32)
-typedef size32									size;
-typedef size32									aptr;		// pointer type for arithmetic
-#	elif defined(_WIN64)
+// MSVC 64-bit compiler will defined both _WIN32 and _WIN64
+#	if defined(_WIN32) && defined(_WIN64)
 typedef size64									size;
 typedef size64									aptr;		// pointer type for arithmetic
+#	elif defined(_WIN32)
+typedef size32									size;
+typedef size32									aptr;		// pointer type for arithmetic
 #	else
 // TODO: add
 #	endif
