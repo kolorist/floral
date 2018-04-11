@@ -26,14 +26,23 @@ typedef double                                  f64;
 // size type
 typedef u32										size32;
 typedef u64										size64;
+// index type
+typedef u32										uidx32;
+typedef s32										sidx32;
+typedef u64										uidx64;
+typedef s64										sidx64;
 #if defined(PLATFORM_WINDOWS)
 // MSVC 64-bit compiler will defined both _WIN32 and _WIN64
 #	if defined(_WIN32) && defined(_WIN64)
 typedef size64									size;
+typedef uidx64									uidx;		// unsigned index type
+typedef sidx64									sidx;		// signed index type
 typedef size64									aptr;		// pointer type for arithmetic
 #	elif defined(_WIN32)
 typedef size32									size;
-typedef size32									aptr;		// pointer type for arithmetic
+typedef uidx32									uidx;
+typedef sidx32									sidx;
+typedef size32									aptr;
 #	else
 // TODO: add
 #	endif

@@ -195,7 +195,7 @@ namespace floral {
 		
 		// length
 		const DType length() const {
-			return sqrt(x * x + y * y + z * z);
+			return sqrtf(x * x + y * y + z * z);
 		}
 		// normalize
 		vec3 normalize() const {

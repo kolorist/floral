@@ -16,7 +16,7 @@ namespace floral {
 #if defined(PLATFORM_WINDOWS)
 	struct file_info {
 		HANDLE									file_handle;
-		u64										file_size;				// in bytes
+		size									file_size;				// in bytes
 	};
 #else
 #endif
@@ -34,8 +34,8 @@ namespace floral {
 
 		public:
 			file_info							info;
-			u64									rpos;
-			u8*									buffer;
+			size								rpos;
+			p8									buffer;
 	};
 
 	// -----------------------------------------

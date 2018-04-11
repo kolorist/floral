@@ -54,7 +54,8 @@ namespace floral {
 	void read_all_file(const file_info& fileInfo, voidptr buffer)
 	{
 		DWORD bytesRead = 0;
-		ReadFile(fileInfo.file_handle, buffer, fileInfo.file_size, &bytesRead, 0);
+		// 32bit / 64bit: ReadFile only accept DWORD as file size
+		ReadFile(fileInfo.file_handle, buffer, static_cast<size32>(fileInfo.file_size), &bytesRead, 0);
 	}
 
 	void read_all_file(const file_info& fileInfo, file_stream& fileStream)
@@ -62,7 +63,8 @@ namespace floral {
 		DWORD bytesRead = 0;
 		fileStream.info = fileInfo;
 		fileStream.rpos = 0;
-		ReadFile(fileInfo.file_handle, fileStream.buffer, fileInfo.file_size, &bytesRead, 0);
+		// 32bit / 64bit: ReadFile only accept DWORD as file size
+		ReadFile(fileInfo.file_handle, fileStream.buffer, static_cast<size32>(fileInfo.file_size), &bytesRead, 0);
 	}
 
 	void mmap_all_file(const file_info& fileInfo, voidptr buffer)
