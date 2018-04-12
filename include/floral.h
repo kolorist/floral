@@ -4,6 +4,7 @@
 #include <stdaliases.h>
 ////////////////////////////////////////////////
 #include <containers/array.h>
+#include <containers/fast_array.h>
 #include <containers/queue.h>
 ////////////////////////////////////////////////
 #include <gpds/vec.h>
