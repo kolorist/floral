@@ -47,7 +47,7 @@ namespace floral {
 			{
 				my_allocator = myAllocator;
 				// TODO: assert for my_allocator
-				head_node = my_allocator->Allocate<queue_node<value_type>>();
+				head_node = my_allocator->allocate<queue_node<value_type>>();
 				tail_node = head_node;			// tail == head means the queue is empty
 			}
 
@@ -55,7 +55,7 @@ namespace floral {
 				queue_node_ptr oldHead = pop_head();
 				if (oldHead) {
 					value_type retData = oldHead->data;
-					my_allocator->Free(oldHead);
+					my_allocator->free(oldHead);
 					return retData;
 				}
 				// TODO: if value_type is a pointer type, will this be nullptr?
@@ -72,12 +72,12 @@ namespace floral {
 				head_mtx.unlock();
 
 				value_type retData = oldHead->data;
-				my_allocator->Free(oldHead);
+				my_allocator->free(oldHead);
 				return retData;
 			}
 
 			void push(const_reference_type val) {
-				queue_node_ptr newTail = my_allocator->Allocate<queue_node<value_type>>();
+				queue_node_ptr newTail = my_allocator->allocate<queue_node<value_type>>();
 				tail_mtx.lock();
 				tail_node->data = val;
 				tail_node->next = newTail;
