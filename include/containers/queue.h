@@ -8,10 +8,10 @@
 
 namespace floral {
 
-	// TODO: DType need to be assignable, how does other implementation deal with this?
-	template <class DType>
+	// TODO: t_type need to be assignable, how does other implementation deal with this?
+	template <class t_type>
 	struct queue_node {
-		DType									data;
+		t_type									data;
 		queue_node*								next;
 
 		queue_node()
@@ -19,13 +19,13 @@ namespace floral {
 		{ }
 	};
 
-	template <class DType, class AllocatorType>
+	template <class t_type, class t_allocator>
 	class queue_mt_lockbased {
-		typedef DType							value_type;
+		typedef t_type							value_type;
 		typedef value_type*						pointer_type;
 		typedef value_type&						reference_type;
 		typedef const value_type&				const_reference_type;
-		typedef AllocatorType					allocator_type;
+		typedef t_allocator						allocator_type;
 		typedef allocator_type*					allocator_ptr_type;
 
 		typedef queue_node<value_type>*			queue_node_ptr;
