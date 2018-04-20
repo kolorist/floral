@@ -44,12 +44,24 @@ typedef uidx32									uidx;
 typedef sidx32									sidx;
 typedef size32									aptr;
 #	else
-// TODO: add
+// TODO: not supported
 #	endif
-#elif defined(PLATFORM_ANDROID)
-// TODO: add
+#elif defined(PLATFORM_POSIX)
+#	if defined(POSIX64)
+typedef size64									size;
+typedef uidx64									uidx;		// unsigned index type
+typedef sidx64									sidx;		// signed index type
+typedef size64									aptr;		// pointer type for arithmetic
+#	elif defined(POSIX32)
+typedef size32									size;
+typedef uidx32									uidx;
+typedef sidx32									sidx;
+typedef size32									aptr;
+#	else
+// TODO: not supported
+#	endif
 #else
-// TODO: add
+// TODO: not supported
 #endif
 
 // c-string

@@ -19,6 +19,9 @@ namespace floral {
 		size									file_size;				// in bytes
 	};
 #else
+	struct file_info {
+		size									file_size;
+	};
 #endif
 
 	class file_stream {

@@ -12,7 +12,7 @@ namespace floral {
 	crc_string::crc_string(const_cstr nullTerminatedStr)
 	{
 		crc32 = compute_crc32_naive(nullTerminatedStr);
-		strcpy_s(c_str, sizeof(c_str), nullTerminatedStr);
+		strcpy(c_str, nullTerminatedStr);
 	}
 
 	const bool crc_string::operator==(const crc_string& other) const
@@ -23,7 +23,7 @@ namespace floral {
 	crc_string& crc_string::operator=(const crc_string& other)
 	{
 		crc32 = other.crc32;
-		strcpy_s(c_str, sizeof(c_str), other.c_str);
+		strcpy(c_str, other.c_str);
 		return *this;
 	}
 }

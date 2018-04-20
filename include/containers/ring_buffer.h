@@ -31,7 +31,7 @@ namespace floral {
 			void assign_allocator(allocator_ptr_t i_allocator)
 			{
 				m_allocator = i_allocator;
-				m_data = m_allocator->allocate_array<value_t>(t_size);
+				m_data = m_allocator->template allocate_array<value_t>(t_size);
 				m_head = 0; m_tail = 0;			// head == tail => buffer empty
 			}
 

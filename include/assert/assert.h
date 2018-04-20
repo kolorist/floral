@@ -5,6 +5,8 @@
 
 namespace floral {
 
+#if defined(PLATFORM_WINDOWS)
+
 	enum class assert_action_e {
 		abort = 0,
 		debug_break,
@@ -18,7 +20,6 @@ namespace floral {
 	assert_action_e								assertion_report_msgonly(const_cstr msg, const_cstr file, const u32 line);
 	assert_action_e								assertion_report_dlg(const_cstr title, const_cstr msg, const_cstr file, const u32 line);
 
-#if 1
 
 #define FLORAL_DEBUG_BREAK						__debugbreak
 

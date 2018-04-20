@@ -20,7 +20,7 @@ namespace floral {
 		typedef			t_allocator				allocator_t;
 		typedef			allocator_t*			allocator_ptr_t;
 
-		typename		value_t					zero_value = t_value();
+		static value_t							zero_value = t_value();
 
 	public:
 		fixed_array()
@@ -36,7 +36,7 @@ namespace floral {
 			, m_allocator(i_myAllocator)
 		{
 			ASSERT_MSG((int)i_capacity > 0, "Cannot create an non-positive-capacity array");
-			m_data = m_allocator->allocate_array<value_t>(m_capacity);
+			m_data = m_allocator->template allocate_array<value_t>(m_capacity);
 			for (u32 i = 0; i < m_capacity; i++) {
 				m_data[i] = zero_value;
 			}
@@ -126,7 +126,7 @@ namespace floral {
 		fixed_array& operator=(const fixed_array& i_other) {
 			if (this != &i_other) {
 				ASSERT_MSG(m_capacity >= i_other.m_size, "Not enough capacity in destination array");
-				Empty();
+				empty();
 				for (u32 i = 0; i < i_other.m_size; i++) {
 					m_data[i] = i_other.m_data[i];
 				}
@@ -212,7 +212,7 @@ namespace floral {
 		typedef			t_allocator				allocator_t;
 		typedef			allocator_t*			allocator_ptr_t;
 
-		typename		value_t					zero_value = t_value();
+		static value_t							zero_value = t_value();
 
 	public:
 
@@ -238,7 +238,7 @@ namespace floral {
 			, m_allocator(myAllocator)
 		{
 			ASSERT_MSG((int)capacity > 0, "Cannot create an non-positive-capacity array");
-			m_data = m_allocator->allocate_array<value_t>(m_capacity);
+			m_data = m_allocator->template allocate_array<value_t>(m_capacity);
 			for (u32 i = 0; i < m_capacity; i++) {
 				m_data[i] = zero_value;
 			}
@@ -406,7 +406,7 @@ namespace floral {
 				po2Size |= po2Size >> 16;
 				po2Size++;
 
-				pointer_t data = m_allocator->allocate_array<value_t>(po2Size);
+				pointer_t data = m_allocator->template allocate_array<value_t>(po2Size);
 				for (u32 i = 0; i < po2Size; i++) {
 					data[i] = zero_value;
 				}
@@ -428,7 +428,7 @@ namespace floral {
 			if (newCapacity <= m_capacity)
 				return;
 		
-			pointer_t data = m_allocator->allocate_array<value_t>(newCapacity);
+			pointer_t data = m_allocator->template allocate_array<value_t>(newCapacity);
 			for (u32 i = 0; i < newCapacity; i++) {
 				data[i] = zero_value;
 			}

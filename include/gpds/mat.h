@@ -48,9 +48,9 @@ namespace floral {
 		// noone should do this, this is ridiculous -.-!
 		mat3x3(ColType Cols[])
 		{
-			Cols[0][0] = Cols[0][0]; Cols[0][1] = Cols[0][1]; Cols[0][2] = m02;
-			Cols[1][0] = Cols[1][0]; Cols[1][1] = Cols[1][1]; Cols[1][2] = m12;
-			Cols[2][0] = Cols[2][0]; Cols[2][1] = Cols[2][1]; Cols[2][2] = m22;
+			Cols[0][0] = Cols[0][0]; Cols[0][1] = Cols[0][1]; Cols[0][2] = Cols[0][2];
+			Cols[1][0] = Cols[1][0]; Cols[1][1] = Cols[1][1]; Cols[1][2] = Cols[1][2];
+			Cols[2][0] = Cols[2][0]; Cols[2][1] = Cols[2][1]; Cols[2][2] = Cols[2][2];
 		}
 
 		explicit mat3x3(const DType val)

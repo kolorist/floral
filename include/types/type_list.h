@@ -22,21 +22,26 @@ struct type_list {
 	using tail_list = _tail_list;
 };
 
-#pragma region type_list length
+// type_list length
 template <typename> struct tl_length;
 
 template <>
 struct tl_length<null_type> {
-	DECLARE_STATIC_CONSTANT(unsigned int, value = 0u);
+	//DECLARE_STATIC_CONSTANT(unsigned int, value = 0u);
+	enum {
+		value = 0u
+	};
 };
 
 template <class _head_elem, typename _tail_list>
 struct tl_length<type_list<_head_elem, _tail_list> > {
-	DECLARE_STATIC_CONSTANT(unsigned int, value = 1u + tl_length<_tail_list>::value);
+	//DECLARE_STATIC_CONSTANT(unsigned int, value = 1u + tl_length<_tail_list>::value);
+	enum {
+		value = 1u + tl_length<_tail_list>::value
+	};
 };
-#pragma endregion
 
-#pragma region type_list index access
+// type_list index access
 //TODO: static_assert for int, it must be unsigned int
 template <int, typename> struct tl_type_at;
 
@@ -57,9 +62,8 @@ struct tl_type_at<_idx, type_list<_head_elem, _tail_list> > {
 
 template <int _idx, class _type_list>
 using tl_type_at_t = typename tl_type_at<_idx, _type_list>::type;
-#pragma endregion
 
-#pragma region type_list index access with fallback type
+// type_list index access with fallback type
 template <int, typename, typename> struct tl_fb_type_at;
 
 template <int _idx, typename _fallback_type>
@@ -79,14 +83,12 @@ struct tl_fb_type_at<_idx, type_list<_head_elem, _tail_list>, _fallback_type> {
 
 template <int _idx, class _type_list, typename _fallback_type>
 using tl_fb_type_at_t = typename tl_fb_type_at<_idx, _type_list, _fallback_type>::type;
-#pragma endregion
 
-#pragma region type_list declaration helpers
+// type_list declaration helpers
 #define type_list_1(t1)							type_list<t1, null_type>
 #define type_list_2(t1, t2)						type_list<t1, type_list_1(t2)>
 #define type_list_3(t1, t2, t3)					type_list<t1, type_list_2(t2, t3)>
 #define type_list_4(t1, t2, t3, t4)				type_list<t1, type_list_3(t2, t3, t4)>
 #define type_list_5(t1, t2, t3, t4, t5)			type_list<t1, type_list_4(t2, t3, t4, t5)>
-#pragma endregion
 
 #endif // __FLORAL_TYPE_LIST_H__

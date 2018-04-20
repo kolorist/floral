@@ -47,7 +47,7 @@ namespace floral {
 			{
 				my_allocator = myAllocator;
 				// TODO: assert for my_allocator
-				head_node = my_allocator->allocate<queue_node<value_type>>();
+				head_node = my_allocator->template allocate<queue_node<value_type>>();
 				tail_node = head_node;			// tail == head means the queue is empty
 			}
 
@@ -77,7 +77,7 @@ namespace floral {
 			}
 
 			void push(const_reference_type val) {
-				queue_node_ptr newTail = my_allocator->allocate<queue_node<value_type>>();
+				queue_node_ptr newTail = my_allocator->template allocate<queue_node<value_type>>();
 				tail_mtx.lock();
 				tail_node->data = val;
 				tail_node->next = newTail;
