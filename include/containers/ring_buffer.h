@@ -8,6 +8,7 @@
 #include "assert/assert.h"
 
 namespace floral {
+
 	template <class t_type, class t_allocator, u32 t_size>
 	class ring_buffer_mt {
 		typedef t_type							value_t;
@@ -41,6 +42,17 @@ namespace floral {
 				return pop_head_into(o_value);
 			}
 
+			value_t wait_and_pop()
+			{
+				while (get_head() == get_tail()) {
+					m_data_condvar.wait(m_data_condvar_mtx);
+				}
+
+				value_t retData = m_data[m_head];
+				m_head = (m_head + 1) % t_size;
+				return retData;
+			}
+
 			void push(const_reference_t i_value)
 			{
 				m_head_mtx.lock();
@@ -51,6 +63,7 @@ namespace floral {
 				m_data[m_tail] = i_value;
 				m_tail = newTail;
 				m_tail_mtx.unlock();
+				m_data_condvar.notify_one();
 			}
 
 			const bool is_empty() const {
@@ -90,5 +103,7 @@ namespace floral {
 
 			mutex								m_head_mtx;
 			mutex								m_tail_mtx;
+			mutex								m_data_condvar_mtx;
+			condition_variable					m_data_condvar;
 	};
 }

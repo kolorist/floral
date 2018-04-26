@@ -6,6 +6,7 @@
 #include <containers/array.h>
 #include <containers/fast_array.h>
 #include <containers/queue.h>
+#include <containers/ring_buffer.h>
 ////////////////////////////////////////////////
 #include <gpds/vec.h>
 #include <gpds/mat.h>

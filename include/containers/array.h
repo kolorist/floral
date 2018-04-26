@@ -77,7 +77,7 @@ namespace floral {
 
 		void clear() {
 			for (u32 i = 0; i < m_size; i++) {
-				m_data[i] = zero_value;
+				m_data[i] = value_t();
 			}
 			m_size = 0;
 		}
@@ -216,8 +216,6 @@ namespace floral {
 		typedef			t_allocator				allocator_t;
 		typedef			allocator_t*			allocator_ptr_t;
 
-		static value_t							zero_value = t_value();
-
 	public:
 
 		dynamic_array()
@@ -244,7 +242,7 @@ namespace floral {
 			ASSERT_MSG((int)capacity > 0, "Cannot create an non-positive-capacity array");
 			m_data = m_allocator->template allocate_array<value_t>(m_capacity);
 			for (u32 i = 0; i < m_capacity; i++) {
-				m_data[i] = zero_value;
+				m_data[i] = value_t();
 			}
 		}
 
@@ -280,7 +278,7 @@ namespace floral {
 
 		void Clear() {
 			for (u32 i = 0; i < m_size; i++) {
-				m_data[i] = zero_value;
+				m_data[i] = value_t();
 			}
 			m_size = 0;
 		}
@@ -412,7 +410,7 @@ namespace floral {
 
 				pointer_t data = m_allocator->template allocate_array<value_t>(po2Size);
 				for (u32 i = 0; i < po2Size; i++) {
-					data[i] = zero_value;
+					data[i] = value_t();
 				}
 				// copy data
 				for (u32 i = 0; i < m_size; i++) {
@@ -434,7 +432,7 @@ namespace floral {
 		
 			pointer_t data = m_allocator->template allocate_array<value_t>(newCapacity);
 			for (u32 i = 0; i < newCapacity; i++) {
-				data[i] = zero_value;
+				data[i] = value_t();
 			}
 			// copy data
 			for (u32 i = 0; i < m_size; i++) {
