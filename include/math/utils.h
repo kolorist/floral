@@ -8,6 +8,7 @@ namespace floral {
 #define PI										3.1415926525898f
 
 #define		TEST_BIT(target, bitmask)			(target & bitmask)
+#define		TEST_BIT_BOOL(target, bitmask)		((target & bitmask) != 0)
 #define		SET_BIT(target, bitmask)			(target = target | bitmask)
 #define		CLEAR_BIT(target, bitmask)			(target = target & (~bitmask))
 
