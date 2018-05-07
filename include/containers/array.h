@@ -8,7 +8,154 @@
 //			for both single-threaded (range check, type check) and multi-threaded (synchronization) purposes
 
 namespace floral {
-	// FIXME: template type naming convention
+
+	template <class t_value, u32 t_capacity>
+	class inplace_array {
+		typedef			t_value					value_t;
+		typedef			const t_value			const_value_t;
+		typedef			t_value*				pointer_t;
+		typedef			const t_value*			const_pointer_t;
+		typedef			t_value&				reference_t;
+		typedef			const t_value&			const_reference_t;
+
+	public:
+		inplace_array()
+			: m_capacity(t_capacity)
+			, m_size(0)
+		{ }
+
+		void init()
+		{
+			m_size = 0;
+			
+			ASSERT_MSG((int)m_capacity > 0, "Cannot create an non-positive-capacity array");
+			for (u32 i = 0; i < m_capacity; i++) {
+				m_data[i] = value_t();
+			}
+		}
+
+		~inplace_array()
+		{
+		}
+
+		void push_back(const_reference_t i_value) {
+			ASSERT_MSG(m_size + 1 <= m_capacity, "Not enough array memory for PushBack");
+			m_data[m_size] = i_value;
+			m_size++;
+		}
+		
+		void empty() {
+			m_size = 0;
+		}
+
+		void clear() {
+			for (u32 i = 0; i < m_size; i++) {
+				m_data[i] = value_t();
+			}
+			m_size = 0;
+		}
+
+		const u32								get_size() const					{ return m_size; }
+		const u32								get_capacity() const				{ return m_capacity; }
+		const u32								get_terminated_index() const		{ return m_size; }
+		const_value_t at(const u32 index) const {
+			ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
+			return m_data[index];
+		}
+
+		const u32 find(const_reference_t value, 
+			bool (*cmpFunc)(const_reference_t, const_reference_t),
+			const u32 fromId = 0, const u32 toId = 0) const 
+		{
+			u32 from = fromId;
+			u32 to = toId > 0 ? toId : m_size;
+
+			for (u32 i = from; i < to; i++) {
+				if (cmpFunc(m_data[i], value))
+					return i;
+			}
+			return m_size;
+		}
+		
+		const u32 find(const_reference_t value, const u32 fromId = 0, const u32 toId = 0) const {
+			u32 from = fromId;
+			u32 to = toId > 0 ? toId : m_size;
+
+			for (u32 i = from; i < to; i++) {
+				if (m_data[i] == value)
+					return i;
+			}
+			return m_size;
+		}
+
+		// operator overloading
+		reference_t operator[](const u32 index) {
+			ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
+			return m_data[index];
+		}
+
+		const_reference_t operator[](const u32 index) const {
+			ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
+			return m_data[index];
+		}
+
+		// copy assignment
+		inplace_array& operator=(const inplace_array& i_other) {
+			if (this != &i_other) {
+				ASSERT_MSG(m_capacity >= i_other.m_size, "Not enough capacity in destination array");
+				empty();
+				for (u32 i = 0; i < i_other.m_size; i++) {
+					m_data[i] = i_other.m_data[i];
+				}
+				m_size = i_other.m_size;
+			}
+			return *this;
+		}
+
+		// TODO: cannot sure if this works correctly, need to compare with std::vector or something similar
+		// review ref: https://codereview.stackexchange.com/questions/77782/quick-sort-implementation
+		template <s32 (*t_compare_func)(t_value&, t_value&)>
+		void sort()
+		{
+			partition<t_compare_func>(0, m_size - 1);
+		}
+
+	private:
+		template <s32 (*t_compare_func)(t_value&, t_value&)>
+		void partition(s32 lo, s32 hi)
+		{
+			if (lo >= hi) {
+				return;
+			}
+			// we choose pivot to be the center element (not the median-value) because of the simplicity
+			//s32 pivot = (lo + hi) / 2;
+			s32 pivot = lo + (hi - lo) / 2;
+			t_value pivotVal = m_data[pivot];
+			//s32 i = lo - 1, j = hi + 1;
+			s32 i = lo, j = hi;
+			while (i <= j) {
+				while (t_compare_func(m_data[i], pivotVal) > 0) i++;
+				while (t_compare_func(m_data[j], pivotVal) < 0) j--;
+				if (i <= j) {
+					if (i < j) {
+						t_value tmp = m_data[i];
+						m_data[i] = m_data[j];
+						m_data[j] = tmp;
+					}
+					i++; j--;
+				}
+			}
+			partition<t_compare_func>(lo, j);
+			partition<t_compare_func>(i, hi);
+		}
+
+	private:
+		u32										m_size;
+		u32										m_capacity;
+
+		value_t									m_data[t_capacity];
+	};
+
 	template <class t_value, class t_allocator>
 	class fixed_array {
 		typedef			t_value					value_t;
