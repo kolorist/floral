@@ -16,8 +16,10 @@ namespace floral {
 		public:
 			u32											crc32;
 
+#if defined(FLORAL_DEBUG_CRCSTRING)
 			// for debugging purpose
 			c8											c_str[256];
+#endif
 	};
 }
 
