@@ -30,8 +30,16 @@ namespace floral {
 			~file_stream();
 
 			u8									read_byte();
+			void								read_bytes(voidptr o_buffer, const size i_count);
 			void								unread_byte();
+			void								unread_bytes(const size i_count);
 			c8									read_char();
+
+			template <typename t_type>
+			void read(t_type* i_to) {
+				memcpy((p8)i_to, &buffer[rpos], sizeof(t_type));
+				rpos += sizeof(t_type);
+			}
 
 			const bool							is_eos();
 

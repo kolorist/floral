@@ -19,9 +19,20 @@ namespace floral {
 		return retVal;
 	}
 
+	void file_stream::read_bytes(voidptr o_buffer, const size i_count)
+	{
+		memcpy((p8)o_buffer, &buffer[rpos], i_count);
+		rpos += i_count;
+	}
+
 	void file_stream::unread_byte()
 	{
 		rpos--;
+	}
+
+	void file_stream::unread_bytes(const size i_count)
+	{
+		rpos -= i_count;
 	}
 
 	c8 file_stream::read_char()
