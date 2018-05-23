@@ -33,6 +33,7 @@ namespace floral {
 			void								read_bytes(voidptr o_buffer, const size i_count);
 			void								unread_byte();
 			void								unread_bytes(const size i_count);
+			void								seek_begin(const size i_offset);
 			c8									read_char();
 
 			template <typename t_type>

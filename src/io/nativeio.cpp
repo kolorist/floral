@@ -35,6 +35,11 @@ namespace floral {
 		rpos -= i_count;
 	}
 
+	void file_stream::seek_begin(const size i_offset)
+	{
+		rpos = i_offset;
+	}
+
 	c8 file_stream::read_char()
 	{
 		c8 retVal = buffer[rpos];
