@@ -19,6 +19,7 @@
 #include <math/utils.h>
 #include <math/intersect.h>
 #include <math/transform.h>
+#include <math/easings.h>
 ////////////////////////////////////////////////
 #include <thread/thread.h>
 #include <thread/mutex.h>
