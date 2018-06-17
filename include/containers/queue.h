@@ -48,7 +48,7 @@ namespace floral {
 					return false;
 
 				o_output = next->data;
-				tail.store(next, std::memory_order_release);
+				m_tail.store(next, std::memory_order_release);
 				return true;
 			}
 
