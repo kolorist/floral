@@ -6,7 +6,67 @@
 #include <thread/mutex.h>
 #include <thread/condition_variable.h>
 
+#include <atomic>
+
 namespace floral {
+
+	template <class t_type, usize t_capacity>
+	class inplace_mpsc_queue_t {
+		private:
+			struct node {
+				t_type							data;
+				std::atomic<node*>				next;
+			};
+
+		public:
+			inplace_mpsc_queue_t()
+				: m_alloc_idx(0)
+				, m_head(allocate_new_node())
+				, m_tail(m_head.load(std::memory_order_relaxed))
+			{
+				node* front = m_head.load(std::memory_order_relaxed);
+				front->next.store(nullptr, std::memory_order_relaxed);
+			}
+
+			~inplace_mpsc_queue_t()
+			{ }
+
+			void push(const t_type& i_data) {
+				node* newNode = allocate_new_node();
+				newNode->data = i_data;
+				newNode->next.store(nullptr, std::memory_order_relaxed);
+
+				node* prevHead = m_head.exchange(newNode, std::memory_order_acq_rel);
+				prevHead->next.store(newNode, std::memory_order_release);
+			}
+
+			const bool try_pop_into(t_type& o_output) {
+				node* tail = m_tail.load(std::memory_order_relaxed);
+				node* next = tail->next.load(std::memory_order_acquire);
+
+				if (next == nullptr)
+					return false;
+
+				o_output = next->data;
+				tail.store(next, std::memory_order_release);
+				return true;
+			}
+
+		private:
+			node* allocate_new_node() {
+				// no fear for overflow (xd)
+				// TODO: relaxed order here? can it produce same slot index?
+				usize idx = m_alloc_idx.fetch_add(1, std::memory_order_relaxed);
+				return &m_buffer[idx % t_capacity];
+			}
+
+		private:
+			std::atomic<usize>					m_alloc_idx;
+			node								m_buffer[t_capacity];
+
+			std::atomic<node*>					m_head;
+			std::atomic<node*>					m_tail;
+	};
 
 	// TODO: t_type need to be assignable, how does other implementation deal with this?
 	template <class t_type>
