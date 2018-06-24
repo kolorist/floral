@@ -9,6 +9,94 @@
 
 namespace floral {
 
+	template <class t_type, class t_allocator, u32 t_capacity>
+	class ring_buffer_st {
+		public:
+			ring_buffer_st()
+				: m_allocator(nullptr)
+			{
+			}
+
+			ring_buffer_st(t_allocator* i_allocator)
+			{
+				init(i_allocator);
+			}
+
+			~ring_buffer_st()
+			{
+				if (m_data)
+					m_allocator->free(m_data);
+			}
+
+			void init(t_allocator* i_allocator)
+			{
+				m_allocator = i_allocator;
+				m_write_slot = 0;
+				m_read_slot = 0;
+
+				m_data = m_allocator->template allocate_array<t_type>(t_capacity);
+				for (sidx i = 0; i < t_capacity; i++) {
+					m_data[i] = t_type();
+				}
+			}
+
+			void push_back(const t_type& i_value)
+			{
+				sidx wslot = m_write_slot;
+				sidx rslot = m_read_slot;
+
+				m_data[wslot] = i_value;
+				wslot = (wslot + 1) % (sidx)t_capacity;
+				if (wslot == rslot) rslot = (rslot + 1) % (sidx)t_capacity;
+
+				m_write_slot = wslot;
+				m_read_slot = rslot;
+			}
+
+			const bool is_empty() const
+			{
+				return (m_write_slot == m_read_slot);
+			}
+			
+			const bool is_full() const
+			{
+				return (((m_write_slot + 1) % (sidx)t_capacity) == m_read_slot);
+			}
+
+			void empty()
+			{
+				m_write_slot = 0;
+				m_read_slot = 0;
+			}
+
+			const bool pop_front_into(t_type& o_value)
+			{
+				if (!is_empty()) {
+					o_value = m_data[m_read_slot];
+					m_read_slot = (m_read_slot + 1) % (sidx)t_capacity;
+					return true;
+				}
+				return false;
+			}
+
+			const bool peek_front_into(t_type& o_value)
+			{
+				if (!is_empty()) {
+					o_value = m_data[m_read_slot];
+					return true;
+				}
+				return false;
+			}
+
+		private:
+			t_allocator*						m_allocator;
+
+			t_type*								m_data;
+			
+			sidx								m_write_slot;
+			sidx								m_read_slot;
+	};
+
 	template <class t_type, class t_allocator, u32 t_size>
 	class ring_buffer_mt {
 		typedef t_type							value_t;
