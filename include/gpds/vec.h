@@ -306,6 +306,16 @@ namespace floral {
 	using vec4i = vec4<s32>;
 
 	////////////////////////////////////////////
+	template <class t_type>
+	vec2<t_type> operator*(const t_type& i_scalar, const vec2<t_type>& i_v) {
+		return vec2<t_type>(i_v.x * i_scalar, i_v.y * i_scalar);
+	}
+
+	template <class t_type>
+	vec2<t_type> operator*(const vec2<t_type>& i_v, const t_type& i_scalar) {
+		return vec2<t_type>(i_v.x * i_scalar, i_v.y * i_scalar);
+	}
+	
 	template <class DType>
 	vec3<DType> operator*(const f32& scalar, const vec3<DType>& v) {
 		return vec3<DType>(v.x * scalar, v.y * scalar, v.z * scalar);
