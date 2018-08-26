@@ -3,6 +3,8 @@
 
 #include <stdaliases.h>
 
+#include <cmds/path.h>
+
 #if defined(PLATFORM_WINDOWS)
 #include <Windows.h>
 #endif
@@ -53,6 +55,7 @@ namespace floral {
 	// -----------------------------------------
 
 	file_info									open_file(const_cstr filePath);
+	file_info									open_file(path i_filePath);
 	void										read_all_file(const file_info& fileInfo, voidptr buffer);
 	void										read_all_file(const file_info& fileInfo, file_stream& fileStream);
 	void										mmap_all_file(const file_info& fileInfo, voidptr buffer);

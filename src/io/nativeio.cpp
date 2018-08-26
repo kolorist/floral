@@ -67,6 +67,19 @@ namespace floral {
 		return newFile;
 	}
 
+	file_info open_file(path i_filePath)
+	{
+		file_info newFile;
+		newFile.file_handle = CreateFileA(i_filePath.pm_PathStr, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+		newFile.file_size = 0;
+		if (newFile.file_handle != INVALID_HANDLE_VALUE) {
+			LARGE_INTEGER fileSize;
+			GetFileSizeEx(newFile.file_handle, &fileSize);
+			newFile.file_size = (u64)fileSize.QuadPart;
+		}
+		return newFile;
+	}
+
 	void read_all_file(const file_info& fileInfo, voidptr buffer)
 	{
 		DWORD bytesRead = 0;
