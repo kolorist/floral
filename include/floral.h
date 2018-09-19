@@ -20,6 +20,7 @@
 #include <math/intersect.h>
 #include <math/transform.h>
 #include <math/easings.h>
+#include <math/coordinate.h>
 ////////////////////////////////////////////////
 #include <thread/thread.h>
 #include <thread/mutex.h>
