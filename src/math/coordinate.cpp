@@ -69,7 +69,7 @@ floral::vec3f texel_coord_to_cube_coord(const s32 i_faceIdx, const f32 i_u, cons
 //----------------------------------------------
 static f32 get_area_element(f32 x, f32 y)
 {
-	return atan2(x * y, sqrt(x * x + y * y + 1));
+	return atan2f(x * y, sqrtf(x * x + y * y + 1));
 }
 
 f32 texel_coord_to_solid_angle(const s32 i_faceIdx, const f32 i_u, const f32 i_v, const s32 i_size)
