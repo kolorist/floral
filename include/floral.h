@@ -12,6 +12,7 @@
 #include <gpds/mat.h>
 #include <gpds/geometry.h>
 #include <gpds/rect.h>
+#include <gpds/camera.h>
 ////////////////////////////////////////////////
 #include <cmds/path.h>
 #include <cmds/crc_string.h>
