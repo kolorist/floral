@@ -212,7 +212,7 @@ struct vec4 {
 		: x(0), y(0), z(0), w(0)
 	{}
 
-	explicit vec4(const DType val)
+	vec4(const DType val)
 		: x(val), y(val), z(val), w(val)
 	{}
 	
