@@ -1,12 +1,13 @@
 #include "assert/assert.h"
 
-#include <Windows.h>
 #include <stdio.h>
+#include <cassert>
 #include <commctrl.h>
 
 #include <assert/StackWalker.h>
 #include <thread/mutex.h>
 
+#include <Windows.h>
 // use this pragma in order to enable visual style v6 by generating application manifest
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
@@ -18,6 +19,7 @@ namespace floral {
 	static StackWalker							g_stack_walker;
 
 	static mutex								g_stacktrace_mtx;
+	static mutex								g_dlg_mtx;
 
 	void get_stack_trace(cstr stackTraceBuffer)
 	{
@@ -48,27 +50,30 @@ namespace floral {
 		return assertion_report_dlg("", msg, file, line);
 	}
 
+	static c8 s_stack_trace[4096];
+
 	assert_action_e assertion_report_dlg(const_cstr title, const_cstr msg, const_cstr file, const u32 line)
 	{
+		memset(s_stack_trace, 0, sizeof(s_stack_trace));
+		get_stack_trace(s_stack_trace);
+#if 0
+		wchar_t wTitle[256];
+		wchar_t wMsg[2048];
+		wchar_t wFile[512];
+		wchar_t wContent[2048];
+		wchar_t wStackTrace[4096];
+		floral::lock_guard dlgGuard(g_dlg_mtx);
 		s32 buttonPressed = 0;
-		wchar_t wTitle[1024];
-		wchar_t wMsg[4096];
-		wchar_t wFile[1024];
-		MultiByteToWideChar(CP_ACP, 0, title, -1, wTitle, 1024);
-		MultiByteToWideChar(CP_ACP, 0, msg, -1, wMsg, 4096);
-		MultiByteToWideChar(CP_ACP, 0, file, -1, wFile, 1024);
+		MultiByteToWideChar(CP_ACP, 0, title, -1, wTitle, 256);
+		MultiByteToWideChar(CP_ACP, 0, msg, -1, wMsg, 2048);
+		MultiByteToWideChar(CP_ACP, 0, file, -1, wFile, 512);
 
-		wchar_t wContent[4096];
-		c8 stackTrace[8192];
-		wchar_t wStackTrace[8192];
-		_snwprintf(wContent, 8192, L"File: %s\nLine: %d\nMessage: %s",
+		_snwprintf(wContent, 2048, L"File: %s\nLine: %d\nMessage: %s",
 				wFile, line, wMsg);
-		memset(stackTrace, 0, sizeof(stackTrace));
-		get_stack_trace(stackTrace);
-		MultiByteToWideChar(CP_ACP, 0, stackTrace, -1, wStackTrace, 8192);
+		MultiByteToWideChar(CP_ACP, 0, stackTrace, -1, wStackTrace, 4096);
 
-		TASKDIALOGCONFIG config = { 0 };
-		const TASKDIALOG_BUTTON buttons[]   = { 
+		static TASKDIALOGCONFIG config = { 0 };
+		static const TASKDIALOG_BUTTON buttons[]   = { 
 			{ IDOK,		L"Abort" },
 			{ IDRETRY,	L"Debug break" },
 			{ IDCLOSE,	L"Ignore" }
@@ -86,6 +91,8 @@ namespace floral {
 		config.pszExpandedControlText			= L"Hide Stacktrace";
 		config.pszCollapsedControlText			= L"Show Stacktrace";
 
+		//TaskDialog(NULL, NULL, L"title", L"instruction", L"content", TDCBF_OK_BUTTON | TDCBF_YES_BUTTON, NULL, &buttonPressed);
+		//MessageBox(NULL, stackTrace, title, MB_ABORTRETRYIGNORE);
 		TaskDialogIndirect(&config, &buttonPressed, NULL, NULL);
 
 		switch (buttonPressed) {
@@ -98,5 +105,22 @@ namespace floral {
 			default:
 				return assert_action_e::ignore;
 		}
+#else
+		c8 errorStr[8192];
+		sprintf(errorStr, ">> expression: %s\n>> message: %s\n>> location: %s:%d\n>> stacktrace: \n%s",
+				title, msg, file, line, s_stack_trace);
+
+		s32 buttonPressed = MessageBox(NULL, errorStr, "floral assertion failed!", MB_ABORTRETRYIGNORE | MB_ICONERROR);
+		switch (buttonPressed) {
+			case IDABORT:
+				return assert_action_e::abort;
+			case IDRETRY:
+				return assert_action_e::debug_break;
+			case IDIGNORE:
+				return assert_action_e::ignore;
+			default:
+				return assert_action_e::ignore;
+		}
+#endif
 	}
 }

@@ -1,74 +1,76 @@
 #ifndef __FLORAL_SIMPLE_CALLBACK_H__
 #define __FLORAL_SIMPLE_CALLBACK_H__
 
+#include "stdaliases.h"
+
 namespace floral {
 
-template <typename _RetType, typename ... _Params>
-class SimpleCallback {
+template <typename t_ret, typename ... t_params>
+class simple_callback {
 private:
-	typedef _RetType(*InvokerType)(void*, _Params...);
+	typedef t_ret(*invoker_t)(voidptr, t_params...);
 
 public:
-	SimpleCallback()
-		: m_Invoker(nullptr)
-		, m_Callee(nullptr)
+	simple_callback()
+		: m_invoker(nullptr)
+		, m_callee(nullptr)
 	{}
 
-	explicit SimpleCallback(InvokerType invoker)
-		: m_Invoker(invoker)
-		, m_Callee(nullptr)
+	explicit simple_callback(invoker_t invoker)
+		: m_invoker(invoker)
+		, m_callee(nullptr)
 	{}
 
-	SimpleCallback(void* pObj, InvokerType invoker)
-		: m_Invoker(invoker)
-		, m_Callee(pObj)
+	simple_callback(voidptr pObj, invoker_t invoker)
+		: m_invoker(invoker)
+		, m_callee(pObj)
 	{}
 
-	template <typename __ObjectType, _RetType(__ObjectType::*__MemFunc)(_Params...)>
-	static SimpleCallback<_RetType, _Params...> MakeCallback(__ObjectType* pObj) {
-		SimpleCallback<_RetType, _Params...> retCb;
-		retCb.Bind<__ObjectType, __MemFunc>(pObj);
+	template <typename t_object, t_ret(t_object::*t_func)(t_params...)>
+	static simple_callback<t_ret, t_params...> make(t_object* pObj) {
+		simple_callback<t_ret, t_params...> retCb;
+		retCb.bind<t_object, t_func>(pObj);
 		return retCb;
 	}
 
-	template <_RetType(*__MemFunc)(_Params...)>
-	static SimpleCallback<_RetType, _Params...> MakeCallback() {
-		SimpleCallback<_RetType, _Params...> retCb;
-		retCb.Bind<__MemFunc>();
+	template <t_ret(*t_object)(t_params...)>
+	static simple_callback<t_ret, t_params...> make() {
+		simple_callback<t_ret, t_params...> retCb;
+		retCb.bind<t_object>();
 		return retCb;
 	}
 
-	template <typename __ObjectType, _RetType(__ObjectType::*__MemFunc)(_Params...)>
-	void Bind(__ObjectType* pObj) {
-		m_Callee = pObj;
-		m_Invoker = &MemberFunctionInvoker<__ObjectType, __MemFunc>;
+	template <typename t_object, t_ret(t_object::*t_func)(t_params...)>
+	void bind(t_object* pObj) {
+		m_callee = pObj;
+		m_invoker = &member_function_invoker<t_object, t_func>;
 	}
 
-	template <_RetType(*__MemFunc)(_Params...)>
-	void Bind() {
-		m_Callee = nullptr;
-		m_Invoker = &FreeFunctionInvoker<__MemFunc>;
+	template <t_ret(*t_object)(t_params...)>
+	void bind() {
+		m_callee = nullptr;
+		m_invoker = &free_function_invoker<t_object>;
 	}
 
-	_RetType operator()(_Params ... params) {
-		return (*m_Invoker)(m_Callee, params...);
-	}
-
-private:
-	template <typename __ObjectType, _RetType(__ObjectType::*__MemFunc)(_Params...)>
-	static _RetType MemberFunctionInvoker(void* pObj, _Params ... params) {
-		__ObjectType* callee = (__ObjectType*)pObj;
-		return (callee->*__MemFunc)(params...);
-	}
-
-	template <_RetType(*__MemFunc)(_Params...)>
-	static _RetType FreeFunctionInvoker(void*, _Params ... params) {
-		return (*__MemFunc)(params...);
+	t_ret operator()(t_params ... params) {
+		return (*m_invoker)(m_callee, params...);
 	}
 
 private:
-	void*										m_Callee;
-	InvokerType									m_Invoker;
+	template <typename t_object, t_ret(t_object::*t_func)(t_params...)>
+	static t_ret member_function_invoker(voidptr pObj, t_params ... params) {
+		t_object* callee = (t_object*)pObj;
+		return (callee->*t_func)(params...);
+	}
+
+	template <t_ret(*t_object)(t_params...)>
+	static t_ret free_function_invoker(voidptr, t_params ... params) {
+		return (*t_object)(params...);
+	}
+
+private:
+	voidptr										m_callee;
+	invoker_t									m_invoker;
 };
 
 // But when put MakeSimpleCallback outside of the struct, we can make callback in a magnificent way:
@@ -78,46 +80,46 @@ private:
 // WARNING: DO NOT USE THIS AS THEY ARE WRONG
 // Why they are wrong? Because we are trying to assign a run-time function pointer to
 // a compile-time template parameter. It simply does not work!
-template <class _ObjectType, class _RetType>
-SimpleCallback<_RetType> MakeSimpleCallback(_ObjectType* pObj, 
-	_RetType(_ObjectType::*pFunc)()) {
-	return SimpleCallback<_RetType>(pObj, pFunc);
+template <class _ObjectType, class t_ret>
+simple_callback<t_ret> MakeSimpleCallback(_ObjectType* pObj, 
+	t_ret(_ObjectType::*pFunc)()) {
+	return simple_callback<t_ret>(pObj, pFunc);
 }
 
-template <class _ObjectType, class _RetType, class _P0>
-SimpleCallback<_RetType, _P0> MakeSimpleCallback(_ObjectType* pObj, 
-	_RetType(_ObjectType::*pFunc)(_P0)) {
-	return SimpleCallback<_RetType, _P0>(pObj, pFunc);
+template <class _ObjectType, class t_ret, class _P0>
+simple_callback<t_ret, _P0> MakeSimpleCallback(_ObjectType* pObj, 
+	t_ret(_ObjectType::*pFunc)(_P0)) {
+	return simple_callback<t_ret, _P0>(pObj, pFunc);
 }
 
-template <class _ObjectType, class _RetType, class _P0, class _P1>
-SimpleCallback<_RetType, _P0, _P1> MakeSimpleCallback(_ObjectType* pObj, 
-	_RetType(_ObjectType::*pFunc)(_P0, _P1)) {
-	return SimpleCallback<_RetType, _P0, _P1>(pObj, pFunc);
+template <class _ObjectType, class t_ret, class _P0, class _P1>
+simple_callback<t_ret, _P0, _P1> MakeSimpleCallback(_ObjectType* pObj, 
+	t_ret(_ObjectType::*pFunc)(_P0, _P1)) {
+	return simple_callback<t_ret, _P0, _P1>(pObj, pFunc);
 }
 
-template <class _ObjectType, class _RetType, class _P0, class _P1, class _P2>
-SimpleCallback<_RetType, _P0, _P1, _P2> MakeSimpleCallback(_ObjectType* pObj, 
-	_RetType(_ObjectType::*pFunc)(_P0, _P1, _P2)) {
-	return SimpleCallback<_RetType>(pObj, pFunc);
+template <class _ObjectType, class t_ret, class _P0, class _P1, class _P2>
+simple_callback<t_ret, _P0, _P1, _P2> MakeSimpleCallback(_ObjectType* pObj, 
+	t_ret(_ObjectType::*pFunc)(_P0, _P1, _P2)) {
+	return simple_callback<t_ret>(pObj, pFunc);
 }
 
-template <class _ObjectType, class _RetType, class _P0, class _P1, class _P2, class _P3>
-SimpleCallback<_RetType, _P0, _P1, _P2, _P3> MakeSimpleCallback(_ObjectType* pObj, 
-	_RetType(_ObjectType::*pFunc)(_P0, _P1, _P2, _P3)) {
-	return SimpleCallback<_RetType>(pObj, pFunc);
+template <class _ObjectType, class t_ret, class _P0, class _P1, class _P2, class _P3>
+simple_callback<t_ret, _P0, _P1, _P2, _P3> MakeSimpleCallback(_ObjectType* pObj, 
+	t_ret(_ObjectType::*pFunc)(_P0, _P1, _P2, _P3)) {
+	return simple_callback<t_ret>(pObj, pFunc);
 }
 
-template <class _ObjectType, class _RetType, class _P0, class _P1, class _P2, class _P3, class _P4>
-SimpleCallback<_RetType, _P0, _P1, _P2, _P3, _P4> MakeSimpleCallback(_ObjectType* pObj, 
-	_RetType(_ObjectType::*pFunc)(_P0, _P1, _P2, _P3, _P4)) {
-	return SimpleCallback<_RetType>(pObj, pFunc);
+template <class _ObjectType, class t_ret, class _P0, class _P1, class _P2, class _P3, class _P4>
+simple_callback<t_ret, _P0, _P1, _P2, _P3, _P4> MakeSimpleCallback(_ObjectType* pObj, 
+	t_ret(_ObjectType::*pFunc)(_P0, _P1, _P2, _P3, _P4)) {
+	return simple_callback<t_ret>(pObj, pFunc);
 }
 
-template <class _ObjectType, class _RetType, class _P0, class _P1, class _P2, class _P3, class _P4, class _P5>
-SimpleCallback<_RetType, _P0, _P1, _P2, _P3, _P4, _P5> MakeSimpleCallback(_ObjectType* pObj, 
-	_RetType(_ObjectType::*pFunc)(_P0, _P1, _P2, _P3, _P4, _P5)) {
-	return SimpleCallback<_RetType>(pObj, pFunc);
+template <class _ObjectType, class t_ret, class _P0, class _P1, class _P2, class _P3, class _P4, class _P5>
+simple_callback<t_ret, _P0, _P1, _P2, _P3, _P4, _P5> MakeSimpleCallback(_ObjectType* pObj, 
+	t_ret(_ObjectType::*pFunc)(_P0, _P1, _P2, _P3, _P4, _P5)) {
+	return simple_callback<t_ret>(pObj, pFunc);
 }
 
 }

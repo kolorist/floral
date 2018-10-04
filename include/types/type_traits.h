@@ -17,7 +17,7 @@ template <class _type>
 class type_traits {
 private:
 
-#pragma region pointer_traits
+// pointer_traits
 	// generic template implementation
 	template <class>							// C++'s motto: we doesn't have to name it while we won't use it
 	struct pointer_traits : false_type {
@@ -30,20 +30,21 @@ private:
 	struct pointer_traits<__type*> : true_type {
 		typedef __type							type;
 	};
-#pragma endregion
 
-#pragma region member_pointer_traits
-#pragma endregion
+// member_pointer_traits
 
 
 public:
-	DECLARE_STATIC_CONSTANT(bool, is_pointer = pointer_traits<_type>::value);
+	//DECLARE_STATIC_CONSTANT(bool, is_pointer = pointer_traits<_type>::value);
+	enum {
+		is_pointer = pointer_traits<_type>::value
+	};
 	// have 'typename' keyword due to 'type' is a dependent-type (depends on _type)
 	typedef typename pointer_traits<_type>::type			pointee_type;
 
 };
 
-#pragma region pointer_type_manipulators
+// pointer_type_manipulators
 template <class _type>
 struct to_pointer {
 	typedef _type*								type;
@@ -56,6 +57,5 @@ struct to_pointer<_type*> {
 
 template <class _type>
 using to_pointer_t = typename to_pointer<_type>::type;
-#pragma endregion
 
 #endif // __FLORAL_TYPE_TRAITS_H__

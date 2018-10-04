@@ -4,12 +4,15 @@
 #include <stdaliases.h>
 ////////////////////////////////////////////////
 #include <containers/array.h>
+#include <containers/fast_array.h>
 #include <containers/queue.h>
+#include <containers/ring_buffer.h>
 ////////////////////////////////////////////////
 #include <gpds/vec.h>
 #include <gpds/mat.h>
 #include <gpds/geometry.h>
 #include <gpds/rect.h>
+#include <gpds/camera.h>
 ////////////////////////////////////////////////
 #include <cmds/path.h>
 #include <cmds/crc_string.h>
@@ -17,6 +20,8 @@
 #include <math/utils.h>
 #include <math/intersect.h>
 #include <math/transform.h>
+#include <math/easings.h>
+#include <math/coordinate.h>
 ////////////////////////////////////////////////
 #include <thread/thread.h>
 #include <thread/mutex.h>

@@ -19,9 +19,25 @@ namespace floral {
 		return retVal;
 	}
 
+	void file_stream::read_bytes(voidptr o_buffer, const size i_count)
+	{
+		memcpy((p8)o_buffer, &buffer[rpos], i_count);
+		rpos += i_count;
+	}
+
 	void file_stream::unread_byte()
 	{
 		rpos--;
+	}
+
+	void file_stream::unread_bytes(const size i_count)
+	{
+		rpos -= i_count;
+	}
+
+	void file_stream::seek_begin(const size i_offset)
+	{
+		rpos = i_offset;
 	}
 
 	c8 file_stream::read_char()
@@ -59,10 +75,24 @@ namespace floral {
 		return newFile;
 	}
 
+	file_info open_file(path i_filePath)
+	{
+		file_info newFile;
+		newFile.file_handle = CreateFileA(i_filePath.pm_PathStr, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+		newFile.file_size = 0;
+		if (newFile.file_handle != INVALID_HANDLE_VALUE) {
+			LARGE_INTEGER fileSize;
+			GetFileSizeEx(newFile.file_handle, &fileSize);
+			newFile.file_size = (u64)fileSize.QuadPart;
+		}
+		return newFile;
+	}
+
 	void read_all_file(const file_info& fileInfo, voidptr buffer)
 	{
 		DWORD bytesRead = 0;
-		ReadFile(fileInfo.file_handle, buffer, fileInfo.file_size, &bytesRead, 0);
+		// 32bit / 64bit: ReadFile only accept DWORD as file size
+		ReadFile(fileInfo.file_handle, buffer, static_cast<size32>(fileInfo.file_size), &bytesRead, 0);
 	}
 
 	void read_all_file(const file_info& fileInfo, file_stream& fileStream)
@@ -70,7 +100,8 @@ namespace floral {
 		DWORD bytesRead = 0;
 		fileStream.info = fileInfo;
 		fileStream.rpos = 0;
-		ReadFile(fileInfo.file_handle, fileStream.buffer, fileInfo.file_size, &bytesRead, 0);
+		// 32bit / 64bit: ReadFile only accept DWORD as file size
+		ReadFile(fileInfo.file_handle, fileStream.buffer, static_cast<size32>(fileInfo.file_size), &bytesRead, 0);
 	}
 
 	void mmap_all_file(const file_info& fileInfo, voidptr buffer)

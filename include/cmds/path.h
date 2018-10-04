@@ -8,7 +8,7 @@ namespace floral {
 	public:
 		path();
 		explicit path(const_cstr pathNullTerminated);
-		explicit path(const path& other);
+		path(const path& other);
 
 		const bool								IsFile() const						{ return pm_IsFile; }
 		const bool								IsDir() const						{ return !pm_IsFile; }

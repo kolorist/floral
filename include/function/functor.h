@@ -199,12 +199,12 @@ private:
 template <typename _ObjectType, typename _ReturnType, typename _Params>
 class functor_handler : public functor_impl<_ObjectType, _ReturnType, _Params> {
 
-	typedef typename functor_impl<_ObjectType, _ReturnType, _Params>		FImpl;
-	typedef typename tl_fb_type_at_t<0, _Params, null_type> param0;
-	typedef typename tl_fb_type_at_t<1, _Params, null_type> param1;
-	typedef typename tl_fb_type_at_t<2, _Params, null_type> param2;
-	typedef typename tl_fb_type_at_t<3, _Params, null_type> param3;
-	typedef typename tl_fb_type_at_t<4, _Params, null_type> param4;
+	typedef functor_impl<_ObjectType, _ReturnType, _Params>		FImpl;
+	typedef tl_fb_type_at_t<0, _Params, null_type> param0;
+	typedef tl_fb_type_at_t<1, _Params, null_type> param1;
+	typedef tl_fb_type_at_t<2, _Params, null_type> param2;
+	typedef tl_fb_type_at_t<3, _Params, null_type> param3;
+	typedef tl_fb_type_at_t<4, _Params, null_type> param4;
 
 	typedef _ObjectType						object_type;
 	typedef _ReturnType						return_type;
@@ -214,7 +214,7 @@ public:
 
 public:
 	functor_handler(to_pointer_t<object_type> pObj, mem_function_type func)
-		: functor_impl(pObj, func)
+		: functor_impl<_ObjectType, _ReturnType, _Params>(pObj, func)
 	{
 		m_Impl = this;
 	}
@@ -252,51 +252,57 @@ template <class _ObjectType, typename _ReturnType> class functor;
 
 template <class _ObjectType, typename _ReturnType>
 class functor<_ObjectType, _ReturnType()> : public functor_handler<_ObjectType, _ReturnType, null_type> {
+	typedef functor_handler<_ObjectType, _ReturnType, null_type> original_functor_handler_t;
 public:
-	functor(to_pointer_t<_ObjectType> pObj, mem_function_type func)
-		: functor_handler(pObj, func)
+	functor(to_pointer_t<_ObjectType> pObj, typename original_functor_handler_t::mem_function_type func)
+		: original_functor_handler_t(pObj, func)
 	{}
 };
 
 template <class _ObjectType, typename _ReturnType, typename _P0>
 class functor<_ObjectType, _ReturnType(_P0)> : public functor_handler<_ObjectType, _ReturnType, type_list_1(_P0)> {
+	typedef functor_handler<_ObjectType, _ReturnType, type_list_1(_P0)> original_functor_handler_t;
 public:
-	functor(to_pointer_t<_ObjectType> pObj, mem_function_type func)
-		: functor_handler(pObj, func)
+	functor(to_pointer_t<_ObjectType> pObj, typename original_functor_handler_t::mem_function_type func)
+		: original_functor_handler_t(pObj, func)
 	{}
 };
 
 template <class _ObjectType, typename _ReturnType, typename _P0, typename _P1>
 class functor<_ObjectType, _ReturnType(_P0, _P1)> : public functor_handler<_ObjectType, _ReturnType, type_list_2(_P0, _P1)> {
+	typedef functor_handler<_ObjectType, _ReturnType, type_list_2(_P0, _P1)> original_functor_handler_t;
 public:
-	functor(to_pointer_t<_ObjectType> pObj, mem_function_type func)
-		: functor_handler(pObj, func)
+	functor(to_pointer_t<_ObjectType> pObj, typename original_functor_handler_t::mem_function_type func)
+		: original_functor_handler_t(pObj, func)
 	{}
 };
 
 template <class _ObjectType, typename _ReturnType, typename _P0, typename _P1, typename _P2>
 class functor<_ObjectType, _ReturnType(_P0, _P1, _P2)> : public functor_handler<_ObjectType, _ReturnType, type_list_3(_P0, _P1, _P2)> {
+	typedef functor_handler<_ObjectType, _ReturnType, type_list_3(_P0, _P1, _P2)> original_functor_handler_t;
 public:
-	functor(to_pointer_t<_ObjectType> pObj, mem_function_type func)
-		: functor_handler(pObj, func)
+	functor(to_pointer_t<_ObjectType> pObj, typename original_functor_handler_t::mem_function_type func)
+		: original_functor_handler_t(pObj, func)
 	{}
 };
 
 template <class _ObjectType, typename _ReturnType, typename _P0, typename _P1, typename _P2, typename _P3>
 class functor<_ObjectType, _ReturnType(_P0, _P1, _P2, _P3)> : 
 	public functor_handler<_ObjectType, _ReturnType, type_list_4(_P0, _P1, _P2, _P3)> {
+	typedef functor_handler<_ObjectType, _ReturnType, type_list_4(_P0, _P1, _P2, _P3)> original_functor_handler_t;
 public:
-	functor(to_pointer_t<_ObjectType> pObj, mem_function_type func)
-		: functor_handler(pObj, func)
+	functor(to_pointer_t<_ObjectType> pObj, typename original_functor_handler_t::mem_function_type func)
+		: original_functor_handler_t(pObj, func)
 	{}
 };
 
 template <class _ObjectType, typename _ReturnType, typename _P0, typename _P1, typename _P2, typename _P3, typename _P4>
 class functor<_ObjectType, _ReturnType(_P0, _P1, _P2, _P3, _P4)> : 
 	public functor_handler<_ObjectType, _ReturnType, type_list_5(_P0, _P1, _P2, _P3, _P4)> {
+	typedef functor_handler<_ObjectType, _ReturnType, type_list_5(_P0, _P1, _P2, _P3, _P4)> original_functor_handler_t;
 public:
-	functor(to_pointer_t<_ObjectType> pObj, mem_function_type func)
-		: functor_handler(pObj, func)
+	functor(to_pointer_t<_ObjectType> pObj, typename original_functor_handler_t::mem_function_type func)
+		: original_functor_handler_t(pObj, func)
 	{}
 };
 //////////////////////////////////////////////////////////////////////////

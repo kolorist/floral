@@ -6,12 +6,72 @@
 #include <thread/mutex.h>
 #include <thread/condition_variable.h>
 
+#include <atomic>
+
 namespace floral {
 
-	// TODO: DType need to be assignable, how does other implementation deal with this?
-	template <class DType>
+	template <class t_type, usize t_capacity>
+	class inplace_mpsc_queue_t {
+		private:
+			struct node {
+				t_type							data;
+				std::atomic<node*>				next;
+			};
+
+		public:
+			inplace_mpsc_queue_t()
+				: m_alloc_idx(0)
+				, m_head(allocate_new_node())
+				, m_tail(m_head.load(std::memory_order_relaxed))
+			{
+				node* front = m_head.load(std::memory_order_relaxed);
+				front->next.store(nullptr, std::memory_order_relaxed);
+			}
+
+			~inplace_mpsc_queue_t()
+			{ }
+
+			void push(const t_type& i_data) {
+				node* newNode = allocate_new_node();
+				newNode->data = i_data;
+				newNode->next.store(nullptr, std::memory_order_relaxed);
+
+				node* prevHead = m_head.exchange(newNode, std::memory_order_acq_rel);
+				prevHead->next.store(newNode, std::memory_order_release);
+			}
+
+			const bool try_pop_into(t_type& o_output) {
+				node* tail = m_tail.load(std::memory_order_relaxed);
+				node* next = tail->next.load(std::memory_order_acquire);
+
+				if (next == nullptr)
+					return false;
+
+				o_output = next->data;
+				m_tail.store(next, std::memory_order_release);
+				return true;
+			}
+
+		private:
+			node* allocate_new_node() {
+				// no fear for overflow (xd)
+				// TODO: relaxed order here? can it produce same slot index?
+				usize idx = m_alloc_idx.fetch_add(1, std::memory_order_relaxed);
+				return &m_buffer[idx % t_capacity];
+			}
+
+		private:
+			std::atomic<usize>					m_alloc_idx;
+			node								m_buffer[t_capacity];
+
+			std::atomic<node*>					m_head;
+			std::atomic<node*>					m_tail;
+	};
+
+	// TODO: t_type need to be assignable, how does other implementation deal with this?
+	template <class t_type>
 	struct queue_node {
-		DType									data;
+		t_type									data;
 		queue_node*								next;
 
 		queue_node()
@@ -19,13 +79,13 @@ namespace floral {
 		{ }
 	};
 
-	template <class DType, class AllocatorType>
+	template <class t_type, class t_allocator>
 	class queue_mt_lockbased {
-		typedef DType							value_type;
+		typedef t_type							value_type;
 		typedef value_type*						pointer_type;
 		typedef value_type&						reference_type;
 		typedef const value_type&				const_reference_type;
-		typedef AllocatorType					allocator_type;
+		typedef t_allocator						allocator_type;
 		typedef allocator_type*					allocator_ptr_type;
 
 		typedef queue_node<value_type>*			queue_node_ptr;
@@ -47,7 +107,7 @@ namespace floral {
 			{
 				my_allocator = myAllocator;
 				// TODO: assert for my_allocator
-				head_node = my_allocator->Allocate<queue_node<value_type>>();
+				head_node = my_allocator->template allocate<queue_node<value_type>>();
 				tail_node = head_node;			// tail == head means the queue is empty
 			}
 
@@ -55,7 +115,7 @@ namespace floral {
 				queue_node_ptr oldHead = pop_head();
 				if (oldHead) {
 					value_type retData = oldHead->data;
-					my_allocator->Free(oldHead);
+					my_allocator->free(oldHead);
 					return retData;
 				}
 				// TODO: if value_type is a pointer type, will this be nullptr?
@@ -72,12 +132,12 @@ namespace floral {
 				head_mtx.unlock();
 
 				value_type retData = oldHead->data;
-				my_allocator->Free(oldHead);
+				my_allocator->free(oldHead);
 				return retData;
 			}
 
 			void push(const_reference_type val) {
-				queue_node_ptr newTail = my_allocator->Allocate<queue_node<value_type>>();
+				queue_node_ptr newTail = my_allocator->template allocate<queue_node<value_type>>();
 				tail_mtx.lock();
 				tail_node->data = val;
 				tail_node->next = newTail;
