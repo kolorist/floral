@@ -100,7 +100,7 @@ mat4x4f construct_axis_rotation3d(const vec3f& axis, const f32 angle)
 	f32 c = cosf(angle);
 	f32 s = sinf(angle);
 
-	vec3f ax = axis.normalize();
+	vec3f ax = normalize(axis);
 
 	tMat[0][0] = c + (1 - c)      * ax.x     * ax.x;
 	tMat[0][1] = (1 - c) * ax.x * ax.y + s * ax.z;
