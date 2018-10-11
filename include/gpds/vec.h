@@ -278,6 +278,7 @@ struct vec4 {
 	vec4(const t_type i_val)					: x(i_val), y(i_val), z(i_val), w(i_val) {}
 	vec4(const vec4& i_other)					: x(i_other.x), y(i_other.y), z(i_other.z), w(i_other.w) {}
 	vec4(const t_type i_x, const t_type i_y, const t_type i_z, const t_type i_w) : x(i_x), y(i_y), z(i_z), w(i_w) {}
+	vec4(const vec3<t_type>& i_other, const t_type i_w) : x(i_other.x), y(i_other.y), z(i_other.z), w(i_w) {}
 
 	// assignment
 	vec4& operator=(const vec4& i_other) {

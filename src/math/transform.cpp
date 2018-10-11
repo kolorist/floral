@@ -119,6 +119,27 @@ mat4x4f construct_axis_rotation3d(const vec3f& i_axis, const f32 i_angle)
 	return tMat;
 }
 
+quaternionf construct_quaternion_euler(const vec3f& i_r)
+{
+	return construct_quaternion_euler(i_r.x, i_r.y, i_r.z);
+}
+
+quaternionf construct_quaternion_euler(const f32 i_rx, const f32 i_ry, const f32 i_rz)
+{
+	// TODO: optimize this!!!
+	quaternionf qX, qY, qZ;
+	f32 halfThetaX = floral::to_radians(i_rx) / 2.0f;
+	f32 halfThetaY = floral::to_radians(i_ry) / 2.0f;
+	f32 halfThetaZ = floral::to_radians(i_rz) / 2.0f;
+	qX.v = floral::vec3f(-sinf(halfThetaX), 0.0f, 0.0f);
+	qX.w = cosf(halfThetaX);
+	qY.v = floral::vec3f(0.0f, -sinf(halfThetaY), 0.0f);
+	qY.w = cosf(halfThetaY);
+	qZ.v = floral::vec3f(0.0f, 0.0f, -sinf(halfThetaZ));
+	qZ.w = cosf(halfThetaZ);
+	return qX * qY * qZ;
+}
+
 mat4x4f construct_invert(const mat4x4f& i_m)
 {
 	mat4x4f tMat;
