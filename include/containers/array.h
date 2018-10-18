@@ -20,8 +20,8 @@ class inplace_array {
 
 public:
 	inplace_array()
-		: m_capacity(t_capacity)
-		, m_size(0)
+		: m_size(0)
+		, m_capacity(t_capacity)
 	{ }
 
 	void init()
@@ -169,10 +169,10 @@ class fixed_array {
 
 public:
 	fixed_array()
-		: m_capacity(0)
-		, m_size(0)
-		, m_allocator(nullptr)
+		: m_size(0)
+		, m_capacity(0)
 		, m_data(nullptr)
+		, m_allocator(nullptr)
 	{ }
 
 	explicit fixed_array(const u32 i_capacity, allocator_ptr_t i_myAllocator)
@@ -366,17 +366,17 @@ class dynamic_array {
 public:
 
 	dynamic_array()
-		: m_capacity(0)
-		, m_size(0)
-		, m_allocator(nullptr)
+		: m_size(0)
+		, m_capacity(0)
 		, m_data(nullptr)
+		, m_allocator(nullptr)
 	{ }
 	
 	explicit dynamic_array(t_allocator* myAllocator)
-		: m_capacity(0)
-		, m_size(0)
-		, m_allocator(myAllocator)
+		: m_size(0)
+		, m_capacity(0)
 		, m_data(nullptr)
+		, m_allocator(myAllocator)
 	{
 		
 	}
@@ -597,8 +597,8 @@ private:
 	u32										m_size;
 	u32										m_capacity;
 
-	pointer_t							m_data;
-	allocator_ptr_t						m_allocator;
+	pointer_t								m_data;
+	allocator_ptr_t							m_allocator;
 };
 }
 
