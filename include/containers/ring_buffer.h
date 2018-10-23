@@ -16,7 +16,7 @@ class inplaced_ring_buffer_mt_spsc {
 	typedef t_type								value_t;
 	typedef value_t&							reference_t;
 	typedef const value_t&						const_reference_t;
-	typedef u32									index_t;
+	typedef usize								index_t;
 
 	public:
 		inplaced_ring_buffer_mt_spsc()
@@ -31,8 +31,8 @@ class inplaced_ring_buffer_mt_spsc {
 			const index_t currentHead = m_head.load();
 
 			if (currentHead != m_tail.load()) {
-				o_value = m_data[currentHead];
-				index_t nextHead = (currentHead + 1) % t_capacity;
+				o_value = m_data[currentHead % t_capacity];
+				index_t nextHead = currentHead + 1;
 				m_head.store(nextHead);
 				return true;
 			}
@@ -49,10 +49,10 @@ class inplaced_ring_buffer_mt_spsc {
 		const bool push(const_reference_t i_value)
 		{
 			const index_t currentTail = m_tail.load();
-			const index_t nextTail = (currentTail + 1) % t_capacity;
+			const index_t nextTail = currentTail + 1;
 
 			if (currentTail - m_head.load() <= t_capacity - 1) {
-				m_data[currentTail] = i_value;
+				m_data[currentTail % t_capacity] = i_value;
 				m_tail.store(nextTail);
 				return true;
 			}
