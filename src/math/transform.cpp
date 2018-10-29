@@ -140,6 +140,16 @@ quaternionf construct_quaternion_euler(const f32 i_rx, const f32 i_ry, const f32
 	return qX * qY * qZ;
 }
 
+quaternionf construct_quaternion_axis(const vec3f& i_axis, const f32 i_r)
+{
+	quaternionf q;
+	vec3f n = normalize(i_axis);
+	f32 halfTheta = floral::to_radians(i_r) / 2.0f;
+	q.v = -i_axis * sinf(halfTheta);
+	q.w = cosf(halfTheta);
+	return q;
+}
+
 mat4x4f construct_invert(const mat4x4f& i_m)
 {
 	mat4x4f tMat;

@@ -25,11 +25,14 @@ struct quaternion {
 
 	// inner product
 	static t_type dot(const quaternion& q1, const quaternion& q2) {
-		return (vec3<t_type>::dot(q1.v, q2.v) + q1.w * q2.w);
+		return (floral::dot(q1.v, q2.v) + q1.w * q2.w);
 	}
 
 	quaternion normalize() {
-		return (*this) / sqrt(dot(*this, *this));
+		f32 l = sqrtf(dot(*this, *this));
+		v = v / l;
+		w = w / l;
+		return (*this);
 	}
 
 	// -----------------------------------------

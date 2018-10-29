@@ -416,12 +416,11 @@ vec3<t_vec> operator*(const mat3x3<t_mat>& m, const vec3<t_vec>& v) {
 
 template <class t_vec, class t_mat>
 vec4<t_vec> operator*(const mat4x4<t_mat>& m, const vec4<t_vec>& v) {
-	return vec4<t_vec>(
-			m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0] * v.w,
-			m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z + m[3][1] * v.w,
-			m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z + m[3][2] * v.w,
-			m[0][3] * v.x + m[1][3] * v.y + m[2][3] * v.z + m[3][3] * v.w
-			);
+	t_vec x = m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0] * v.w;
+	t_vec y = m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z + m[3][1] * v.w;
+	t_vec z = m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z + m[3][2] * v.w;
+	t_vec w = m[0][3] * v.x + m[1][3] * v.y + m[2][3] * v.z + m[3][3] * v.w;
+	return vec4<t_vec>(x, y, z, w);
 }
 
 }

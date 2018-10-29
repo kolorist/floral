@@ -285,6 +285,7 @@ struct vec4 {
 		x = i_other.x;
 		y = i_other.y;
 		z = i_other.z;
+		w = i_other.w;
 		return (*this);
 	}
 	
@@ -411,6 +412,13 @@ template <typename t_type> const f32 length(const vec4<t_type>& i_a) {
 template <typename t_type> const vec4<t_type> normalize(const vec4<t_type>& i_a) {
 	f32 len = length(i_a);
 	return vec4<t_type>(i_a.x / len, i_a.y / len, i_a.z / len, i_a.w / len);
+}
+
+template <typename t_type> const f32 angle(const vec3<t_type>& i_a, const vec3<t_type>& i_b) {
+	vec3<t_type> na = normalize(i_a);
+	vec3<t_type> nb = normalize(i_b);
+	f32 cosTheta = dot(na, nb);
+	return acosf(cosTheta);
 }
 
 // ---------------------------------------------
