@@ -9,30 +9,29 @@ namespace floral {
 #define CP_UDIR     0
 #define CP_VDIR     1
 #define CP_FACEAXIS 2
-
 floral::vec3f sgFace2DMapping[6][3] = {
 	//XPOS face
-	{floral::vec3f( 0,  0, 1),   //u towards positive Z
-	 floral::vec3f( 0, 1,  0),   //v towards positive Y
-	 floral::vec3f(1,  0,  0)},  //pos X axis  
+	{floral::vec3f(0,  0, -1),   //u towards negative Z
+	 floral::vec3f(0, 1,  0),   //v towards positive Y
+	 floral::vec3f(1,  0,  0)},  //pos X axis
 	//XNEG face
-	{floral::vec3f(0,  0,  -1),   //u towards negative Z
+	{floral::vec3f(0,  0,  1),   //u towards positive Z
 	 floral::vec3f(0, 1,  0),   //v towards positive Y
 	 floral::vec3f(-1,  0,  0)},  //neg X axis       
 	//YPOS face
 	{floral::vec3f(1, 0, 0),     //u towards positive X
-	 floral::vec3f(0, 0, 1),     //v towards positive Z
+	 floral::vec3f(0, 0, -1),     //v towards negative Z
 	 floral::vec3f(0, 1 , 0)},   //pos Y axis  
 	//YNEG face
 	{floral::vec3f(1, 0, 0),     //u towards positive X
-	 floral::vec3f(0, 0 , -1),   //v towards negative Z
+	 floral::vec3f(0, 0 , 1),   //v towards positive Z
 	 floral::vec3f(0, -1 , 0)},  //neg Y axis  
 	//ZPOS face
-	{floral::vec3f(-1, 0, 0),     //u towards negative X
+	{floral::vec3f(1, 0, 0),     //u towards positive X
 	 floral::vec3f(0, 1, 0),    //v towards positive Y
 	 floral::vec3f(0, 0,  1)},   //pos Z axis  
 	//ZNEG face
-	{floral::vec3f(1, 0, 0),    //u towards positive X
+	{floral::vec3f(-1, 0, 0),    //u towards negative X
 	 floral::vec3f(0, 1, 0),    //v towards positive Y
 	 floral::vec3f(0, 0, -1)},   //neg Z axis  
 };
