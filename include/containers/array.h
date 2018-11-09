@@ -39,7 +39,7 @@ public:
 	}
 
 	void push_back(const_reference_t i_value) {
-		ASSERT_MSG(m_size + 1 <= m_capacity, "Not enough array memory for PushBack");
+		ASSERT_MSG(m_size + 1 <= m_capacity, "Not enough array memory for push_back");
 		m_data[m_size] = i_value;
 		m_size++;
 	}
@@ -213,7 +213,7 @@ public:
 	}
 
 	void push_back(const_reference_t i_value) {
-		ASSERT_MSG(m_size + 1 <= m_capacity, "Not enough array memory for PushBack");
+		ASSERT_MSG(m_size + 1 <= m_capacity, "Not enough array memory for push_back");
 		m_data[m_size] = i_value;
 		m_size++;
 	}
@@ -304,7 +304,7 @@ public:
 	// TODO: cannot sure if this works correctly, need to compare with std::vector or something similar
 	// review ref: https://codereview.stackexchange.com/questions/77782/quick-sort-implementation
 	template <s32 (*t_compare_func)(t_value&, t_value&)>
-	void Sort()
+	void sort()
 	{
 		partition<t_compare_func>(0, m_size - 1);
 	}
@@ -411,19 +411,19 @@ public:
 		m_allocator->free(m_data);
 	}
 
-	void PushBack(const_reference_t v) {
+	void push_back(const_reference_t v) {
 		if (m_size + 1 > m_capacity) {
-			Resize(m_capacity << 1);			// strategy: double capacity growth
+			resize(m_capacity << 1);			// strategy: double capacity growth
 		}
 		m_data[m_size] = v;
 		m_size++;
 	}
 	
-	void Empty() {
+	void empty() {
 		m_size = 0;
 	}
 
-	void Clear() {
+	void clear() {
 		for (u32 i = 0; i < m_size; i++) {
 			m_data[i] = value_t();
 		}
@@ -478,7 +478,7 @@ public:
 	dynamic_array& operator=(const dynamic_array& i_other) {
 		if (this != &i_other) {
 			ASSERT_MSG(m_capacity >= i_other.m_size, "Not enough capacity in destination array");
-			Empty();
+			empty();
 			for (u32 i = 0; i < i_other.m_size; i++) {
 				m_data[i] = i_other.m_data[i];
 			}
@@ -505,7 +505,7 @@ public:
 	// TODO: cannot sure if this works correctly, need to compare with std::vector or something similar
 	// review ref: https://codereview.stackexchange.com/questions/77782/quick-sort-implementation
 	template <s32 (*t_compare_func)(t_value&, t_value&)>
-	void Sort()
+	void sort()
 	{
 		partition<t_compare_func>(0, m_size - 1);
 	}
@@ -573,7 +573,7 @@ public:
 		m_size = newSize;
 	}
 
-	void Resize(const u32 newCapacity) {
+	void resize(const u32 newCapacity) {
 		if (newCapacity <= m_capacity)
 			return;
 	
