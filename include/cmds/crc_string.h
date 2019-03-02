@@ -1,5 +1,4 @@
-#ifndef __FLORAL_CRCSTRING_H__
-#define __FLORAL_CRCSTRING_H__
+#pragma once
 
 #include <stdaliases.h>
 
@@ -22,5 +21,3 @@ namespace floral {
 #endif
 	};
 }
-
-#endif // __FLORAL_CRCSTRING_H__
