@@ -29,7 +29,7 @@
 
 #include "src/io/nativeio.cpp"
 #elif defined(PLATFORM_POSIX)
-// TODO: port
+#include "src/io/nativeio_posix.cpp"
 #else
 // TODO: not supported
 #endif

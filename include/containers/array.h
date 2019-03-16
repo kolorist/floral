@@ -382,8 +382,8 @@ public:
 	}
 
 	dynamic_array(const u32 capacity, t_allocator* myAllocator)
-		: m_capacity(capacity)
-		, m_size(0)
+		: m_size(0)
+		, m_capacity(capacity)
 		, m_allocator(myAllocator)
 	{
 		ASSERT_MSG((int)capacity > 0, "Cannot create an non-positive-capacity array");
