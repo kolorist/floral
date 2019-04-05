@@ -12,18 +12,18 @@ private:
 
 public:
 	simple_callback()
-		: m_invoker(nullptr)
-		, m_callee(nullptr)
+		: m_callee(nullptr)
+		, m_invoker(nullptr)
 	{}
 
 	explicit simple_callback(invoker_t invoker)
-		: m_invoker(invoker)
-		, m_callee(nullptr)
+		: m_callee(nullptr)
+		, m_invoker(invoker)
 	{}
 
 	simple_callback(voidptr pObj, invoker_t invoker)
-		: m_invoker(invoker)
-		, m_callee(pObj)
+		: m_callee(pObj)
+		, m_invoker(invoker)
 	{}
 
 	template <typename t_object, t_ret(t_object::*t_func)(t_params...)>
