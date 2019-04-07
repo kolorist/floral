@@ -1,5 +1,5 @@
-#include "thread/posix_thread.h"
-#include "thread/thread.h"						// api
+#include "floral/thread/posix_thread.h"
+#include "floral/thread/thread.h"
 
 namespace floral {
 	voidptr posix_thread_func(voidptr param)

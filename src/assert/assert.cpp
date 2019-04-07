@@ -1,17 +1,12 @@
-#include "assert/assert.h"
+#include "floral/assert/assert.h"
+
+#include "floral/assert/StackWalker.h"
+#include "floral/thread/mutex.h"
 
 #include <stdio.h>
 #include <cassert>
 #include <commctrl.h>
-
-#include <assert/StackWalker.h>
-#include <thread/mutex.h>
-
 #include <Windows.h>
-// use this pragma in order to enable visual style v6 by generating application manifest
-#pragma comment(linker,"\"/manifestdependency:type='win32' \
-name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
-processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 namespace floral {
 

@@ -1,5 +1,5 @@
-#include "thread/windows_mutex.h"
-#include "thread/mutex.h"						// api
+#include "floral/thread/windows_mutex.h"
+#include "floral/thread/mutex.h"						// api
 
 namespace floral {
 

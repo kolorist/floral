@@ -1,5 +1,5 @@
-#include "thread/windows_condition_variable.h"
-#include "thread/condition_variable.h"			// api
+#include "floral/thread/windows_condition_variable.h"
+#include "floral/thread/condition_variable.h"
 
 namespace floral {
 

@@ -1,6 +1,5 @@
-#include "thread/posix_condition_variable.h"
-
-#include "thread/posix_mutex.h"
+#include "floral/thread/posix_condition_variable.h"
+#include "floral/thread/posix_mutex.h"
 
 namespace floral {
 	posix_condition_variable::posix_condition_variable()

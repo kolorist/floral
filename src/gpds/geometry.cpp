@@ -1,8 +1,8 @@
-#include "gpds/geometry.h"
+#include "floral/gpds/geometry.h"
+
+#include "floral/math/utils.h"
 
 #include <math.h>
-
-#include <math/utils.h>
 
 namespace floral {
 

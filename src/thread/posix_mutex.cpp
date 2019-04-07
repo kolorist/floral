@@ -1,5 +1,5 @@
-#include "thread/posix_mutex.h"
-#include "thread/mutex.h"						// api
+#include "floral/thread/posix_mutex.h"
+#include "floral/thread/mutex.h"
 
 namespace floral {
 	posix_mutex::posix_mutex()

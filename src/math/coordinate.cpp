@@ -1,8 +1,8 @@
-#include "math/coordinate.h"
+#include "floral/math/coordinate.h"
+
+#include "floral/stdaliases.h"
 
 #include <math.h>
-
-#include "stdaliases.h"
 
 namespace floral {
 

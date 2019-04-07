@@ -1,6 +1,6 @@
-#include "cmds/crc_string.h"
+#include "floral/cmds/crc_string.h"
 
-#include <math/utils.h>
+#include "floral/math/utils.h"
 
 namespace floral {
 	crc_string::crc_string()

@@ -1,10 +1,10 @@
-#include "cmds/path.h"
+#include "floral/cmds/path.h"
+
+#include "floral/stdaliases.h"
+#include "floral/math/utils.h"
 
 #include <cstring>
 #include <stdio.h>
-
-#include <stdaliases.h>
-#include <math/utils.h>
 
 namespace floral {
 	
