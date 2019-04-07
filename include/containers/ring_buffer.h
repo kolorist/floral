@@ -11,6 +11,8 @@
 
 namespace floral {
 
+#define ENABLE_MEMORY_ORDER
+
 template <class t_type, u32 t_capacity>
 class inplaced_ring_buffer_mt_spsc {
 	typedef t_type								value_t;
@@ -21,13 +23,29 @@ class inplaced_ring_buffer_mt_spsc {
 	public:
 		inplaced_ring_buffer_mt_spsc()
 		{
+#ifdef ENABLE_MEMORY_ORDER
+			m_head.store(0, std::memory_order_relaxed);
+			m_tail.store(0, std::memory_order_relaxed);
+#else
 			m_head.store(0);
 			m_tail.store(0);
+#endif
 		}
 
 		// non-block
 		const bool try_pop_into(reference_t o_value)
 		{
+#ifdef ENABLE_MEMORY_ORDER
+			const index_t currentHead = m_head.load(std::memory_order_relaxed);
+
+			if (currentHead != m_tail.load(std::memory_order_acquire)) { // (1) synchronize with the push (2)
+				o_value = m_data[currentHead % t_capacity];
+				index_t nextHead = currentHead + 1;
+				m_head.store(nextHead, std::memory_order_relaxed);
+				return true;
+			}
+			return false;
+#else
 			const index_t currentHead = m_head.load();
 
 			if (currentHead != m_tail.load()) {
@@ -37,6 +55,7 @@ class inplaced_ring_buffer_mt_spsc {
 				return true;
 			}
 			return false;
+#endif
 		}
 
 		value_t wait_and_pop()
@@ -46,8 +65,34 @@ class inplaced_ring_buffer_mt_spsc {
 			return ret;
 		}
 
+		const bool is_empty()
+		{
+#ifdef ENABLE_MEMORY_ORDER
+			const index_t currentHead = m_head.load(std::memory_order_relaxed);
+			if (currentHead == m_tail.load(std::memory_order_relaxed))
+				return true;
+			return false;
+#else
+			const index_t currentHead = m_head.load();
+			if (currentHead == m_tail.load())
+				return true;
+			return false;
+#endif
+		}
+
 		const bool push(const_reference_t i_value)
 		{
+#ifdef ENABLE_MEMORY_ORDER
+			const index_t currentTail = m_tail.load(std::memory_order_relaxed);
+			const index_t nextTail = currentTail + 1;
+
+			if (currentTail - m_head.load(std::memory_order_relaxed) <= t_capacity - 1) {
+				m_data[currentTail % t_capacity] = i_value;
+				m_tail.store(nextTail, std::memory_order_release); // (2) synchronize with the pop (1)
+				return true;
+			}
+			return false;
+#else
 			const index_t currentTail = m_tail.load();
 			const index_t nextTail = currentTail + 1;
 
@@ -57,6 +102,7 @@ class inplaced_ring_buffer_mt_spsc {
 				return true;
 			}
 			return false;
+#endif
 		}
 
 		void wait_and_push(const_reference_t i_value)
