@@ -1,6 +1,10 @@
 #include "floral/math/intersect.h"
 
+#include <math.h>
+
 namespace floral {
+
+//----------------------------------------------
 
 const bool ray_triangle_intersect(const ray3df& i_ray,
 		const floral::vec3f& i_p0, const floral::vec3f& i_p1, const floral::vec3f& i_p2, f32* o_t)
@@ -32,6 +36,8 @@ const bool ray_triangle_intersect(const ray3df& i_ray,
 	return true;
 }
 
+//----------------------------------------------
+
 const bool ray_quad_intersect(const ray3df& i_ray,
 		const floral::vec3f& i_p0, const floral::vec3f& i_p1,
 		const floral::vec3f& i_p2, const floral::vec3f& i_p3, f32* o_t)
@@ -49,6 +55,33 @@ const bool ray_quad_intersect(const ray3df& i_ray,
 		return true;
 	}
 	return false;
+}
+
+//----------------------------------------------
+
+#include "tri_aabb_intersect.inl"
+
+const bool triangle_aabb_intersect(
+		const floral::vec3f& i_v0, const floral::vec3f& i_v1,
+		const floral::vec3f& i_v2, const floral::aabb3f& i_aabb)
+{
+	floral::vec3f translation = -(i_aabb.min_corner + i_aabb.max_corner) / 2.0f;
+	floral::vec3f scaling = i_aabb.max_corner - i_aabb.min_corner;
+
+	floral::vec3f v0 = (i_v0 + translation) / scaling;
+	floral::vec3f v1 = (i_v1 + translation) / scaling;
+	floral::vec3f v2 = (i_v2 + translation) / scaling;
+
+	Triangle3 tri;
+	tri.v1 = Point3 { v0.x, v0.y, v0.z};
+	tri.v2 = Point3 { v1.x, v1.y, v1.z};
+	tri.v3 = Point3 { v2.x, v2.y, v2.z};
+
+	long intersect = t_c_intersection(tri);
+	if (intersect == INSIDE)
+		return true;
+	else
+		return false;
 }
 
 }
