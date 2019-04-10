@@ -84,4 +84,14 @@ const bool triangle_aabb_intersect(
 		return false;
 }
 
+//----------------------------------------------
+
+const bool point_inside_aabb(
+		const floral::vec3f& i_p, const floral::aabb3f& i_aabb)
+{
+	return (i_p.x >= i_aabb.min_corner.x && i_p.x <= i_aabb.max_corner.x
+		&& i_p.y >= i_aabb.min_corner.y && i_p.y <= i_aabb.max_corner.y
+		&& i_p.z >= i_aabb.min_corner.z && i_p.z <= i_aabb.max_corner.z);
+}
+
 }

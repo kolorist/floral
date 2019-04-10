@@ -18,5 +18,7 @@ const bool										ray_quad_intersect(const ray3df& i_ray,
 const bool										triangle_aabb_intersect(
 													const floral::vec3f& i_v0, const floral::vec3f& i_v1,
 													const floral::vec3f& i_v2, const floral::aabb3f& i_aabb);
-
+													
+const bool										point_inside_aabb(
+													const floral::vec3f& i_p, const floral::aabb3f& i_aabb);
 };
