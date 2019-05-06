@@ -3,6 +3,8 @@
 namespace floral
 {
 
+// ---------------------------------------------
+
 file_stream::file_stream()
 	: rpos(0)
 	, buffer(nullptr)
@@ -74,7 +76,28 @@ const bool file_stream::is_eos()
 	return (rpos >= info.file_size);
 }
 
-// -----------------------------------------
+// ---------------------------------------------
+
+output_file_stream::output_file_stream()
+{
+}
+
+output_file_stream::~output_file_stream()
+{
+}
+
+void output_file_stream::write_bytes(voidptr i_buffer, const size i_count)
+{
+	DWORD byteWritten = 0;
+	WriteFile(
+			info.file_handle,
+			i_buffer,
+			i_count,
+			&byteWritten,
+			NULL);
+}
+
+// ---------------------------------------------
 
 file_info open_file(const_cstr filePath)
 {
@@ -102,6 +125,14 @@ file_info open_file(path i_filePath)
 	return newFile;
 }
 
+file_info open_output_file(const_cstr i_filePath)
+{
+	file_info newFile;
+	newFile.file_handle = CreateFileA(i_filePath, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	newFile.file_size = 0;
+	return newFile;
+}
+
 void read_all_file(const file_info& fileInfo, voidptr buffer)
 {
 	DWORD bytesRead = 0;
@@ -122,8 +153,14 @@ void mmap_all_file(const file_info& fileInfo, voidptr buffer)
 {
 }
 
+void map_output_file(const file_info& i_fileInfo, output_file_stream& o_fileStream)
+{
+	o_fileStream.info = i_fileInfo;
+}
+
 void close_file(file_info& fileInfo)
 {
+	CloseHandle(fileInfo.file_handle);
 }
 
 }
