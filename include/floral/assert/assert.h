@@ -22,6 +22,12 @@ namespace floral {
 
 #define FLORAL_DEBUG_BREAK						__debugbreak
 
+#define FLORAL_CRASH							\
+	{											\
+		volatile u32* crash = nullptr;			\
+		*crash = 10;							\
+	}
+
 #define FLORAL_ASSERT(x)						\
 	do {										\
 		if (!(x)) {								\
@@ -71,6 +77,12 @@ namespace floral {
 	} while(0)
 
 #else
+	
+#define FLORAL_CRASH							\
+	{											\
+		volatile u32* crash = nullptr;			\
+		*crash = 10;							\
+	}
 
 #define FLORAL_ASSERT(x)						\
 	do { (void)sizeof(x); } while(0)

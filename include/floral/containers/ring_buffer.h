@@ -15,7 +15,6 @@ template <class t_type, u32 t_capacity>
 class inplaced_ring_buffer_mt_spsc {
 	typedef t_type								value_t;
 	typedef value_t&							reference_t;
-	typedef const value_t&						const_reference_t;
 	typedef usize								index_t;
 
 	public:
@@ -78,7 +77,7 @@ class inplaced_ring_buffer_mt_spsc {
 #endif
 		}
 
-		const bool push(const_reference_t i_value)
+		const bool push(const t_type& i_value)
 		{
 #ifdef ENABLE_MEMORY_ORDER
 			const index_t currentTail = m_tail.load(std::memory_order_relaxed);
@@ -103,9 +102,22 @@ class inplaced_ring_buffer_mt_spsc {
 #endif
 		}
 
-		void wait_and_push(const_reference_t i_value)
+		void wait_and_push(const t_type& i_value)
 		{
 			while (!push(i_value));
+		}
+		
+		void wait_and_push(const t_type& i_value, const u32& i_loopLimit)
+		{
+			u32 loopCount = 0;
+			while (!push(i_value))
+			{
+				loopCount++;
+				if (loopCount > i_loopLimit)
+				{
+					FLORAL_CRASH;
+				}
+			}
 		}
 
 	private:

@@ -66,6 +66,7 @@ public:
 	template <typename t_type>
 	void write(const t_type& i_from)
 	{
+#if defined(PLATFORM_WINDOWS)
 		DWORD byteWritten = 0;
 		WriteFile(
 				info.file_handle,
@@ -73,6 +74,8 @@ public:
 				sizeof(t_type),
 				&byteWritten,
 				NULL);
+#else
+#endif
 	}
 
 public:

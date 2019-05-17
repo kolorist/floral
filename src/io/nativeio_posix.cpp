@@ -76,6 +76,14 @@ const bool file_stream::is_eos()
 
 // -----------------------------------------
 
+output_file_stream::output_file_stream()
+{
+}
+
+output_file_stream::~output_file_stream()
+{
+}
+
 file_info open_file(const_cstr filePath)
 {
 	file_info newFile;
@@ -102,6 +110,14 @@ file_info open_file(path i_filePath)
 	return newFile;
 }
 
+file_info open_output_file(const_cstr i_filePath)
+{
+	file_info newFile;
+	//newFile.file_handle = CreateFileA(i_filePath, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	//newFile.file_size = 0;
+	return newFile;
+}
+
 void read_all_file(const file_info& fileInfo, voidptr buffer)
 {
 	// DWORD bytesRead = 0;
@@ -120,6 +136,11 @@ void read_all_file(const file_info& fileInfo, file_stream& fileStream)
 
 void mmap_all_file(const file_info& fileInfo, voidptr buffer)
 {
+}
+
+void map_output_file(const file_info& i_fileInfo, output_file_stream& o_fileStream)
+{
+	//o_fileStream.info = i_fileInfo;
 }
 
 void close_file(file_info& fileInfo)

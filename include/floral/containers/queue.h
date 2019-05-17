@@ -15,7 +15,6 @@ class inplace_queue_t
 {
 	typedef t_type								value_t;
 	typedef value_t&							reference_t;
-	typedef const reference_t					const_reference_t;
 	typedef size								index_t;
 
 public:
@@ -26,7 +25,7 @@ public:
 	{
 	}
 
-	void push(const_reference_t i_value)
+	void push(const t_type& i_value)
 	{
 		FLORAL_ASSERT_MSG(m_write_idx < m_capacity, "Queue overflowed");
 
@@ -69,7 +68,6 @@ class inplace_spsc_queue_lock_based_t
 {
 	typedef t_type								value_t;
 	typedef value_t&							reference_t;
-	typedef const reference_t					const_reference_t;
 	typedef size								index_t;
 
 public:
@@ -80,7 +78,7 @@ public:
 	{
 	}
 
-	void push(const_reference_t i_value)
+	void push(const t_type& i_value)
 	{
 		lock_guard guard(m_data_access_mtx);
 		FLORAL_ASSERT_MSG(m_write_idx < m_capacity, "Queue overflowed");
