@@ -9,6 +9,8 @@
 #include "src/math/coordinate.cpp"
 #include "src/math/intersect.cpp"
 
+#include "src/comgeo/shapegen.cpp"
+
 #include "src/thread/thread.cpp"
 #include "src/thread/mutex.cpp"
 #if defined(PLATFORM_WINDOWS)
