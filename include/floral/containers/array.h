@@ -15,7 +15,6 @@ class inplace_array {
 	typedef			t_value*				pointer_t;
 	typedef			const t_value*			const_pointer_t;
 	typedef			t_value&				reference_t;
-	typedef			const t_value&			const_reference_t;
 
 public:
 	inplace_array()
@@ -37,7 +36,7 @@ public:
 	{
 	}
 
-	void push_back(const_reference_t i_value) {
+	void push_back(const t_value& i_value) {
 		FLORAL_ASSERT_MSG(m_size + 1 <= m_capacity, "Not enough array memory for push_back");
 		m_data[m_size] = i_value;
 		m_size++;
@@ -62,8 +61,8 @@ public:
 		return m_data[index];
 	}
 
-	const u32 find(const_reference_t value, 
-		bool (*cmpFunc)(const_reference_t, const_reference_t),
+	const u32 find(const t_value& value, 
+		bool (*cmpFunc)(const t_value&, const t_value&),
 		const u32 fromId = 0, const u32 toId = 0) const 
 	{
 		u32 from = fromId;
@@ -76,7 +75,7 @@ public:
 		return m_size;
 	}
 	
-	const u32 find(const_reference_t value, const u32 fromId = 0, const u32 toId = 0) const {
+	const u32 find(const t_value& value, const u32 fromId = 0, const u32 toId = 0) const {
 		u32 from = fromId;
 		u32 to = toId > 0 ? toId : m_size;
 
@@ -93,7 +92,7 @@ public:
 		return m_data[index];
 	}
 
-	const_reference_t operator[](const u32 index) const {
+	const t_value& operator[](const u32 index) const {
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}

@@ -2,6 +2,8 @@
 
 #include "floral/stdaliases.h"
 
+#include <stdlib.h>
+
 namespace floral {
 
 #if defined(PLATFORM_WINDOWS)
