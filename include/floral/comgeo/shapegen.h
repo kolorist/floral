@@ -40,9 +40,11 @@ struct manifold_geo_generate_result_t
 void											push_generation_transform(const floral::mat4x4f& i_xform);
 void											pop_generation_transform();
 void											reset_generation_transforms_stack();
-void											apply_tranforms(const s32 i_vtxFormat, const u32 i_vtxCount, const size i_vtxStride, voidptr io_vtxData);
 
-geo_generate_result_t							generate_quadtes_unit_plane_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, const f32 i_quadSize, voidptr o_vtxData, s32* o_idxData);
+// transformation stack will affect these functions
+geo_generate_result_t							generate_quadtes_plane_3d(
+													const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat,
+													const f32 i_quadSize, voidptr o_vtxData, s32* o_idxData);
 
 //----------------------------------------------
 
@@ -63,5 +65,8 @@ manifold_geo_generate_result_t					generate_manifold_unit_plane_3d(
 													const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData,
 													const s32 i_mnfStartIdx, const size i_mnfVtxStride, const f32 i_mnfThickness,
 													const s32 i_mnfVtxFormat, voidptr o_mnfVtxData, s32* o_mnfIdxData);
+
+//----------------------------------------------
+// built-in geometry
 
 }

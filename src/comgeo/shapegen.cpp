@@ -114,15 +114,49 @@ void apply_tranforms(const s32 i_vtxFormat, const u32 i_vtxCount, const size i_v
 	}
 }
 
+void apply_tranforms(floral::vec4f& io_vec)
+{
+	if (s_topXForm == 0)
+	{
+		return;
+	}
+
+	floral::mat4x4f m(1.0f);
+
+	for (size i = 0; i < s_topXForm; i++)
+	{
+		m = m * s_xformStack[i];
+	}
+
+	io_vec = m * io_vec;
+}
+
 //----------------------------------------------
 
-geo_generate_result_t generate_quadtes_unit_plane_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, const f32 i_quadSize, voidptr o_vtxData, s32* o_idxData)
+geo_generate_result_t generate_quadtes_plane_3d(
+		const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat,
+		const f32 i_quadSize, voidptr o_vtxData, s32* o_idxData)
 {
 	FLORAL_ASSERT_MSG(TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
 
-	s32 tesTime = (s32)(-logf(i_quadSize) / logf(2.0f));	// for 1.0f width
-	s32 gridPerEdge = 1 << (tesTime + 1);					// for 2.0f width
-	f32 gridSize = 2.0f / gridPerEdge;
+	vertex_pn_t vertices[] =
+	{
+		floral::vec3f(1.0f, 0.0f, 1.0f),		floral::vec3f(0.0f, 1.0f, 0.0f),
+		floral::vec3f(1.0f, 0.0f, -1.0f),		floral::vec3f(0.0f, 1.0f, 0.0f),
+		floral::vec3f(-1.0f, 0.0f, -1.0f),		floral::vec3f(0.0f, 1.0f, 0.0f),
+		floral::vec3f(-1.0f, 0.0f, 1.0f),		floral::vec3f(0.0f, 1.0f, 0.0f)
+	};
+
+	apply_tranforms(i_vtxFormat, 4, sizeof(vertex_pn_t), vertices);
+	const f32 gridSize = i_quadSize;
+	const f32 edgeLengthX = floral::length(vertices[3].position - vertices[0].position);
+	const f32 edgeLengthZ = floral::length(vertices[1].position - vertices[0].position);
+	const s32 gridPerEdgeX = (s32)(edgeLengthX / gridSize) + 1;
+	const s32 gridPerEdgeZ = (s32)(edgeLengthZ / gridSize) + 1;
+	const floral::vec3f ex = vertices[3].position - vertices[0].position;
+	const floral::vec3f ez = vertices[1].position - vertices[0].position;
+	const floral::vec3f dx = floral::normalize(vertices[3].position - vertices[0].position) * gridSize;
+	const floral::vec3f dz = floral::normalize(vertices[1].position - vertices[0].position) * gridSize;
 
 	floral::inplace_array<floral::vec3f, 1024u> vertexArray;
 	floral::inplace_array<s32, 4096u> indexArray;
@@ -132,15 +166,19 @@ geo_generate_result_t generate_quadtes_unit_plane_3d(const s32 i_startIdx, const
 		0, 1, 2, 2, 3, 0
 	};
 
-	for (s32 i = 0; i < gridPerEdge; i++)
+	for (s32 i = 0; i < gridPerEdgeX; i++)
 	{
-		for (s32 j = 0; j < gridPerEdge; j++)
+		for (s32 j = 0; j < gridPerEdgeZ; j++)
 		{
 			floral::vec3f v[4];
-			v[0] = floral::vec3f(1.0f - gridSize * i, 0.0f, 1.0f - gridSize * j);
-			v[1] = floral::vec3f(1.0f - gridSize * i, 0.0f, 1.0f - gridSize * (j + 1));
-			v[2] = floral::vec3f(1.0f - gridSize * (i + 1), 0.0f, 1.0f - gridSize * (j + 1));
-			v[3] = floral::vec3f(1.0f - gridSize * (i + 1), 0.0f, 1.0f - gridSize * j);
+
+			floral::vec3f dxMax = (i + 1 == gridPerEdgeX) ? ex : dx * (f32)(i + 1);
+			floral::vec3f dzMax = (j + 1 == gridPerEdgeZ) ? ez : dz * (f32)(j + 1);
+
+			v[0] = vertices[0].position + dx * (f32)i + dz * (f32)j;
+			v[1] = vertices[0].position + dx * (f32)i + dzMax;
+			v[2] = vertices[0].position + dxMax + dzMax;
+			v[3] = vertices[0].position + dxMax + dz * (f32)j;
 
 			for (u32 k = 0; k < 6; k++)
 			{
@@ -164,7 +202,7 @@ geo_generate_result_t generate_quadtes_unit_plane_3d(const s32 i_startIdx, const
 		{
 			vertex_pn_t* vtx = (vertex_pn_t*)o_vtxData;
 			vtx->position = vertexArray[i];
-			vtx->normal = floral::vec3f(0.0f, 1.0f, 0.0f);
+			vtx->normal = vertices[0].normal;
 			o_vtxData = (voidptr)((aptr)o_vtxData + i_vtxStride);
 		}
 	}
@@ -187,11 +225,6 @@ geo_generate_result_t generate_quadtes_unit_plane_3d(const s32 i_startIdx, const
 	genResult.vertices_generated = vertexArray.get_size();
 	genResult.indices_generated = indexArray.get_size();
 	return genResult;
-}
-
-geo_generate_result_t generate_quadtes_unit_box_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, const f32 i_quadSize, voidptr o_vtxData, s32* o_idxData)
-{
-	FLORAL_ASSERT_MSG(TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
 }
 
 //----------------------------------------------
@@ -537,9 +570,9 @@ manifold_geo_generate_result_t generate_manifold_quadtes_unit_plane_3d(
 
 	// generate the plane
 	{
-		geo_generate_result_t objResult = generate_quadtes_unit_plane_3d(i_startIdx, i_vtxStride, i_vtxFormat, i_quadSize, o_vtxData, o_idxData);
-
-		apply_tranforms(i_vtxFormat, objResult.vertices_generated, i_vtxStride, o_vtxData);
+		geo_generate_result_t objResult = generate_quadtes_plane_3d(
+				i_startIdx, i_vtxStride, i_vtxFormat,
+				i_quadSize, o_vtxData, o_idxData);
 
 		genResult.vertices_generated = objResult.vertices_generated;
 		genResult.indices_generated = objResult.indices_generated;
