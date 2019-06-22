@@ -9,6 +9,9 @@ namespace floral {
 
 const bool										ray_triangle_intersect(const ray3df& i_ray,
 													const floral::vec3f& i_p0, const floral::vec3f& i_p1, const floral::vec3f& i_p2, f32* o_t);
+													
+const bool										ray_triangle_intersect(const ray3df& i_ray,
+													const floral::vec3f& i_p0, const floral::vec3f& i_p1, const floral::vec3f& i_p2, f32* o_t, f32* o_b0, f32* o_b1);
 
 const bool										ray_quad_intersect(const ray3df& i_ray,
 													const floral::vec3f& i_p0, const floral::vec3f& i_p1,
@@ -21,4 +24,8 @@ const bool										triangle_aabb_intersect(
 													
 const bool										point_inside_aabb(
 													const floral::vec3f& i_p, const floral::aabb3f& i_aabb);
+													
+const bool										point_in_positive_region_of_plane(
+													const floral::vec3f& i_p, const floral::vec3f& i_p0, const floral::vec3f& i_normal);
+
 };

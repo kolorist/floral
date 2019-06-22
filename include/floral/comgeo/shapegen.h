@@ -48,11 +48,13 @@ geo_generate_result_t							generate_quadtes_plane_3d(
 
 //----------------------------------------------
 
-geo_generate_result_t							generate_unit_plane_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData);
+//geo_generate_result_t							generate_unit_plane_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData);
 geo_generate_result_t							generate_unit_box_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData);
 geo_generate_result_t							generate_unit_icosphere_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData);
 
 //----------------------------------------------
+
+geo_generate_result_t							generate_unit_plane_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData);
 
 manifold_geo_generate_result_t					generate_manifold_quadtes_unit_plane_3d(
 													const s32 i_startIdx, const size i_vtxStride,
@@ -61,6 +63,12 @@ manifold_geo_generate_result_t					generate_manifold_quadtes_unit_plane_3d(
 													const s32 i_mnfVtxFormat, voidptr o_mnfVtxData, s32* o_mnfIdxData);
 
 manifold_geo_generate_result_t					generate_manifold_unit_plane_3d(
+													const s32 i_startIdx, const size i_vtxStride,
+													const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData,
+													const s32 i_mnfStartIdx, const size i_mnfVtxStride, const f32 i_mnfThickness,
+													const s32 i_mnfVtxFormat, voidptr o_mnfVtxData, s32* o_mnfIdxData);
+
+manifold_geo_generate_result_t					generate_manifold_icosphere_3d(
 													const s32 i_startIdx, const size i_vtxStride,
 													const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData,
 													const s32 i_mnfStartIdx, const size i_mnfVtxStride, const f32 i_mnfThickness,

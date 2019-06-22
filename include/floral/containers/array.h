@@ -8,7 +8,7 @@
 
 namespace floral {
 
-template <class t_value, u32 t_capacity>
+template <class t_value, size t_capacity>
 class inplace_array {
 	typedef			t_value					value_t;
 	typedef			const t_value			const_value_t;
@@ -27,7 +27,7 @@ public:
 		m_size = 0;
 		
 		FLORAL_ASSERT_MSG((int)m_capacity > 0, "Cannot create an non-positive-capacity array");
-		for (u32 i = 0; i < m_capacity; i++) {
+		for (size i = 0; i < m_capacity; i++) {
 			m_data[i] = value_t();
 		}
 	}
@@ -47,39 +47,39 @@ public:
 	}
 
 	void clear() {
-		for (u32 i = 0; i < m_size; i++) {
+		for (size i = 0; i < m_size; i++) {
 			m_data[i] = value_t();
 		}
 		m_size = 0;
 	}
 
-	const u32								get_size() const					{ return m_size; }
-	const u32								get_capacity() const				{ return m_capacity; }
-	const u32								get_terminated_index() const		{ return m_size; }
-	const_value_t at(const u32 index) const {
+	const size								get_size() const					{ return m_size; }
+	const size								get_capacity() const				{ return m_capacity; }
+	const size								get_terminated_index() const		{ return m_size; }
+	const_value_t at(const size index) const {
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
 
-	const u32 find(const t_value& value, 
+	const size find(const t_value& value, 
 		bool (*cmpFunc)(const t_value&, const t_value&),
-		const u32 fromId = 0, const u32 toId = 0) const 
+		const size fromId = 0, const size toId = 0) const 
 	{
-		u32 from = fromId;
-		u32 to = toId > 0 ? toId : m_size;
+		size from = fromId;
+		size to = toId > 0 ? toId : m_size;
 
-		for (u32 i = from; i < to; i++) {
+		for (size i = from; i < to; i++) {
 			if (cmpFunc(m_data[i], value))
 				return i;
 		}
 		return m_size;
 	}
 	
-	const u32 find(const t_value& value, const u32 fromId = 0, const u32 toId = 0) const {
-		u32 from = fromId;
-		u32 to = toId > 0 ? toId : m_size;
+	const size find(const t_value& value, const size fromId = 0, const size toId = 0) const {
+		size from = fromId;
+		size to = toId > 0 ? toId : m_size;
 
-		for (u32 i = from; i < to; i++) {
+		for (size i = from; i < to; i++) {
 			if (m_data[i] == value)
 				return i;
 		}
@@ -87,12 +87,12 @@ public:
 	}
 
 	// operator overloading
-	reference_t operator[](const u32 index) {
+	reference_t operator[](const size index) {
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
 
-	const t_value& operator[](const u32 index) const {
+	const t_value& operator[](const size index) const {
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
@@ -102,7 +102,7 @@ public:
 		if (this != &i_other) {
 			FLORAL_ASSERT_MSG(m_capacity >= i_other.m_size, "Not enough capacity in destination array");
 			empty();
-			for (u32 i = 0; i < i_other.m_size; i++) {
+			for (size i = 0; i < i_other.m_size; i++) {
 				m_data[i] = i_other.m_data[i];
 			}
 			m_size = i_other.m_size;
@@ -112,25 +112,25 @@ public:
 
 	// TODO: cannot sure if this works correctly, need to compare with std::vector or something similar
 	// review ref: https://codereview.stackexchange.com/questions/77782/quick-sort-implementation
-	template <s32 (*t_compare_func)(t_value&, t_value&)>
+	template <size (*t_compare_func)(t_value&, t_value&)>
 	void sort()
 	{
 		partition<t_compare_func>(0, m_size - 1);
 	}
 
 private:
-	template <s32 (*t_compare_func)(t_value&, t_value&)>
-	void partition(s32 lo, s32 hi)
+	template <size (*t_compare_func)(t_value&, t_value&)>
+	void partition(size lo, size hi)
 	{
 		if (lo >= hi) {
 			return;
 		}
 		// we choose pivot to be the center element (not the median-value) because of the simplicity
-		//s32 pivot = (lo + hi) / 2;
-		s32 pivot = lo + (hi - lo) / 2;
+		//size pivot = (lo + hi) / 2;
+		size pivot = lo + (hi - lo) / 2;
 		t_value pivotVal = m_data[pivot];
-		//s32 i = lo - 1, j = hi + 1;
-		s32 i = lo, j = hi;
+		//size i = lo - 1, j = hi + 1;
+		size i = lo, j = hi;
 		while (i <= j) {
 			while (t_compare_func(m_data[i], pivotVal) > 0) i++;
 			while (t_compare_func(m_data[j], pivotVal) < 0) j--;
@@ -148,11 +148,13 @@ private:
 	}
 
 private:
-	u32										m_size;
-	u32										m_capacity;
+	size										m_size;
+	size										m_capacity;
 
 	value_t									m_data[t_capacity];
 };
+
+//----------------------------------------------
 
 template <class t_value, class t_allocator>
 class fixed_array {
@@ -161,7 +163,7 @@ class fixed_array {
 	typedef			t_value*				pointer_t;
 	typedef			const t_value*			const_pointer_t;
 	typedef			t_value&				reference_t;
-	typedef			const t_value&			const_reference_t;
+	
 	typedef			t_allocator				allocator_t;
 	typedef			allocator_t*			allocator_ptr_t;
 
@@ -173,12 +175,23 @@ public:
 		, m_allocator(nullptr)
 	{ }
 
-	explicit fixed_array(const u32 i_capacity, allocator_ptr_t i_myAllocator)
+	explicit fixed_array(allocator_ptr_t i_myAllocator)
+		: m_size(0)
+		, m_capacity(0)
+		, m_data(nullptr)
+		, m_allocator(i_myAllocator)
 	{
-		init(i_capacity, i_myAllocator);
+		// nothing
+	}
+
+	fixed_array(const size i_capacity, allocator_ptr_t i_myAllocator)
+		: m_allocator(i_myAllocator)
+	{
+		reserve(i_capacity);
 	}
 	
-	void init(const u32 i_capacity, allocator_ptr_t i_allocator)
+	// deprecated
+	void init(const size i_capacity, allocator_ptr_t i_allocator)
 	{
 		m_capacity = i_capacity;
 		m_allocator = i_allocator;
@@ -186,7 +199,27 @@ public:
 		
 		FLORAL_ASSERT_MSG((int)i_capacity > 0, "Cannot create an non-positive-capacity array");
 		m_data = m_allocator->template allocate_array<value_t>(m_capacity);
-		for (u32 i = 0; i < m_capacity; i++) {
+		for (size i = 0; i < m_capacity; i++)
+		{
+			m_data[i] = value_t();
+		}
+	}
+
+	void reserve(const size i_capacity, allocator_ptr_t i_newAllocator)
+	{
+		m_allocator = i_newAllocator;
+		reserve(i_capacity);
+	}
+
+	void reserve(const size i_capacity)
+	{
+		m_capacity = i_capacity;
+		m_size = 0;
+		
+		FLORAL_ASSERT_MSG((int)i_capacity > 0, "Cannot create an non-positive-capacity array");
+		m_data = m_allocator->template allocate_array<value_t>(m_capacity);
+		for (size i = 0; i < m_capacity; i++)
+		{
 			m_data[i] = value_t();
 		}
 	}
@@ -207,53 +240,60 @@ public:
 	~fixed_array()
 	{
 		if (m_data)
+		{
 			m_allocator->free(m_data);
+		}
 	}
 
-	void push_back(const_reference_t i_value) {
+	inline void push_back(const t_value& i_value)
+	{
 		FLORAL_ASSERT_MSG(m_size + 1 <= m_capacity, "Not enough array memory for push_back");
 		m_data[m_size] = i_value;
 		m_size++;
 	}
 	
-	void empty() {
+	inline void empty()
+	{
 		m_size = 0;
 	}
 
-	void clear() {
-		for (u32 i = 0; i < m_size; i++) {
+	inline void clear()
+	{
+		for (size i = 0; i < m_size; i++)
+		{
 			m_data[i] = value_t();
 		}
 		m_size = 0;
 	}
 
-	const u32								get_size() const					{ return m_size; }
-	const u32								get_capacity() const				{ return m_capacity; }
-	const u32								get_terminated_index() const		{ return m_size; }
-	const_value_t at(const u32 index) const {
+	inline const size							get_size() const					{ return m_size; }
+	inline const size							get_capacity() const				{ return m_capacity; }
+	inline const size							get_terminated_index() const		{ return m_size; }
+	inline const_value_t at(const size index) const
+	{
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
 
-	const u32 find(const_reference_t value, 
-		bool (*cmpFunc)(const_reference_t, const_reference_t),
-		const u32 fromId = 0, const u32 toId = 0) const 
+	const size find(const t_value& value, 
+		bool (*cmpFunc)(const t_value&, const t_value&),
+		const size fromId = 0, const size toId = 0) const 
 	{
-		u32 from = fromId;
-		u32 to = toId > 0 ? toId : m_size;
+		size from = fromId;
+		size to = toId > 0 ? toId : m_size;
 
-		for (u32 i = from; i < to; i++) {
+		for (size i = from; i < to; i++) {
 			if (cmpFunc(m_data[i], value))
 				return i;
 		}
 		return m_size;
 	}
 	
-	const u32 find(const_reference_t value, const u32 fromId = 0, const u32 toId = 0) const {
-		u32 from = fromId;
-		u32 to = toId > 0 ? toId : m_size;
+	const size find(const t_value& value, const size fromId = 0, const size toId = 0) const {
+		size from = fromId;
+		size to = toId > 0 ? toId : m_size;
 
-		for (u32 i = from; i < to; i++) {
+		for (size i = from; i < to; i++) {
 			if (m_data[i] == value)
 				return i;
 		}
@@ -261,22 +301,25 @@ public:
 	}
 
 	// operator overloading
-	reference_t operator[](const u32 index) {
+	inline reference_t operator[](const size index)
+	{
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
 
-	const_reference_t operator[](const u32 index) const {
+	inline const t_value& operator[](const size index) const
+	{
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
 
 	// copy assignment
-	fixed_array& operator=(const fixed_array& i_other) {
+	fixed_array& operator=(const fixed_array& i_other)
+	{
 		if (this != &i_other) {
 			FLORAL_ASSERT_MSG(m_capacity >= i_other.m_size, "Not enough capacity in destination array");
 			empty();
-			for (u32 i = 0; i < i_other.m_size; i++) {
+			for (size i = 0; i < i_other.m_size; i++) {
 				m_data[i] = i_other.m_data[i];
 			}
 			m_size = i_other.m_size;
@@ -301,30 +344,37 @@ public:
 
 	// TODO: cannot sure if this works correctly, need to compare with std::vector or something similar
 	// review ref: https://codereview.stackexchange.com/questions/77782/quick-sort-implementation
-	template <s32 (*t_compare_func)(t_value&, t_value&)>
+	template <size (*t_compare_func)(t_value&, t_value&)>
 	void sort()
 	{
 		partition<t_compare_func>(0, m_size - 1);
 	}
 
-	void resize_ex(const u32 newSize) {
+	inline void resize(const size i_newSize)
+	{
+		FLORAL_ASSERT_MSG(i_newSize <= m_capacity, "Invalid new size!");
+		m_size = i_newSize;
+	}
+
+	// depreacted
+	void resize_ex(const size newSize) {
 		FLORAL_ASSERT_MSG(newSize <= m_capacity, "Invalid new size!");
 		m_size = newSize;
 	}
 
 private:
-	template <s32 (*t_compare_func)(t_value&, t_value&)>
-	void partition(s32 lo, s32 hi)
+	template <size (*t_compare_func)(t_value&, t_value&)>
+	void partition(size lo, size hi)
 	{
 		if (lo >= hi) {
 			return;
 		}
 		// we choose pivot to be the center element (not the median-value) because of the simplicity
-		//s32 pivot = (lo + hi) / 2;
-		s32 pivot = lo + (hi - lo) / 2;
+		//size pivot = (lo + hi) / 2;
+		size pivot = lo + (hi - lo) / 2;
 		t_value pivotVal = m_data[pivot];
-		//s32 i = lo - 1, j = hi + 1;
-		s32 i = lo, j = hi;
+		//size i = lo - 1, j = hi + 1;
+		size i = lo, j = hi;
 		while (i <= j) {
 			while (t_compare_func(m_data[i], pivotVal) > 0) i++;
 			while (t_compare_func(m_data[j], pivotVal) < 0) j--;
@@ -342,8 +392,8 @@ private:
 	}
 
 private:
-	u32										m_size;
-	u32										m_capacity;
+	size									m_size;
+	size									m_capacity;
 
 	pointer_t								m_data;
 	allocator_ptr_t							m_allocator;

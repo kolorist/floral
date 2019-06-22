@@ -78,7 +78,7 @@ void apply_tranforms(const s32 i_vtxFormat, const u32 i_vtxCount, const size i_v
 
 	for (size i = 0; i < s_topXForm; i++)
 	{
-		m = m * s_xformStack[i];
+		m = s_xformStack[i] *  m;
 	}
 
 	aptr vtxData = (aptr)io_vtxData;
@@ -229,7 +229,7 @@ geo_generate_result_t generate_quadtes_plane_3d(
 
 //----------------------------------------------
 
-geo_generate_result_t generate_unit_plane_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
+geo_generate_result_t create_unit_plane_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
 {
 	FLORAL_ASSERT_MSG(TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
 
@@ -558,6 +558,17 @@ geo_generate_result_t generate_unit_icosphere_3d(const s32 i_startIdx, const siz
 
 //----------------------------------------------
 
+geo_generate_result_t generate_unit_plane_3d(
+		const s32 i_startIdx, const size i_vtxStride,
+		const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
+{
+	geo_generate_result_t objResult = create_unit_plane_3d(i_startIdx, i_vtxStride, i_vtxFormat, o_vtxData, o_idxData);
+
+	apply_tranforms(i_vtxFormat, objResult.vertices_generated, i_vtxStride, o_vtxData);
+
+	return objResult;
+}
+
 manifold_geo_generate_result_t generate_manifold_quadtes_unit_plane_3d(
 		const s32 i_startIdx, const size i_vtxStride,
 		const s32 i_vtxFormat, const f32 i_quadSize, voidptr o_vtxData, s32* o_idxData,
@@ -573,6 +584,65 @@ manifold_geo_generate_result_t generate_manifold_quadtes_unit_plane_3d(
 		geo_generate_result_t objResult = generate_quadtes_plane_3d(
 				i_startIdx, i_vtxStride, i_vtxFormat,
 				i_quadSize, o_vtxData, o_idxData);
+
+		genResult.vertices_generated = objResult.vertices_generated;
+		genResult.indices_generated = objResult.indices_generated;
+	}
+
+	// generate the manifold object
+	{
+		geo_generate_result_t manifoldResult = generate_unit_box_3d(i_mnfStartIdx, i_mnfVtxStride, i_mnfVtxFormat, o_mnfVtxData, o_mnfIdxData);
+
+		aptr mnfVtxData = (aptr)o_mnfVtxData;
+		for (size i = 0; i < manifoldResult.vertices_generated; i++)
+		{
+			floral::vec3f* pos = (floral::vec3f*)mnfVtxData;
+			if (pos->x > 0.0f)
+				pos->x += i_mnfThickness;
+			else
+				pos->x -= i_mnfThickness;
+
+			if (pos->z > 0.0f)
+				pos->z += i_mnfThickness;
+			else
+				pos->z -= i_mnfThickness;
+
+			if (fabs(pos->y - 1.0f) < s_epsilon)
+			{
+				pos->y = 0.0f;
+			}
+			else if (fabs(pos->y + 1.0f) < s_epsilon)
+			{
+				pos->y = -i_mnfThickness;
+			}
+
+			mnfVtxData += i_mnfVtxStride;
+		}
+
+		apply_tranforms(i_mnfVtxFormat, manifoldResult.vertices_generated, i_mnfVtxStride, o_mnfVtxData);
+
+		genResult.manifold_vertices_generated = manifoldResult.vertices_generated;
+		genResult.manifold_indices_generated = manifoldResult.indices_generated;
+	}
+
+	return genResult;
+}
+
+manifold_geo_generate_result_t generate_manifold_unit_plane_3d(
+		const s32 i_startIdx, const size i_vtxStride,
+		const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData,
+		const s32 i_mnfStartIdx, const size i_mnfVtxStride, const f32 i_mnfThickness,
+		const s32 i_mnfVtxFormat, voidptr o_mnfVtxData, s32* o_mnfIdxData)
+{
+	FLORAL_ASSERT_MSG(i_mnfThickness > 0.0f, "Manifold thickness must be greater than 0");
+
+	manifold_geo_generate_result_t genResult;
+
+	// generate the plane
+	{
+		geo_generate_result_t objResult = create_unit_plane_3d(i_startIdx, i_vtxStride, i_vtxFormat, o_vtxData, o_idxData);
+
+		apply_tranforms(i_vtxFormat, objResult.vertices_generated, i_vtxStride, o_vtxData);
 
 		genResult.vertices_generated = objResult.vertices_generated;
 		genResult.indices_generated = objResult.indices_generated;
@@ -607,19 +677,17 @@ manifold_geo_generate_result_t generate_manifold_quadtes_unit_plane_3d(
 	return genResult;
 }
 
-manifold_geo_generate_result_t generate_manifold_unit_plane_3d(
+manifold_geo_generate_result_t generate_manifold_icosphere_3d(
 		const s32 i_startIdx, const size i_vtxStride,
 		const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData,
 		const s32 i_mnfStartIdx, const size i_mnfVtxStride, const f32 i_mnfThickness,
 		const s32 i_mnfVtxFormat, voidptr o_mnfVtxData, s32* o_mnfIdxData)
 {
 	FLORAL_ASSERT_MSG(i_mnfThickness > 0.0f, "Manifold thickness must be greater than 0");
-
 	manifold_geo_generate_result_t genResult;
 
-	// generate the plane
 	{
-		geo_generate_result_t objResult = generate_unit_plane_3d(i_startIdx, i_vtxStride, i_vtxFormat, o_vtxData, o_idxData);
+		geo_generate_result_t objResult = generate_unit_icosphere_3d(i_startIdx, i_vtxStride, i_vtxFormat, o_vtxData, o_idxData);
 
 		apply_tranforms(i_vtxFormat, objResult.vertices_generated, i_vtxStride, o_vtxData);
 
@@ -627,30 +695,13 @@ manifold_geo_generate_result_t generate_manifold_unit_plane_3d(
 		genResult.indices_generated = objResult.indices_generated;
 	}
 
-	// generate the manifold object
 	{
-		geo_generate_result_t manifoldResult = generate_unit_box_3d(i_mnfStartIdx, i_mnfVtxStride, i_mnfVtxFormat, o_mnfVtxData, o_mnfIdxData);
+		geo_generate_result_t objResult = generate_unit_icosphere_3d(i_mnfStartIdx, i_mnfVtxStride, i_mnfVtxFormat, o_mnfVtxData, o_mnfIdxData);
 
-		aptr mnfVtxData = (aptr)o_mnfVtxData;
-		for (size i = 0; i < manifoldResult.vertices_generated; i++)
-		{
-			floral::vec3f* pos = (floral::vec3f*)mnfVtxData;
-			if (fabs(pos->y - 1.0f) < s_epsilon)
-			{
-				pos->y = 0.0f;
-			}
-			else if (fabs(pos->y + 1.0f) < s_epsilon)
-			{
-				pos->y = -i_mnfThickness;
-			}
+		apply_tranforms(i_mnfVtxFormat, objResult.vertices_generated, i_mnfVtxStride, o_mnfVtxData);
 
-			mnfVtxData += i_mnfVtxStride;
-		}
-
-		apply_tranforms(i_mnfVtxFormat, manifoldResult.vertices_generated, i_mnfVtxStride, o_mnfVtxData);
-
-		genResult.manifold_vertices_generated = manifoldResult.vertices_generated;
-		genResult.manifold_indices_generated = manifoldResult.indices_generated;
+		genResult.manifold_vertices_generated = objResult.vertices_generated;
+		genResult.manifold_indices_generated = objResult.indices_generated;
 	}
 
 	return genResult;

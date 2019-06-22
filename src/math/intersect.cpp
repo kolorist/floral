@@ -9,11 +9,14 @@ namespace floral {
 const bool ray_triangle_intersect(const ray3df& i_ray,
 		const floral::vec3f& i_p0, const floral::vec3f& i_p1, const floral::vec3f& i_p2, f32* o_t)
 {
+	const f32 epsilon = 0.00001f;
+
 	vec3f e1 = i_p1 - i_p0;
 	vec3f e2 = i_p2 - i_p0;
 	vec3f s1 = cross(i_ray.d, e2);
 	f32 divisor = dot(s1, e1);
-	if (divisor == 0.0f)
+	//if (divisor == 0.0f)
+	if (fabs(divisor) <= epsilon)
 		return false;
 
 	f32 invDivisor = 1.0f / divisor;
@@ -21,17 +24,59 @@ const bool ray_triangle_intersect(const ray3df& i_ray,
 	// first barycentric coordinate
 	vec3f d = i_ray.o - i_p0;
 	f32 b1 = dot(d, s1) * invDivisor;
-	if (b1 < 0.0f || b1 > 1.0f)
+	//if (b1 < 0.0f || b1 > 1.0f)
+	if (b1 < -epsilon || b1 > (1.0f + epsilon))
 		return false;
 
 	// second barycentric coordinate
 	vec3f s2 = cross(d, e1);
 	f32 b2 = dot(i_ray.d, s2) * invDivisor;
-	if (b2 < 0.0f || b1 + b2 > 1.0f)
+	//if (b2 < 0.0f || b1 + b2 > 1.0f)
+	if (b2 < -epsilon || b1 + b2 > (1.0f + epsilon))
 		return false;
 
 	// t to intersection point
 	*o_t = dot(e2, s2) * invDivisor;
+
+	return true;
+}
+
+//----------------------------------------------
+
+const bool ray_triangle_intersect(const ray3df& i_ray,
+		const floral::vec3f& i_p0, const floral::vec3f& i_p1, const floral::vec3f& i_p2,
+		f32* o_t, f32* o_b0, f32* o_b1)
+{
+	const f32 epsilon = 0.00001f;
+
+	vec3f e1 = i_p1 - i_p0;
+	vec3f e2 = i_p2 - i_p0;
+	vec3f s1 = cross(i_ray.d, e2);
+	f32 divisor = dot(s1, e1);
+	//if (divisor == 0.0f)
+	if (fabs(divisor) <= epsilon)
+		return false;
+
+	f32 invDivisor = 1.0f / divisor;
+
+	// first barycentric coordinate
+	vec3f d = i_ray.o - i_p0;
+	f32 b1 = dot(d, s1) * invDivisor;
+	//if (b1 < 0.0f || b1 > 1.0f)
+	if (b1 < -epsilon || b1 > (1.0f + epsilon))
+		return false;
+
+	// second barycentric coordinate
+	vec3f s2 = cross(d, e1);
+	f32 b2 = dot(i_ray.d, s2) * invDivisor;
+	//if (b2 < 0.0f || b1 + b2 > 1.0f)
+	if (b2 < -epsilon || b1 + b2 > (1.0f + epsilon))
+		return false;
+
+	// t to intersection point
+	*o_t = dot(e2, s2) * invDivisor;
+	*o_b0 = b1;
+	*o_b1 = b2;
 
 	return true;
 }
@@ -92,6 +137,14 @@ const bool point_inside_aabb(
 	return (i_p.x >= i_aabb.min_corner.x && i_p.x <= i_aabb.max_corner.x
 		&& i_p.y >= i_aabb.min_corner.y && i_p.y <= i_aabb.max_corner.y
 		&& i_p.z >= i_aabb.min_corner.z && i_p.z <= i_aabb.max_corner.z);
+}
+
+//----------------------------------------------
+
+const bool point_in_positive_region_of_plane(
+		const floral::vec3f& i_p, const floral::vec3f& i_p0, const floral::vec3f& i_normal)
+{
+	return true;
 }
 
 }
