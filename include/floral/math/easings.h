@@ -2,7 +2,7 @@
 
 #include "floral/stdaliases.h"
 
-#include <math.h>
+#include <cmath>
 
 namespace floral {
 

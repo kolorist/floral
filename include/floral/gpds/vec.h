@@ -2,7 +2,7 @@
 
 #include "floral/stdaliases.h"
 
-#include <math.h>
+#include <cmath>
 
 namespace floral {
 
@@ -121,8 +121,8 @@ template <typename t_type> const t_type dot(const vec2<t_type>& i_a, const vec2<
 	return (i_a.x * i_b.x + i_a.y * i_b.y);
 }
 
-template <typename t_type> const f32 length(const vec2<t_type>& i_a) {
-	return sqrtf(i_a.x * i_a.x + i_a.y * i_a.y);
+template <typename t_type> const t_type length(const vec2<t_type>& i_a) {
+	return sqrt(i_a.x * i_a.x + i_a.y * i_a.y);
 }
 
 template <typename t_type> const vec2<t_type> normalize(const vec2<t_type>& i_a) {
@@ -261,12 +261,12 @@ template <typename t_type> const vec3<t_type> cross(const vec3<t_type>& i_a, con
 			i_a.x * i_b.y - i_a.y * i_b.x);
 }
 
-template <typename t_type> const f32 length(const vec3<t_type>& i_a) {
-	return sqrtf(i_a.x * i_a.x + i_a.y * i_a.y + i_a.z * i_a.z);
+template <typename t_type> const t_type length(const vec3<t_type>& i_a) {
+	return sqrt(i_a.x * i_a.x + i_a.y * i_a.y + i_a.z * i_a.z);
 }
 
 template <typename t_type> const vec3<t_type> normalize(const vec3<t_type>& i_a) {
-	f32 len = length(i_a);
+	t_type len = length(i_a);
 	return vec3<t_type>(i_a.x / len, i_a.y / len, i_a.z / len);
 }
 // ---------------------------------------------

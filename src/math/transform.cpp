@@ -180,4 +180,19 @@ mat3x3f construct_transpose(const mat3x3f& i_m)
 	tMat[2][0] = i_m[0][2]; tMat[2][1] = i_m[1][2]; tMat[2][2] = i_m[2][2];
 	return tMat;
 }
+
+vec3f apply_vector_transform(const vec3f& i_v, const mat4x4f& i_m)
+{
+	vec4f tmp(i_v.x, i_v.y, i_v.z, 0.0f);
+	tmp = i_m * tmp;
+	return vec3f(tmp.x, tmp.y, tmp.z);
+}
+
+vec3f apply_point_transform(const vec3f& i_p, const mat4x4f& i_m)
+{
+	vec4f tmp(i_p.x, i_p.y, i_p.z, 1.0f);
+	tmp = i_m * tmp;
+	return vec3f(tmp.x, tmp.y, tmp.z);
+}
+
 }

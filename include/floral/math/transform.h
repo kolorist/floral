@@ -33,4 +33,7 @@ mat3x3f construct_invert(const mat3x3f& i_m);
 mat4x4f construct_transpose(const mat4x4f& i_m);
 mat3x3f construct_transpose(const mat3x3f& i_m);
 
+vec3f apply_vector_transform(const vec3f& i_v, const mat4x4f& i_m);
+vec3f apply_point_transform(const vec3f& i_p, const mat4x4f& i_m);
+
 }
