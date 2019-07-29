@@ -8,7 +8,7 @@
 
 namespace floral {
 
-template <class t_value, size t_capacity>
+template <class t_value, ssize t_capacity>
 class inplace_array {
 	typedef			t_value					value_t;
 	typedef			const t_value			const_value_t;
@@ -27,7 +27,7 @@ public:
 		m_size = 0;
 		
 		FLORAL_ASSERT_MSG((int)m_capacity > 0, "Cannot create an non-positive-capacity array");
-		for (size i = 0; i < m_capacity; i++) {
+		for (ssize i = 0; i < m_capacity; i++) {
 			m_data[i] = value_t();
 		}
 	}
@@ -47,39 +47,39 @@ public:
 	}
 
 	void clear() {
-		for (size i = 0; i < m_size; i++) {
+		for (ssize i = 0; i < m_size; i++) {
 			m_data[i] = value_t();
 		}
 		m_size = 0;
 	}
 
-	const size								get_size() const					{ return m_size; }
-	const size								get_capacity() const				{ return m_capacity; }
-	const size								get_terminated_index() const		{ return m_size; }
-	const_value_t at(const size index) const {
+	const ssize								get_size() const					{ return m_size; }
+	const ssize								get_capacity() const				{ return m_capacity; }
+	const ssize								get_terminated_index() const		{ return m_size; }
+	const_value_t at(const ssize index) const {
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
 
-	const size find(const t_value& value, 
+	const ssize find(const t_value& value, 
 		bool (*cmpFunc)(const t_value&, const t_value&),
-		const size fromId = 0, const size toId = 0) const 
+		const ssize fromId = 0, const ssize toId = 0) const 
 	{
-		size from = fromId;
-		size to = toId > 0 ? toId : m_size;
+		ssize from = fromId;
+		ssize to = toId > 0 ? toId : m_size;
 
-		for (size i = from; i < to; i++) {
+		for (ssize i = from; i < to; i++) {
 			if (cmpFunc(m_data[i], value))
 				return i;
 		}
 		return m_size;
 	}
 	
-	const size find(const t_value& value, const size fromId = 0, const size toId = 0) const {
-		size from = fromId;
-		size to = toId > 0 ? toId : m_size;
+	const ssize find(const t_value& value, const ssize fromId = 0, const ssize toId = 0) const {
+		ssize from = fromId;
+		ssize to = toId > 0 ? toId : m_size;
 
-		for (size i = from; i < to; i++) {
+		for (ssize i = from; i < to; i++) {
 			if (m_data[i] == value)
 				return i;
 		}
@@ -87,12 +87,12 @@ public:
 	}
 
 	// operator overloading
-	reference_t operator[](const size index) {
+	reference_t operator[](const ssize index) {
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
 
-	const t_value& operator[](const size index) const {
+	const t_value& operator[](const ssize index) const {
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
@@ -102,7 +102,7 @@ public:
 		if (this != &i_other) {
 			FLORAL_ASSERT_MSG(m_capacity >= i_other.m_size, "Not enough capacity in destination array");
 			empty();
-			for (size i = 0; i < i_other.m_size; i++) {
+			for (ssize i = 0; i < i_other.m_size; i++) {
 				m_data[i] = i_other.m_data[i];
 			}
 			m_size = i_other.m_size;
@@ -112,25 +112,25 @@ public:
 
 	// TODO: cannot sure if this works correctly, need to compare with std::vector or something similar
 	// review ref: https://codereview.stackexchange.com/questions/77782/quick-sort-implementation
-	template <size (*t_compare_func)(t_value&, t_value&)>
+	template <ssize (*t_compare_func)(t_value&, t_value&)>
 	void sort()
 	{
 		partition<t_compare_func>(0, m_size - 1);
 	}
 
 private:
-	template <size (*t_compare_func)(t_value&, t_value&)>
-	void partition(size lo, size hi)
+	template <ssize (*t_compare_func)(t_value&, t_value&)>
+	void partition(ssize lo, ssize hi)
 	{
 		if (lo >= hi) {
 			return;
 		}
 		// we choose pivot to be the center element (not the median-value) because of the simplicity
-		//size pivot = (lo + hi) / 2;
-		size pivot = lo + (hi - lo) / 2;
+		//ssize pivot = (lo + hi) / 2;
+		ssize pivot = lo + (hi - lo) / 2;
 		t_value pivotVal = m_data[pivot];
-		//size i = lo - 1, j = hi + 1;
-		size i = lo, j = hi;
+		//ssize i = lo - 1, j = hi + 1;
+		ssize i = lo, j = hi;
 		while (i <= j) {
 			while (t_compare_func(m_data[i], pivotVal) > 0) i++;
 			while (t_compare_func(m_data[j], pivotVal) < 0) j--;
@@ -148,8 +148,8 @@ private:
 	}
 
 private:
-	size										m_size;
-	size										m_capacity;
+	ssize										m_size;
+	ssize										m_capacity;
 
 	value_t									m_data[t_capacity];
 };
@@ -184,14 +184,14 @@ public:
 		// nothing
 	}
 
-	fixed_array(const size i_capacity, allocator_ptr_t i_myAllocator)
+	fixed_array(const ssize i_capacity, allocator_ptr_t i_myAllocator)
 		: m_allocator(i_myAllocator)
 	{
 		reserve(i_capacity);
 	}
 	
 	// deprecated
-	void init(const size i_capacity, allocator_ptr_t i_allocator)
+	void init(const ssize i_capacity, allocator_ptr_t i_allocator)
 	{
 		m_capacity = i_capacity;
 		m_allocator = i_allocator;
@@ -199,26 +199,26 @@ public:
 		
 		FLORAL_ASSERT_MSG((int)i_capacity > 0, "Cannot create an non-positive-capacity array");
 		m_data = m_allocator->template allocate_array<value_t>(m_capacity);
-		for (size i = 0; i < m_capacity; i++)
+		for (ssize i = 0; i < m_capacity; i++)
 		{
 			m_data[i] = value_t();
 		}
 	}
 
-	void reserve(const size i_capacity, allocator_ptr_t i_newAllocator)
+	void reserve(const ssize i_capacity, allocator_ptr_t i_newAllocator)
 	{
 		m_allocator = i_newAllocator;
 		reserve(i_capacity);
 	}
 
-	void reserve(const size i_capacity)
+	void reserve(const ssize i_capacity)
 	{
 		m_capacity = i_capacity;
 		m_size = 0;
 		
 		FLORAL_ASSERT_MSG((int)i_capacity > 0, "Cannot create an non-positive-capacity array");
 		m_data = m_allocator->template allocate_array<value_t>(m_capacity);
-		for (size i = 0; i < m_capacity; i++)
+		for (ssize i = 0; i < m_capacity; i++)
 		{
 			m_data[i] = value_t();
 		}
@@ -242,6 +242,9 @@ public:
 		if (m_data)
 		{
 			m_allocator->free(m_data);
+			m_data = nullptr;
+			m_capacity = 0;
+			m_size = 0;
 		}
 	}
 
@@ -259,41 +262,41 @@ public:
 
 	inline void clear()
 	{
-		for (size i = 0; i < m_size; i++)
+		for (ssize i = 0; i < m_size; i++)
 		{
 			m_data[i] = value_t();
 		}
 		m_size = 0;
 	}
 
-	inline const size							get_size() const					{ return m_size; }
-	inline const size							get_capacity() const				{ return m_capacity; }
-	inline const size							get_terminated_index() const		{ return m_size; }
-	inline const_value_t at(const size index) const
+	inline const ssize							get_size() const					{ return m_size; }
+	inline const ssize							get_capacity() const				{ return m_capacity; }
+	inline const ssize							get_terminated_index() const		{ return m_size; }
+	inline const_value_t at(const ssize index) const
 	{
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
 
-	const size find(const t_value& value, 
+	const ssize find(const t_value& value, 
 		bool (*cmpFunc)(const t_value&, const t_value&),
-		const size fromId = 0, const size toId = 0) const 
+		const ssize fromId = 0, const ssize toId = 0) const 
 	{
-		size from = fromId;
-		size to = toId > 0 ? toId : m_size;
+		ssize from = fromId;
+		ssize to = toId > 0 ? toId : m_size;
 
-		for (size i = from; i < to; i++) {
+		for (ssize i = from; i < to; i++) {
 			if (cmpFunc(m_data[i], value))
 				return i;
 		}
 		return m_size;
 	}
 	
-	const size find(const t_value& value, const size fromId = 0, const size toId = 0) const {
-		size from = fromId;
-		size to = toId > 0 ? toId : m_size;
+	const ssize find(const t_value& value, const ssize fromId = 0, const ssize toId = 0) const {
+		ssize from = fromId;
+		ssize to = toId > 0 ? toId : m_size;
 
-		for (size i = from; i < to; i++) {
+		for (ssize i = from; i < to; i++) {
 			if (m_data[i] == value)
 				return i;
 		}
@@ -301,13 +304,13 @@ public:
 	}
 
 	// operator overloading
-	inline reference_t operator[](const size index)
+	inline reference_t operator[](const ssize index)
 	{
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
 
-	inline const t_value& operator[](const size index) const
+	inline const t_value& operator[](const ssize index) const
 	{
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
@@ -319,7 +322,7 @@ public:
 		if (this != &i_other) {
 			FLORAL_ASSERT_MSG(m_capacity >= i_other.m_size, "Not enough capacity in destination array");
 			empty();
-			for (size i = 0; i < i_other.m_size; i++) {
+			for (ssize i = 0; i < i_other.m_size; i++) {
 				m_data[i] = i_other.m_data[i];
 			}
 			m_size = i_other.m_size;
@@ -344,37 +347,37 @@ public:
 
 	// TODO: cannot sure if this works correctly, need to compare with std::vector or something similar
 	// review ref: https://codereview.stackexchange.com/questions/77782/quick-sort-implementation
-	template <size (*t_compare_func)(t_value&, t_value&)>
+	template <ssize (*t_compare_func)(t_value&, t_value&)>
 	void sort()
 	{
 		partition<t_compare_func>(0, m_size - 1);
 	}
 
-	inline void resize(const size i_newSize)
+	inline void resize(const ssize i_newSize)
 	{
-		FLORAL_ASSERT_MSG(i_newSize <= m_capacity, "Invalid new size!");
+		FLORAL_ASSERT_MSG(i_newSize <= m_capacity, "Invalid new ssize!");
 		m_size = i_newSize;
 	}
 
 	// depreacted
-	void resize_ex(const size newSize) {
-		FLORAL_ASSERT_MSG(newSize <= m_capacity, "Invalid new size!");
+	void resize_ex(const ssize newSize) {
+		FLORAL_ASSERT_MSG(newSize <= m_capacity, "Invalid new ssize!");
 		m_size = newSize;
 	}
 
 private:
-	template <size (*t_compare_func)(t_value&, t_value&)>
-	void partition(size lo, size hi)
+	template <ssize (*t_compare_func)(t_value&, t_value&)>
+	void partition(ssize lo, ssize hi)
 	{
 		if (lo >= hi) {
 			return;
 		}
 		// we choose pivot to be the center element (not the median-value) because of the simplicity
-		//size pivot = (lo + hi) / 2;
-		size pivot = lo + (hi - lo) / 2;
+		//ssize pivot = (lo + hi) / 2;
+		ssize pivot = lo + (hi - lo) / 2;
 		t_value pivotVal = m_data[pivot];
-		//size i = lo - 1, j = hi + 1;
-		size i = lo, j = hi;
+		//ssize i = lo - 1, j = hi + 1;
+		ssize i = lo, j = hi;
 		while (i <= j) {
 			while (t_compare_func(m_data[i], pivotVal) > 0) i++;
 			while (t_compare_func(m_data[j], pivotVal) < 0) j--;
@@ -392,8 +395,8 @@ private:
 	}
 
 private:
-	size									m_size;
-	size									m_capacity;
+	ssize									m_size;
+	ssize									m_capacity;
 
 	pointer_t								m_data;
 	allocator_ptr_t							m_allocator;
