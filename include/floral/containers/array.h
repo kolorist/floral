@@ -42,6 +42,13 @@ public:
 		m_size++;
 	}
 	
+	t_value pop_back() {
+		FLORAL_ASSERT_MSG(m_size > 0, "Cannot pop_back an empty array");
+		t_value retVal = m_data[m_size - 1];
+		m_size--;
+		return retVal;
+	}
+	
 	void empty() {
 		m_size = 0;
 	}
@@ -253,6 +260,13 @@ public:
 		FLORAL_ASSERT_MSG(m_size + 1 <= m_capacity, "Not enough array memory for push_back");
 		m_data[m_size] = i_value;
 		m_size++;
+	}
+	
+	t_value pop_back() {
+		FLORAL_ASSERT_MSG(m_size > 0, "Cannot pop_back an empty array");
+		t_value retVal = m_data[m_size - 1];
+		m_size--;
+		return retVal;
 	}
 	
 	inline void empty()
@@ -468,6 +482,13 @@ public:
 		}
 		m_data[m_size] = v;
 		m_size++;
+	}
+	
+	t_value pop_back() {
+		FLORAL_ASSERT_MSG(m_size > 0, "Cannot pop_back an empty array");
+		t_value retVal = m_data[m_size - 1];
+		m_size--;
+		return retVal;
 	}
 	
 	void empty() {
