@@ -63,7 +63,7 @@ public:
 	const ssize								get_size() const					{ return m_size; }
 	const ssize								get_capacity() const				{ return m_capacity; }
 	const ssize								get_terminated_index() const		{ return m_size; }
-	const_value_t at(const ssize index) const {
+	inline reference_t at(const ssize index) const {
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
@@ -286,7 +286,7 @@ public:
 	inline const ssize							get_size() const					{ return m_size; }
 	inline const ssize							get_capacity() const				{ return m_capacity; }
 	inline const ssize							get_terminated_index() const		{ return m_size; }
-	inline const_value_t at(const ssize index) const
+	inline reference_t at(const ssize index) const
 	{
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
@@ -505,7 +505,7 @@ public:
 	const u32								get_size() const					{ return m_size; }
 	const u32								get_capacity() const				{ return m_capacity; }
 	const u32								get_terminated_index() const		{ return m_size; }
-	const_value_t at(const u32 index) const {
+	inline reference_t at(const u32 index) const {
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}

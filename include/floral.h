@@ -22,6 +22,7 @@
 #include <floral/math/transform.h>
 #include <floral/math/easings.h>
 #include <floral/math/coordinate.h>
+#include <floral/math/rng.h>
 ////////////////////////////////////////////////
 #include <floral/thread/thread.h>
 #include <floral/thread/mutex.h>
