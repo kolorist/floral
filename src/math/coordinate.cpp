@@ -91,5 +91,13 @@ f32 texel_coord_to_solid_angle(const s32 i_faceIdx, const f32 i_u, const f32 i_v
 
 	return solidAngle;
 }
-	
+
+//----------------------------------------------
+f32 get_triangle_area(const vec3f& i_v0, const vec3f& i_v1, const vec3f& i_v2)
+{
+	vec3f ab = i_v1 - i_v0;
+	vec3f ac = i_v2 - i_v0;
+	return length(cross(ab, ac)) / 2.0f;
+}
+
 }
