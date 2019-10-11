@@ -5,7 +5,8 @@
 #include "floral/gpds/mat.h"
 #include "floral/gpds/quaternion.h"
 
-namespace floral {
+namespace floral
+{
 
 mat4x4f construct_translation3d(const f32 i_deltaX, const f32 i_deltaY, const f32 i_deltaZ);
 mat4x4f construct_translation3d(const vec3f& i_delta);
@@ -26,6 +27,8 @@ mat4x4f construct_axis_rotation3d(const vec3f& i_axis, const f32 i_angle);
 quaternionf construct_quaternion_euler(const vec3f& i_r);
 quaternionf construct_quaternion_euler(const f32 i_rx, const f32 i_ry, const f32 i_rz);
 quaternionf construct_quaternion_axis(const vec3f& i_axis, const f32 i_r);
+quaternionf construct_quaternion_axis_rad(const vec3f& i_axis, const f32 i_r);
+quaternionf construct_quaternion_v2v(const vec3f& i_v0, const vec3f& i_v1);
 
 mat4x4f construct_invert(const mat4x4f& i_m);
 mat3x3f construct_invert(const mat3x3f& i_m);

@@ -150,6 +150,48 @@ quaternionf construct_quaternion_axis(const vec3f& i_axis, const f32 i_r)
 	return q;
 }
 
+quaternionf construct_quaternion_axis_rad(const vec3f& i_axis, const f32 i_r)
+{
+	quaternionf q;
+	//vec3f n = normalize(i_axis);
+	f32 halfTheta = i_r / 2.0f;
+	q.v = -i_axis * sinf(halfTheta);
+	q.w = cosf(halfTheta);
+	return q;
+}
+
+quaternionf construct_quaternion_v2v(const vec3f& i_v0, const vec3f& i_v1)
+{
+	static constexpr f32 k_epsilon = 0.001f;
+	if (equal(i_v0, i_v1, k_epsilon))
+	{
+		return construct_quaternion_axis_rad(i_v0, 0.0f);
+	}
+	else if (equal(i_v0, -i_v1, k_epsilon))
+	{
+		vec3f v(0.0f);
+		if (fabs(i_v0.x) < k_epsilon)
+		{
+			v.x = 1.0f;
+		}
+		else if (fabs(i_v0.y) < k_epsilon)
+		{
+			v.y = 1.0f;
+		}
+		else
+		{
+			v.z = 1.0f;
+		}
+		return construct_quaternion_axis_rad(v, pi);
+	}
+
+	vec3f u0 = normalize(i_v0);
+	vec3f u1 = normalize(i_v1);
+	vec3f v = cross(u0, u1);
+	f32 angleRad = acosf(dot(u0, u1));
+	return construct_quaternion_axis_rad(v, angleRad);
+}
+
 mat4x4f construct_invert(const mat4x4f& i_m)
 {
 	mat4x4f tMat;

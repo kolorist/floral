@@ -5,6 +5,7 @@
 namespace floral {
 
 constexpr f32 pi = 3.1415926525898f;
+constexpr f32 half_pi = 1.5707963267948966f;
 #define PI										3.1415926525898f
 
 #define		TEST_BIT(target, bitmask)			(target & bitmask)

@@ -129,6 +129,11 @@ template <typename t_type> const vec2<t_type> normalize(const vec2<t_type>& i_a)
 	f32 len = length(i_a);
 	return vec2<t_type>(i_a.x / len, i_a.y / len);
 }
+
+template <typename t_type> const bool equal(const vec2<t_type>& i_a, const vec2<t_type>& i_b, const f32 i_epsilon) {
+	f32 disp = length(i_a - i_b);
+	return (disp < i_epsilon);
+}
 // ---------------------------------------------
 
 template <class t_type>
@@ -268,6 +273,11 @@ template <typename t_type> const t_type length(const vec3<t_type>& i_a) {
 template <typename t_type> const vec3<t_type> normalize(const vec3<t_type>& i_a) {
 	t_type len = length(i_a);
 	return vec3<t_type>(i_a.x / len, i_a.y / len, i_a.z / len);
+}
+
+template <typename t_type> const bool equal(const vec3<t_type>& i_a, const vec3<t_type>& i_b, const f32 i_epsilon) {
+	f32 disp = length(i_a - i_b);
+	return (disp < i_epsilon);
 }
 // ---------------------------------------------
 
@@ -411,6 +421,11 @@ template <typename t_type> const f32 length(const vec4<t_type>& i_a) {
 template <typename t_type> const vec4<t_type> normalize(const vec4<t_type>& i_a) {
 	f32 len = length(i_a);
 	return vec4<t_type>(i_a.x / len, i_a.y / len, i_a.z / len, i_a.w / len);
+}
+
+template <typename t_type> const bool equal(const vec4<t_type>& i_a, const vec4<t_type>& i_b, const f32 i_epsilon) {
+	f32 disp = length(i_a - i_b);
+	return (disp < i_epsilon);
 }
 
 template <typename t_type> const f32 angle(const vec3<t_type>& i_a, const vec3<t_type>& i_b) {
