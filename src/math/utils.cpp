@@ -1,4 +1,4 @@
-#include "math/utils.h"
+#include "floral/math/utils.h"
 
 #include <math.h>
 
@@ -30,10 +30,10 @@ namespace floral {
 		static const u32 k_CRCTopBit = 1 << (k_CRCWidth - 1);
 		static const u32 k_Polynomial = 0xD8;
 
-		const u32 strLen = strlen(nullTerminatedStr);
+		const size strLen = strlen(nullTerminatedStr);
 		u32 remainder = 0;
 
-		for (u32 byte = 0; byte < strLen; byte++) {
+		for (size byte = 0; byte < strLen; byte++) {
 			remainder ^= (nullTerminatedStr[byte] << (k_CRCWidth - 8));
 			for (u8 bit = 8; bit > 0; bit--) {
 				if (remainder & k_CRCTopBit) {

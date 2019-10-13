@@ -1,16 +1,12 @@
-#include "assert/assert.h"
+#include "floral/assert/assert.h"
 
-#include <Windows.h>
+#include "floral/assert/StackWalker.h"
+#include "floral/thread/mutex.h"
+
 #include <stdio.h>
+#include <cassert>
 #include <commctrl.h>
-
-#include <assert/StackWalker.h>
-#include <thread/mutex.h>
-
-// use this pragma in order to enable visual style v6 by generating application manifest
-#pragma comment(linker,"\"/manifestdependency:type='win32' \
-name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
-processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#include <Windows.h>
 
 namespace floral {
 
@@ -18,6 +14,7 @@ namespace floral {
 	static StackWalker							g_stack_walker;
 
 	static mutex								g_stacktrace_mtx;
+	static mutex								g_dlg_mtx;
 
 	void get_stack_trace(cstr stackTraceBuffer)
 	{
@@ -48,55 +45,16 @@ namespace floral {
 		return assertion_report_dlg("", msg, file, line);
 	}
 
+	static c8 s_stack_trace[4096];
+
 	assert_action_e assertion_report_dlg(const_cstr title, const_cstr msg, const_cstr file, const u32 line)
 	{
-		s32 buttonPressed = 0;
-		wchar_t wTitle[1024];
-		wchar_t wMsg[4096];
-		wchar_t wFile[1024];
-		MultiByteToWideChar(CP_ACP, 0, title, -1, wTitle, 1024);
-		MultiByteToWideChar(CP_ACP, 0, msg, -1, wMsg, 4096);
-		MultiByteToWideChar(CP_ACP, 0, file, -1, wFile, 1024);
-
-		wchar_t wContent[4096];
-		c8 stackTrace[8192];
-		wchar_t wStackTrace[8192];
-		_snwprintf(wContent, 8192, L"File: %s\nLine: %d\nMessage: %s",
-				wFile, line, wMsg);
-		memset(stackTrace, 0, sizeof(stackTrace));
-		get_stack_trace(stackTrace);
-		MultiByteToWideChar(CP_ACP, 0, stackTrace, -1, wStackTrace, 8192);
-
-		TASKDIALOGCONFIG config = { 0 };
-		const TASKDIALOG_BUTTON buttons[]   = { 
-			{ IDOK,		L"Abort" },
-			{ IDRETRY,	L"Debug break" },
-			{ IDCLOSE,	L"Ignore" }
-		};
-		config.cbSize							= sizeof(config);
-		config.hInstance						= NULL;
-		config.dwFlags							= TDF_SIZE_TO_CONTENT | TDF_EXPAND_FOOTER_AREA;
-		config.pszWindowTitle					= L"floral assertion failed!";
-		config.pszMainIcon						= TD_ERROR_ICON;
-		config.pszMainInstruction				= wTitle;
-		config.pszContent						= wContent;
-		config.pButtons							= buttons;
-		config.cButtons							= ARRAYSIZE(buttons);
-		config.pszExpandedInformation			= wStackTrace;
-		config.pszExpandedControlText			= L"Hide Stacktrace";
-		config.pszCollapsedControlText			= L"Show Stacktrace";
-
-		TaskDialogIndirect(&config, &buttonPressed, NULL, NULL);
-
-		switch (buttonPressed) {
-			case IDOK:
-				return assert_action_e::abort;
-			case IDRETRY:
-				return assert_action_e::debug_break;
-			case IDCLOSE:
-				return assert_action_e::ignore;
-			default:
-				return assert_action_e::ignore;
-		}
+		memset(s_stack_trace, 0, sizeof(s_stack_trace));
+		get_stack_trace(s_stack_trace);
+		c8 errorStr[8192];
+		sprintf(errorStr, ">> expression: %s\n>> message: %s\n>> location: %s:%d\n>> stacktrace: \n%s\n",
+				title, msg, file, line, s_stack_trace);
+		OutputDebugStringA(errorStr);
+		return floral::assert_action_e::debug_break;
 	}
 }

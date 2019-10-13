@@ -1,10 +1,10 @@
-#include "cmds/path.h"
+#include "floral/cmds/path.h"
+
+#include "floral/stdaliases.h"
+#include "floral/math/utils.h"
 
 #include <cstring>
 #include <stdio.h>
-
-#include <stdaliases.h>
-#include <math/utils.h>
 
 namespace floral {
 	
@@ -31,27 +31,27 @@ namespace floral {
 	void path::UpdatePath(const_cstr newPath)
 	{
 		m_CRC32 = compute_crc32_naive(newPath);
-		strcpy_s(pm_PathStr, sizeof(pm_PathStr), newPath);
+		strcpy(pm_PathStr, newPath);
 
 		// is file?
-		s32 idx = strlen(pm_PathStr) - 1;
+		sidx idx = strlen(pm_PathStr) - 1;
 		while (idx >= 0 && pm_PathStr[idx] != '.' && pm_PathStr[idx] != '/') idx--;
 		if (idx >= 0 && pm_PathStr[idx] == '.') pm_IsFile = true;
 
 		if (pm_IsFile) {
 			while (idx >= 0 && pm_PathStr[idx] != '/') idx--;
-			strcpy_s(pm_FileName, sizeof(pm_FileName), &pm_PathStr[idx + 1]);
-			strcpy_s(pm_FileNameNoExt, sizeof(pm_FileName), &pm_PathStr[idx + 1]);
-			s32 dotPos = strlen(pm_FileNameNoExt) - 1;
+			strcpy(pm_FileName, &pm_PathStr[idx + 1]);
+			strcpy(pm_FileNameNoExt, &pm_PathStr[idx + 1]);
+			sidx dotPos = strlen(pm_FileNameNoExt) - 1;
 			while (dotPos >= 0 && pm_FileNameNoExt[dotPos] != '.') dotPos--;
 			memset(&pm_FileNameNoExt[dotPos], 0, strlen(pm_FileNameNoExt) - dotPos);
-			strcpy_s(pm_CurrentDir, sizeof(pm_CurrentDir), pm_PathStr);
+			strcpy(pm_CurrentDir, pm_PathStr);
 			memset(&pm_CurrentDir[idx], 0, strlen(pm_PathStr) - idx);
 			if (strlen(pm_CurrentDir) == 0) 
-				strcpy_s(pm_CurrentDir, sizeof(pm_CurrentDir), ".");
+				strcpy(pm_CurrentDir, ".");
 		}
 		else {
-			strcpy_s(pm_CurrentDir, sizeof(pm_CurrentDir), pm_PathStr);
+			strcpy(pm_CurrentDir, pm_PathStr);
 		}
 	}
 
