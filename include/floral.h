@@ -1,40 +1,39 @@
-#ifndef __FLORAL_H__
-#define __FLORAL_H__
+#pragma once
 
-#include <stdaliases.h>
+#include <floral/stdaliases.h>
 ////////////////////////////////////////////////
-#include <containers/array.h>
-#include <containers/fast_array.h>
-#include <containers/queue.h>
-#include <containers/ring_buffer.h>
+#include <floral/containers/array.h>
+#include <floral/containers/fast_array.h>
+#include <floral/containers/queue.h>
+#include <floral/containers/ring_buffer.h>
 ////////////////////////////////////////////////
-#include <gpds/vec.h>
-#include <gpds/mat.h>
-#include <gpds/geometry.h>
-#include <gpds/rect.h>
-#include <gpds/camera.h>
+#include <floral/gpds/vec.h>
+#include <floral/gpds/mat.h>
+#include <floral/gpds/geometry.h>
+#include <floral/gpds/rect.h>
+#include <floral/gpds/camera.h>
+#include <floral/gpds/quaternion.h>
 ////////////////////////////////////////////////
-#include <cmds/path.h>
-#include <cmds/crc_string.h>
+#include <floral/cmds/path.h>
+#include <floral/cmds/crc_string.h>
 ////////////////////////////////////////////////
-#include <math/utils.h>
-#include <math/intersect.h>
-#include <math/transform.h>
-#include <math/easings.h>
-#include <math/coordinate.h>
+#include <floral/math/utils.h>
+#include <floral/math/intersect.h>
+#include <floral/math/transform.h>
+#include <floral/math/easings.h>
+#include <floral/math/coordinate.h>
+#include <floral/math/rng.h>
 ////////////////////////////////////////////////
-#include <thread/thread.h>
-#include <thread/mutex.h>
-#include <thread/condition_variable.h>
+#include <floral/thread/thread.h>
+#include <floral/thread/mutex.h>
+#include <floral/thread/condition_variable.h>
 ////////////////////////////////////////////////
-#include <types/type_traits.h>
-#include <types/type_list.h>
+#include <floral/types/type_traits.h>
+#include <floral/types/type_list.h>
 ////////////////////////////////////////////////
-#include <assert/assert.h>
+#include <floral/assert/assert.h>
 //----------------------------------------------
-#include <io/nativeio.h>
+#include <floral/io/nativeio.h>
 //----------------------------------------------
-#include <function/functor.h>
-#include <function/simple_callback.h>
-
-#endif // __FLORAL_H__
+#include <floral/function/functor.h>
+#include <floral/function/simple_callback.h>

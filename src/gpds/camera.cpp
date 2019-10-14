@@ -1,6 +1,6 @@
-#include "gpds/camera.h"
+#include "floral/gpds/camera.h"
 
-#include <math/transform.h>
+#include "floral/math/transform.h"
 
 namespace floral {
 
@@ -9,9 +9,9 @@ mat4x4f construct_lookat_dir(const vec3f& upDir, const vec3f& camPos, const vec3
 	mat4x4f tMat;
 	tMat = construct_translation3d(-camPos);
 	mat4x4f lMat(1.0f);
-	vec3f lookAtDirNorm = -lookAtDir.normalize();
-	vec3f rightDirNorm = vec3f::cross(upDir, -lookAtDir).normalize();
-	vec3f topDirNorm = vec3f::cross(-lookAtDir, rightDirNorm).normalize();
+	vec3f lookAtDirNorm = -normalize(lookAtDir);
+	vec3f rightDirNorm = normalize(cross(upDir, -lookAtDir));
+	vec3f topDirNorm = normalize(cross(-lookAtDir, rightDirNorm));
 	lMat[0][0] = rightDirNorm.x;	lMat[0][1] = topDirNorm.x;	lMat[0][2] = lookAtDirNorm.x;
 	lMat[1][0] = rightDirNorm.y;	lMat[1][1] = topDirNorm.y;	lMat[1][2] = lookAtDirNorm.y;
 	lMat[2][0] = rightDirNorm.z;	lMat[2][1] = topDirNorm.z;	lMat[2][2] = lookAtDirNorm.z;

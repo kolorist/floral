@@ -1,5 +1,5 @@
-#include "thread/windows_thread.h"
-#include "thread/thread.h"						// api
+#include "floral/thread/windows_thread.h"
+#include "floral/thread/thread.h"
 
 namespace floral {
 

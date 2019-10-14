@@ -7,6 +7,9 @@
 #include "src/math/utils.cpp"
 #include "src/math/transform.cpp"
 #include "src/math/coordinate.cpp"
+#include "src/math/intersect.cpp"
+
+#include "src/comgeo/shapegen.cpp"
 
 #include "src/thread/thread.cpp"
 #include "src/thread/mutex.cpp"
@@ -28,7 +31,7 @@
 
 #include "src/io/nativeio.cpp"
 #elif defined(PLATFORM_POSIX)
-// TODO: port
+#include "src/io/nativeio_posix.cpp"
 #else
 // TODO: not supported
 #endif
