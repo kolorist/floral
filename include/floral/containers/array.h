@@ -117,6 +117,12 @@ public:
 		return *this;
 	}
 
+	inline void resize(const ssize i_newSize)
+	{
+		FLORAL_ASSERT_MSG(i_newSize <= m_capacity, "Invalid new ssize!");
+		m_size = i_newSize;
+	}
+
 	// TODO: cannot sure if this works correctly, need to compare with std::vector or something similar
 	// review ref: https://codereview.stackexchange.com/questions/77782/quick-sort-implementation
 	template <ssize (*t_compare_func)(t_value&, t_value&)>
@@ -672,4 +678,13 @@ private:
 	pointer_t								m_data;
 	allocator_ptr_t							m_allocator;
 };
+
+//----------------------------------------------
+
+template <class array_t>
+void free_array(array_t& i_array)
+{
+	i_array.~array_t();
+}
+
 }

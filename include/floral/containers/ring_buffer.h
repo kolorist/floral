@@ -29,6 +29,12 @@ class inplaced_ring_buffer_mt_spsc {
 #endif
 		}
 
+		void clear()
+		{
+			m_head.store(0, std::memory_order_relaxed);
+			m_tail.store(0, std::memory_order_relaxed);
+		}
+
 		// non-block
 		const bool try_pop_into(reference_t o_value)
 		{
