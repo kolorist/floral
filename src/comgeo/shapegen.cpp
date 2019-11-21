@@ -5,6 +5,8 @@
 #include "floral/gpds/vec.h"
 #include "floral/containers/array.h"
 
+#include <algorithm>
+
 namespace floral
 {
 
@@ -67,7 +69,7 @@ void reset_generation_transforms_stack()
 	s_topXForm = 0;
 }
 
-void apply_tranforms(const s32 i_vtxFormat, const u32 i_vtxCount, const size i_vtxStride, voidptr io_vtxData)
+void apply_tranforms(const geo_vertex_format_e i_vtxFormat, const u32 i_vtxCount, const size i_vtxStride, voidptr io_vtxData)
 {
 	if (s_topXForm == 0)
 	{
@@ -83,7 +85,7 @@ void apply_tranforms(const s32 i_vtxFormat, const u32 i_vtxCount, const size i_v
 
 	aptr vtxData = (aptr)io_vtxData;
 
-	if (TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::normal))
+	if (TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::normal))
 	{
 		for (u32 i = 0; i < i_vtxCount; i++)
 		{
@@ -134,10 +136,10 @@ void apply_tranforms(floral::vec4f& io_vec)
 //----------------------------------------------
 
 geo_generate_result_t generate_quadtes_plane_3d(
-		const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat,
+		const s32 i_startIdx, const size i_vtxStride, const geo_vertex_format_e i_vtxFormat,
 		const f32 i_quadSize, voidptr o_vtxData, s32* o_idxData)
 {
-	FLORAL_ASSERT_MSG(TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
+	FLORAL_ASSERT_MSG(TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
 
 	vertex_pn_t vertices[] =
 	{
@@ -196,7 +198,7 @@ geo_generate_result_t generate_quadtes_plane_3d(
 		}
 	}
 
-	if (TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::normal))
+	if (TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::normal))
 	{
 		for (u32 i = 0; i < vertexArray.get_size(); i++)
 		{
@@ -229,9 +231,9 @@ geo_generate_result_t generate_quadtes_plane_3d(
 
 //----------------------------------------------
 
-geo_generate_result_t create_unit_plane_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
+geo_generate_result_t create_unit_plane_3d(const s32 i_startIdx, const size i_vtxStride, const geo_vertex_format_e i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
 {
-	FLORAL_ASSERT_MSG(TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
+	FLORAL_ASSERT_MSG(TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
 
 	static const floral::vec3f vertices[] =
 	{
@@ -248,7 +250,7 @@ geo_generate_result_t create_unit_plane_3d(const s32 i_startIdx, const size i_vt
 
 	geo_generate_result_t genResult;;
 
-	if (TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::normal))
+	if (TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::normal))
 	{
 		for (size i = 0; i < 4; i++)
 		{
@@ -289,10 +291,10 @@ geo_generate_result_t create_unit_plane_3d(const s32 i_startIdx, const size i_vt
 	}
 }
 
-geo_generate_result_t generate_unit_box_3d_no_normals(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
+geo_generate_result_t generate_unit_box_3d_no_normals(const s32 i_startIdx, const size i_vtxStride, const geo_vertex_format_e i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
 {
-	FLORAL_ASSERT_MSG(TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
-	FLORAL_ASSERT(TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::normal) == 0);
+	FLORAL_ASSERT_MSG(TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
+	FLORAL_ASSERT(TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::normal) == 0);
 
 	static const floral::vec3f vertices[] =
 	{
@@ -342,10 +344,10 @@ geo_generate_result_t generate_unit_box_3d_no_normals(const s32 i_startIdx, cons
 	return genResult;
 }
 
-geo_generate_result_t generate_unit_box_3d_with_normals(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
+geo_generate_result_t generate_unit_box_3d_with_normals(const s32 i_startIdx, const size i_vtxStride, const geo_vertex_format_e i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
 {
-	FLORAL_ASSERT_MSG(TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
-	FLORAL_ASSERT_MSG(TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::normal) != 0, "Vertex format must contain normal semantic");
+	FLORAL_ASSERT_MSG(TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
+	FLORAL_ASSERT_MSG(TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::normal) != 0, "Vertex format must contain normal semantic");
 	FLORAL_ASSERT_MSG(sizeof(vertex_pn_t) <= i_vtxStride, "Vertex stride must be greater than sizeof(vertex_pn_t)");
 
 	static const floral::vec3f vertices[] =
@@ -430,9 +432,9 @@ geo_generate_result_t generate_unit_box_3d_with_normals(const s32 i_startIdx, co
 	return genResult;
 }
 
-geo_generate_result_t generate_unit_box_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
+geo_generate_result_t generate_unit_box_3d(const s32 i_startIdx, const size i_vtxStride, const geo_vertex_format_e i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
 {
-	if (TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::normal))
+	if (TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::normal))
 	{
 		return generate_unit_box_3d_with_normals(i_startIdx, i_vtxStride, i_vtxFormat, o_vtxData, o_idxData);
 	}
@@ -480,9 +482,9 @@ static void tesselate_icosphere(
 }
 
 
-geo_generate_result_t generate_unit_icosphere_3d(const s32 i_startIdx, const size i_vtxStride, const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
+geo_generate_result_t generate_unit_icosphere_3d(const u32 i_tesLevel, const s32 i_startIdx, const size i_vtxStride, const geo_vertex_format_e i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
 {
-	FLORAL_ASSERT_MSG(TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
+	FLORAL_ASSERT_MSG(TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
 
 	static const floral::vec3f positions[12] =
 	{
@@ -507,52 +509,180 @@ geo_generate_result_t generate_unit_icosphere_3d(const s32 i_startIdx, const siz
 	floral::inplace_array<u32, 4096u> siBuff0;
 	floral::inplace_array<u32, 4096u> siBuff1;
 
+	floral::inplace_array<floral::vec3f, 1024u>* frontSvBuff = &svBuff0;
+	floral::inplace_array<floral::vec3f, 1024u>* backSvBuff = &svBuff1;
+	floral::inplace_array<u32, 4096u>* frontSiBuff = &siBuff0;
+	floral::inplace_array<u32, 4096u>* backSiBuff = &siBuff1;
+
 	for (u32 i = 0; i < 12; i++)
 	{
-		svBuff0.push_back(positions[i]);
+		backSvBuff->push_back(positions[i]);
 	}
 
 	for (u32 i = 0; i < 60; i++)
 	{
-		siBuff0.push_back(indices[i]);
+		backSiBuff->push_back(indices[i]);
 	}
 
-	tesselate_icosphere(svBuff0, siBuff0, svBuff1, siBuff1);
-	tesselate_icosphere(svBuff1, siBuff1, svBuff0, siBuff0);
-	tesselate_icosphere(svBuff0, siBuff0, svBuff1, siBuff1);
-
-	if (TEST_BIT(i_vtxFormat, (s32)geo_vertex_format_e::normal))
+	for (u32 i = 0; i < i_tesLevel; i++)
 	{
-		for (u32 i = 0; i < svBuff1.get_size(); i++)
+		tesselate_icosphere(*backSvBuff, *backSiBuff, *frontSvBuff, *frontSiBuff);
+		if (i != i_tesLevel - 1)
+		{
+			std::swap(backSvBuff, frontSvBuff);
+			std::swap(backSiBuff, frontSiBuff);
+		}
+	}
+
+	if (TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::normal))
+	{
+		for (u32 i = 0; i < frontSvBuff->get_size(); i++)
 		{
 			vertex_pn_t* vtx = (vertex_pn_t*)o_vtxData;
 
-			vtx->position = svBuff1[i];
-			vtx->normal = floral::normalize(svBuff1[i]);
+			vtx->position = (*frontSvBuff)[i];
+			vtx->normal = floral::normalize((*frontSvBuff)[i]);
 
 			o_vtxData = (voidptr)((aptr)o_vtxData + i_vtxStride);
 		}
 	}
 	else
 	{
-		for (u32 i = 0; i < svBuff1.get_size(); i++)
+		for (u32 i = 0; i < frontSvBuff->get_size(); i++)
 		{
 			floral::vec3f* pos = (floral::vec3f*)o_vtxData;
-			*pos = svBuff1[i];
+			*pos = (*frontSvBuff)[i];
 			o_vtxData = (voidptr)((aptr)o_vtxData + i_vtxStride);
 		}
 	}
 
-	for (u32 i = 0; i < siBuff1.get_size() / 3; i++)
+	for (u32 i = 0; i < frontSiBuff->get_size() / 3; i++)
 	{
-		o_idxData[3 * i] = i_startIdx + siBuff1[i * 3 + 2];
-		o_idxData[3 * i + 1] = i_startIdx + siBuff1[i * 3 + 1];
-		o_idxData[3 * i + 2] = i_startIdx + siBuff1[i * 3];
+		o_idxData[3 * i] = i_startIdx + (*frontSiBuff)[i * 3 + 2];
+		o_idxData[3 * i + 1] = i_startIdx + (*frontSiBuff)[i * 3 + 1];
+		o_idxData[3 * i + 2] = i_startIdx + (*frontSiBuff)[i * 3];
 	}
 
 	geo_generate_result_t genResult;
-	genResult.vertices_generated = svBuff1.get_size();
-	genResult.indices_generated = siBuff1.get_size();
+	genResult.vertices_generated = frontSvBuff->get_size();
+	genResult.indices_generated = frontSiBuff->get_size();
+	return genResult;
+}
+
+geo_generate_result_t generate_unit_uvsphere_3d(
+		const u32 i_startIdx, const size i_vtxStride,
+		const geo_vertex_format_e i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
+{
+	FLORAL_ASSERT_MSG(TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::position) != 0, "Vertex format must contain position semantic");
+
+	const size k_LongSegments = 32;
+	const size k_LatSegments = 32;
+
+	geo_generate_result_t genResult;
+
+	aptr vtxData = (aptr)o_vtxData;
+	aptr offset = 0;
+	floral::vec3f* iPos = (floral::vec3f*)vtxData;
+	offset += sizeof(floral::vec3f);
+
+	const bool hasNormal = (TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::normal));
+	floral::vec3f* iNormal = nullptr;
+	if (hasNormal)
+	{
+		iNormal = (floral::vec3f*)(vtxData + offset);
+		offset += sizeof(floral::vec3f);
+	}
+
+	const bool hasUV = (TEST_BIT((s32)i_vtxFormat, (s32)geo_vertex_format_e::tex_coord));
+	floral::vec2f* iUV = nullptr;
+	if (hasUV)
+	{
+		iUV = (floral::vec2f*)(vtxData + offset);
+		offset += sizeof(floral::vec2f);
+	}
+
+	for (size y = 0; y <= k_LatSegments; y++)
+	{
+		for (size x = 0; x <= k_LongSegments; x++)
+		{
+			f32 longSeg = (f32)x / (f32)k_LongSegments;
+			f32 latSeg = (f32)y / (f32)k_LatSegments;
+
+			floral::vec3f p(0.0f, 0.0f, 0.0f);
+			p.x = cosf(longSeg * 2.0f * floral::pi) * sinf(latSeg * floral::pi);
+			p.y = cosf(latSeg * floral::pi);
+			p.z = sinf(longSeg * 2.0f * floral::pi) * sinf(latSeg * floral::pi);
+
+			*iPos = p;
+			iPos = (floral::vec3f*)((aptr)iPos + i_vtxStride);
+			if (hasNormal)
+			{
+				*iNormal = p;
+				iNormal = (floral::vec3f*)((aptr)iNormal + i_vtxStride);
+			}
+			if (hasUV)
+			{
+				*iUV = floral::vec2f(longSeg, latSeg);
+				iUV = (floral::vec2f*)((aptr)iUV + i_vtxStride);
+			}
+		}
+	}
+	genResult.vertices_generated = (k_LongSegments + 1) * (k_LatSegments + 1);
+
+#if 0
+	// generate triangle strip
+	bool oddRow = false;
+	s32* idxData = o_idxData;
+	for (int y = 0; y < k_LatSegments; ++y)
+	{
+		if (!oddRow) // even rows: y == 0, y == 2; and so on
+		{
+			for (int x = 0; x <= k_LongSegments; ++x)
+			{
+				*idxData = (y       * (k_LongSegments + 1) + x); idxData++;
+				*idxData = ((y + 1) * (k_LongSegments + 1) + x); idxData++;
+				genResult.indices_generated += 2;
+			}
+		}
+		else
+		{
+			for (int x = k_LongSegments; x >= 0; --x)
+			{
+				*idxData = ((y + 1) * (k_LongSegments + 1) + x); idxData++;
+				*idxData = (y       * (k_LongSegments + 1) + x); idxData++;
+				genResult.indices_generated += 2;
+			}
+		}
+		oddRow = !oddRow;
+	}
+#else
+	s32* idxData = o_idxData;
+	s32 k1, k2;
+	for (s32 i = 0; i < k_LatSegments; i++)
+	{
+		k1 = i * (k_LongSegments + 1);
+		k2 = k1 + k_LongSegments + 1;
+		for (s32 j = 0; j <= k_LongSegments; j++, k1++, k2++)
+		{
+			if (i != 0)
+			{
+				*idxData = k1 + 1; idxData++;
+				*idxData = k2; idxData++;
+				*idxData = k1; idxData++;
+				genResult.indices_generated += 3;
+			}
+
+			if (i != (k_LatSegments - 1))
+			{
+				*idxData = k2 + 1; idxData++;
+				*idxData = k2; idxData++;
+				*idxData = k1 + 1; idxData++;
+				genResult.indices_generated += 3;
+			}
+		}
+	}
+#endif
+
 	return genResult;
 }
 
@@ -560,7 +690,7 @@ geo_generate_result_t generate_unit_icosphere_3d(const s32 i_startIdx, const siz
 
 geo_generate_result_t generate_unit_plane_3d(
 		const s32 i_startIdx, const size i_vtxStride,
-		const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
+		const geo_vertex_format_e i_vtxFormat, voidptr o_vtxData, s32* o_idxData)
 {
 	geo_generate_result_t objResult = create_unit_plane_3d(i_startIdx, i_vtxStride, i_vtxFormat, o_vtxData, o_idxData);
 
@@ -571,9 +701,9 @@ geo_generate_result_t generate_unit_plane_3d(
 
 manifold_geo_generate_result_t generate_manifold_quadtes_unit_plane_3d(
 		const s32 i_startIdx, const size i_vtxStride,
-		const s32 i_vtxFormat, const f32 i_quadSize, voidptr o_vtxData, s32* o_idxData,
+		const geo_vertex_format_e i_vtxFormat, const f32 i_quadSize, voidptr o_vtxData, s32* o_idxData,
 		const s32 i_mnfStartIdx, const size i_mnfVtxStride, const f32 i_mnfThickness,
-		const s32 i_mnfVtxFormat, voidptr o_mnfVtxData, s32* o_mnfIdxData)
+		const geo_vertex_format_e i_mnfVtxFormat, voidptr o_mnfVtxData, s32* o_mnfIdxData)
 {
 	FLORAL_ASSERT_MSG(i_mnfThickness > 0.0f, "Manifold thickness must be greater than 0");
 
@@ -630,9 +760,9 @@ manifold_geo_generate_result_t generate_manifold_quadtes_unit_plane_3d(
 
 manifold_geo_generate_result_t generate_manifold_unit_plane_3d(
 		const s32 i_startIdx, const size i_vtxStride,
-		const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData,
+		const geo_vertex_format_e i_vtxFormat, voidptr o_vtxData, s32* o_idxData,
 		const s32 i_mnfStartIdx, const size i_mnfVtxStride, const f32 i_mnfThickness,
-		const s32 i_mnfVtxFormat, voidptr o_mnfVtxData, s32* o_mnfIdxData)
+		const geo_vertex_format_e i_mnfVtxFormat, voidptr o_mnfVtxData, s32* o_mnfIdxData)
 {
 	FLORAL_ASSERT_MSG(i_mnfThickness > 0.0f, "Manifold thickness must be greater than 0");
 
@@ -679,15 +809,15 @@ manifold_geo_generate_result_t generate_manifold_unit_plane_3d(
 
 manifold_geo_generate_result_t generate_manifold_icosphere_3d(
 		const s32 i_startIdx, const size i_vtxStride,
-		const s32 i_vtxFormat, voidptr o_vtxData, s32* o_idxData,
+		const geo_vertex_format_e i_vtxFormat, voidptr o_vtxData, s32* o_idxData,
 		const s32 i_mnfStartIdx, const size i_mnfVtxStride, const f32 i_mnfThickness,
-		const s32 i_mnfVtxFormat, voidptr o_mnfVtxData, s32* o_mnfIdxData)
+		const geo_vertex_format_e i_mnfVtxFormat, voidptr o_mnfVtxData, s32* o_mnfIdxData)
 {
 	FLORAL_ASSERT_MSG(i_mnfThickness > 0.0f, "Manifold thickness must be greater than 0");
 	manifold_geo_generate_result_t genResult;
 
 	{
-		geo_generate_result_t objResult = generate_unit_icosphere_3d(i_startIdx, i_vtxStride, i_vtxFormat, o_vtxData, o_idxData);
+		geo_generate_result_t objResult = generate_unit_icosphere_3d(3, i_startIdx, i_vtxStride, i_vtxFormat, o_vtxData, o_idxData);
 
 		apply_tranforms(i_vtxFormat, objResult.vertices_generated, i_vtxStride, o_vtxData);
 
@@ -696,7 +826,7 @@ manifold_geo_generate_result_t generate_manifold_icosphere_3d(
 	}
 
 	{
-		geo_generate_result_t objResult = generate_unit_icosphere_3d(i_mnfStartIdx, i_mnfVtxStride, i_mnfVtxFormat, o_mnfVtxData, o_mnfIdxData);
+		geo_generate_result_t objResult = generate_unit_icosphere_3d(3, i_mnfStartIdx, i_mnfVtxStride, i_mnfVtxFormat, o_mnfVtxData, o_mnfIdxData);
 
 		apply_tranforms(i_mnfVtxFormat, objResult.vertices_generated, i_mnfVtxStride, o_mnfVtxData);
 
