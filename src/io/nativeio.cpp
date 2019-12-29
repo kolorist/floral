@@ -1,7 +1,11 @@
 #include "floral/io/nativeio.h"
 
+#include <stdio.h>
+
 namespace floral
 {
+
+static const_cstr s_working_dir = "";
 
 // ---------------------------------------------
 
@@ -92,17 +96,24 @@ void output_file_stream::write_bytes(voidptr i_buffer, const size i_count)
 	WriteFile(
 			info.file_handle,
 			i_buffer,
-			i_count,
+			(DWORD)i_count,
 			&byteWritten,
 			NULL);
 }
 
 // ---------------------------------------------
 
+void set_working_directory(const_cstr i_path)
+{
+	s_working_dir = i_path;
+}
+
 file_info open_file(const_cstr filePath)
 {
+	c8 fullPath[2048];
+	sprintf(fullPath, "%s%s", s_working_dir, filePath);
 	file_info newFile;
-	newFile.file_handle = CreateFileA(filePath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+	newFile.file_handle = CreateFileA(fullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
 	newFile.file_size = 0;
 	if (newFile.file_handle != INVALID_HANDLE_VALUE) {
 		LARGE_INTEGER fileSize;
@@ -114,8 +125,10 @@ file_info open_file(const_cstr filePath)
 
 file_info open_file(path i_filePath)
 {
+	c8 fullPath[2048];
+	sprintf(fullPath, "%s%s", s_working_dir, i_filePath.pm_PathStr);
 	file_info newFile;
-	newFile.file_handle = CreateFileA(i_filePath.pm_PathStr, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+	newFile.file_handle = CreateFileA(fullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
 	newFile.file_size = 0;
 	if (newFile.file_handle != INVALID_HANDLE_VALUE) {
 		LARGE_INTEGER fileSize;
@@ -127,8 +140,10 @@ file_info open_file(path i_filePath)
 
 file_info open_output_file(const_cstr i_filePath)
 {
+	c8 fullPath[2048];
+	sprintf(fullPath, "%s%s", s_working_dir, i_filePath);
 	file_info newFile;
-	newFile.file_handle = CreateFileA(i_filePath, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	newFile.file_handle = CreateFileA(fullPath, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	newFile.file_size = 0;
 	return newFile;
 }

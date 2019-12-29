@@ -5,20 +5,24 @@
 #include "vec.h"
 #include "mat.h"
 
-namespace floral {
+namespace floral
+{
 
-struct camera_view_t {
+struct camera_view_t
+{
 	vec3f										position;
 	vec3f										look_at; // maybe direction or target location
 	vec3f										up_direction;
 };
 
-struct camera_ortho_t {
+struct camera_ortho_t
+{
 	f32											left, right, top, bottom;
 	f32											near_plane, far_plane;
 };
 
-struct camera_persp_t {
+struct camera_persp_t
+{
 	f32											near_plane, far_plane;
 	f32											fov;
 	f32											aspect_ratio;

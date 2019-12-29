@@ -184,15 +184,15 @@ geo_generate_result_t generate_quadtes_plane_3d(
 
 			for (u32 k = 0; k < 6; k++)
 			{
-				u32 index = vertexArray.find(v[indices[k]], &compare_vec3f_point);
+				ssize index = vertexArray.find(v[indices[k]], &compare_vec3f_point);
 				if (index == vertexArray.get_terminated_index())
 				{
 					vertexArray.push_back(v[indices[k]]);
-					indexArray.push_back(vertexArray.get_size() - 1);
+					indexArray.push_back(s32(vertexArray.get_size() - 1));
 				}
 				else
 				{
-					indexArray.push_back(index);
+					indexArray.push_back((s32)index);
 				}
 			}
 		}
@@ -224,8 +224,8 @@ geo_generate_result_t generate_quadtes_plane_3d(
 	}
 
 	geo_generate_result_t genResult;
-	genResult.vertices_generated = vertexArray.get_size();
-	genResult.indices_generated = indexArray.get_size();
+	genResult.vertices_generated = (u32)vertexArray.get_size();
+	genResult.indices_generated = (u32)indexArray.get_size();
 	return genResult;
 }
 
@@ -401,15 +401,15 @@ geo_generate_result_t generate_unit_box_3d_with_normals(const s32 i_startIdx, co
 			vtx.position = vertices[indices[idx]];
 			vtx.normal = faceNormals[f];
 
-			const u32 oldIdx = vertexArray.find(vtx, &compare_vertex_pn);
+			const ssize oldIdx = vertexArray.find(vtx, &compare_vertex_pn);
 			if (oldIdx == vertexArray.get_terminated_index())
 			{
 				vertexArray.push_back(vtx);
-				indexArray.push_back(vertexArray.get_size() - 1);
+				indexArray.push_back(s32(vertexArray.get_size() - 1));
 			}
 			else
 			{
-				indexArray.push_back(oldIdx);
+				indexArray.push_back((s32)oldIdx);
 			}
 		}
 	}
@@ -427,8 +427,8 @@ geo_generate_result_t generate_unit_box_3d_with_normals(const s32 i_startIdx, co
 	}
 
 	geo_generate_result_t genResult;
-	genResult.vertices_generated = vertexArray.get_size();
-	genResult.indices_generated = indexArray.get_size();
+	genResult.vertices_generated = (u32)vertexArray.get_size();
+	genResult.indices_generated = (u32)indexArray.get_size();
 	return genResult;
 }
 
@@ -470,12 +470,12 @@ static void tesselate_icosphere(
 		v[5] = floral::normalize((v[2] + v[0]) / 2.0f);
 
 		for (u32 k = 0; k < 12; k++) {
-			u32 index = o_toVtx.find(v[tmpIdx[k]], &compare_vec3f_point);
+			ssize index = o_toVtx.find(v[tmpIdx[k]], &compare_vec3f_point);
 			if (index == o_toVtx.get_terminated_index()) {
 				o_toVtx.push_back(v[tmpIdx[k]]);
-				o_toIdx.push_back(o_toVtx.get_size() - 1);
+				o_toIdx.push_back(u32(o_toVtx.get_size() - 1));
 			} else {
-				o_toIdx.push_back(index);
+				o_toIdx.push_back((u32)index);
 			}
 		}
 	}
@@ -564,8 +564,8 @@ geo_generate_result_t generate_unit_icosphere_3d(const u32 i_tesLevel, const s32
 	}
 
 	geo_generate_result_t genResult;
-	genResult.vertices_generated = frontSvBuff->get_size();
-	genResult.indices_generated = frontSiBuff->get_size();
+	genResult.vertices_generated = (u32)frontSvBuff->get_size();
+	genResult.indices_generated = (u32)frontSiBuff->get_size();
 	return genResult;
 }
 
@@ -579,6 +579,8 @@ geo_generate_result_t generate_unit_uvsphere_3d(
 	const size k_LatSegments = 32;
 
 	geo_generate_result_t genResult;
+	genResult.indices_generated = 0;
+	genResult.vertices_generated = 0;
 
 	aptr vtxData = (aptr)o_vtxData;
 	aptr offset = 0;

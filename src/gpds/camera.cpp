@@ -1,6 +1,7 @@
 #include "floral/gpds/camera.h"
 
 #include "floral/math/transform.h"
+#include "floral/math/utils.h"
 
 namespace floral {
 

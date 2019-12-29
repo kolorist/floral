@@ -171,6 +171,7 @@ private:
 
 template <class t_value, class t_allocator>
 class fixed_array {
+protected:
 	typedef			t_value					value_t;
 	typedef			const t_value			const_value_t;
 	typedef			t_value*				pointer_t;
@@ -226,6 +227,7 @@ public:
 
 	void reserve(const ssize i_capacity)
 	{
+		FLORAL_ASSERT_MSG(m_allocator != nullptr, "Cannot reserve memory for array without an allocator");
 		m_capacity = i_capacity;
 		m_size = 0;
 		

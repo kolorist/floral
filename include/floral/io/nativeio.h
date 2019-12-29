@@ -3,8 +3,13 @@
 #include "floral/stdaliases.h"
 #include "floral/cmds/path.h"
 
+#include <cstring>
+
 #if defined(PLATFORM_WINDOWS)
+#define NOMINMAX
 #include <Windows.h>
+#else
+#include <stdio.h>
 #endif
 
 /*
@@ -21,6 +26,7 @@ struct file_info {
 };
 #else
 struct file_info {
+	FILE*									file_handle;
 	size									file_size;
 };
 #endif
@@ -38,6 +44,7 @@ class file_stream {
 		void									unread_bytes(const size i_count);
 		void									seek_begin(const size i_offset);
 		c8										read_char();
+		c8										peek_char();
 		u32										read_line_to_buffer(voidptr o_buffer);
 
 		template <typename t_type>
@@ -83,6 +90,7 @@ public:
 };
 
 // -----------------------------------------
+void											set_working_directory(const_cstr i_path);
 
 file_info										open_file(const_cstr filePath);
 file_info										open_file(path i_filePath);

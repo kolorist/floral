@@ -1,7 +1,13 @@
 #include "floral/io/nativeio.h"
 
+#include <sys/stat.h>
+
 namespace floral
 {
+
+static const_cstr s_working_dir = "";
+
+// ---------------------------------------------
 
 file_stream::file_stream()
 	: rpos(0)
@@ -48,6 +54,11 @@ c8 file_stream::read_char()
 	return retVal;
 }
 
+c8 file_stream::peek_char()
+{
+	return buffer[rpos];
+}
+
 u32 file_stream::read_line_to_buffer(voidptr o_buffer)
 {
 	u32 len = 0;
@@ -76,6 +87,11 @@ const bool file_stream::is_eos()
 
 // -----------------------------------------
 
+void set_working_directory(const_cstr i_path)
+{
+	s_working_dir = i_path;
+}
+
 output_file_stream::output_file_stream()
 {
 }
@@ -86,52 +102,56 @@ output_file_stream::~output_file_stream()
 
 file_info open_file(const_cstr filePath)
 {
+	c8 fullPath[2048];
+	sprintf(fullPath, "%s/%s", s_working_dir, filePath);
 	file_info newFile;
-	// newFile.file_handle = CreateFileA(filePath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
-	// newFile.file_size = 0;
-	// if (newFile.file_handle != INVALID_HANDLE_VALUE) {
-		// LARGE_INTEGER fileSize;
-		// GetFileSizeEx(newFile.file_handle, &fileSize);
-		// newFile.file_size = (u64)fileSize.QuadPart;
-	// }
+	newFile.file_handle = fopen(fullPath, "rb");
+	newFile.file_size = 0;
+	if (newFile.file_handle != nullptr)
+	{
+		struct stat st;
+		stat(fullPath, &st);
+		newFile.file_size = st.st_size;
+	}
 	return newFile;
 }
 
 file_info open_file(path i_filePath)
 {
+	c8 fullPath[2048];
+	sprintf(fullPath, "%s/%s", s_working_dir, i_filePath.pm_PathStr);
 	file_info newFile;
-	// newFile.file_handle = CreateFileA(i_filePath.pm_PathStr, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
-	// newFile.file_size = 0;
-	// if (newFile.file_handle != INVALID_HANDLE_VALUE) {
-		// LARGE_INTEGER fileSize;
-		// GetFileSizeEx(newFile.file_handle, &fileSize);
-		// newFile.file_size = (u64)fileSize.QuadPart;
-	// }
+	newFile.file_handle = fopen(fullPath, "rb");
+	newFile.file_size = 0;
+	if (newFile.file_handle != nullptr)
+	{
+		struct stat st;
+		stat(fullPath, &st);
+		newFile.file_size = st.st_size;
+	}
 	return newFile;
 }
 
 file_info open_output_file(const_cstr i_filePath)
 {
+	c8 fullPath[2048];
+	sprintf(fullPath, "%s/%s", s_working_dir, i_filePath);
 	file_info newFile;
-	//newFile.file_handle = CreateFileA(i_filePath, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	//newFile.file_size = 0;
+	newFile.file_handle = fopen(fullPath, "wb");
+	newFile.file_size = 0;
 	return newFile;
 }
 
 void read_all_file(const file_info& fileInfo, voidptr buffer)
 {
-	// DWORD bytesRead = 0;
-	// 32bit / 64bit: ReadFile only accept DWORD as file size
-	// ReadFile(fileInfo.file_handle, buffer, static_cast<size32>(fileInfo.file_size), &bytesRead, 0);
+	fread(buffer, fileInfo.file_size, 1, fileInfo.file_handle);
 }
 
 void read_all_file(const file_info& fileInfo, file_stream& fileStream)
 {
-	// DWORD bytesRead = 0;
-	// fileStream.info = fileInfo;
-	// fileStream.rpos = 0;
-	// 32bit / 64bit: ReadFile only accept DWORD as file size
-	// ReadFile(fileInfo.file_handle, fileStream.buffer, static_cast<size32>(fileInfo.file_size), &bytesRead, 0);
+	fileStream.info = fileInfo;
+	fileStream.rpos = 0;
+	fread(fileStream.buffer, fileInfo.file_size, 1, fileInfo.file_handle);
 }
 
 void mmap_all_file(const file_info& fileInfo, voidptr buffer)
@@ -140,11 +160,12 @@ void mmap_all_file(const file_info& fileInfo, voidptr buffer)
 
 void map_output_file(const file_info& i_fileInfo, output_file_stream& o_fileStream)
 {
-	//o_fileStream.info = i_fileInfo;
+	o_fileStream.info = i_fileInfo;
 }
 
 void close_file(file_info& fileInfo)
 {
+	fclose(fileInfo.file_handle);
 }
 
 }

@@ -6,12 +6,22 @@ namespace floral {
 
 constexpr f32 pi = 3.1415926525898f;
 constexpr f32 half_pi = 1.5707963267948966f;
+#ifndef PI
 #define PI										3.1415926525898f
+#endif
 
+#ifndef TEST_BIT
 #define		TEST_BIT(target, bitmask)			(target & bitmask)
+#endif
+#ifndef TEST_BIT_BOOL
 #define		TEST_BIT_BOOL(target, bitmask)		((target & bitmask) != 0)
+#endif
+#ifndef SET_BIT
 #define		SET_BIT(target, bitmask)			(target = target | bitmask)
+#endif
+#ifndef CLEAR_BIT
 #define		CLEAR_BIT(target, bitmask)			(target = target & (~bitmask))
+#endif
 
 template <class DType>
 DType min(DType lhs, DType rhs) {
