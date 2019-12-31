@@ -11,6 +11,8 @@
  * 	in Memory: m0 m1 m2 m3 m4 ...
  * 	Math Convention (for both GPU and CPU)
  * 		Vector(in Parent) = Matrix(Child to Parent) * Vector(in Child);
+ * 		Matrix(first then second) = Matrix(second) * Matrix(first);
+ * 		Matrix(C0 to C2) = Matrix(C1 to C2) * Matrix(C0 to C1);
  *
  * 	GPU: column-major (because we are storing sequential by columns)
  * 		matrix *math* layout from memory:
