@@ -143,10 +143,10 @@ geo_generate_result_t generate_quadtes_plane_3d(
 
 	vertex_pn_t vertices[] =
 	{
-		floral::vec3f(1.0f, 0.0f, 1.0f),		floral::vec3f(0.0f, 1.0f, 0.0f),
-		floral::vec3f(1.0f, 0.0f, -1.0f),		floral::vec3f(0.0f, 1.0f, 0.0f),
-		floral::vec3f(-1.0f, 0.0f, -1.0f),		floral::vec3f(0.0f, 1.0f, 0.0f),
-		floral::vec3f(-1.0f, 0.0f, 1.0f),		floral::vec3f(0.0f, 1.0f, 0.0f)
+		{floral::vec3f(1.0f, 0.0f, 1.0f),		floral::vec3f(0.0f, 1.0f, 0.0f)},
+		{floral::vec3f(1.0f, 0.0f, -1.0f),		floral::vec3f(0.0f, 1.0f, 0.0f)},
+		{floral::vec3f(-1.0f, 0.0f, -1.0f),		floral::vec3f(0.0f, 1.0f, 0.0f)},
+		{floral::vec3f(-1.0f, 0.0f, 1.0f),		floral::vec3f(0.0f, 1.0f, 0.0f)}
 	};
 
 	apply_tranforms(i_vtxFormat, 4, sizeof(vertex_pn_t), vertices);
