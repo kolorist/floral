@@ -24,6 +24,12 @@ mat4x4f construct_lookat_dir(const camera_view_t& i_desc)
 	return construct_lookat_dir(i_desc.up_direction, i_desc.position, i_desc.look_at);
 }
 
+mat4x4f construct_lookat_point(const vec3f& upDir, const vec3f& camPos, const vec3f& lookAtPoint)
+{
+	vec3f lookAtDir = lookAtPoint - camPos;
+	return construct_lookat_dir(upDir, camPos, lookAtDir);
+}
+
 mat4x4f construct_lookat_point(const camera_view_t& i_desc)
 {
 	vec3f dir = i_desc.look_at - i_desc.position;

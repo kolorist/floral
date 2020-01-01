@@ -30,6 +30,7 @@ struct camera_persp_t
 
 // view matrix construction
 mat4x4f construct_lookat_dir(const vec3f& upDir, const vec3f& camPos, const vec3f& lookAtDir);
+mat4x4f construct_lookat_point(const vec3f& upDir, const vec3f& camPos, const vec3f& lookAtPoint);
 mat4x4f construct_lookat_dir(const camera_view_t& i_desc);
 mat4x4f construct_lookat_point(const camera_view_t& i_desc);
 
