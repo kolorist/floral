@@ -7,16 +7,21 @@ namespace floral {
 
 mat4x4f construct_lookat_dir(const vec3f& upDir, const vec3f& camPos, const vec3f& lookAtDir)
 {
-	mat4x4f tMat;
-	tMat = construct_translation3d(-camPos);
-	mat4x4f lMat(1.0f);
-	vec3f lookAtDirNorm = -normalize(lookAtDir);
-	vec3f rightDirNorm = normalize(cross(upDir, -lookAtDir));
-	vec3f topDirNorm = normalize(cross(-lookAtDir, rightDirNorm));
-	lMat[0][0] = rightDirNorm.x;	lMat[0][1] = topDirNorm.x;	lMat[0][2] = lookAtDirNorm.x;
-	lMat[1][0] = rightDirNorm.y;	lMat[1][1] = topDirNorm.y;	lMat[1][2] = lookAtDirNorm.y;
-	lMat[2][0] = rightDirNorm.z;	lMat[2][1] = topDirNorm.z;	lMat[2][2] = lookAtDirNorm.z;
-	return (lMat * tMat);	// rotate first then translate the coordinate
+	mat4x4f localToWorld;
+	// translation
+	localToWorld[3][0] = camPos.x;
+	localToWorld[3][1] = camPos.y;
+	localToWorld[3][2] = camPos.z;
+	localToWorld[3][3] = 1.0f;
+	// rotation
+	vec3f lookAtDirNorm = normalize(lookAtDir);
+	vec3f upDirNorm = normalize(upDir);
+	vec3f rightDirNorm = normalize(cross(upDirNorm, lookAtDirNorm));
+	vec3f topDirNorm = normalize(cross(lookAtDir, rightDirNorm));
+	localToWorld[0][0] = rightDirNorm.x;	localToWorld[1][0] = topDirNorm.x;	localToWorld[2][0] = lookAtDirNorm.x;
+	localToWorld[0][1] = rightDirNorm.y;	localToWorld[1][1] = topDirNorm.y;	localToWorld[2][1] = lookAtDirNorm.y;
+	localToWorld[0][2] = rightDirNorm.z;	localToWorld[1][2] = topDirNorm.z;	localToWorld[2][2] = lookAtDirNorm.z;
+	return localToWorld.get_inverse();
 }
 
 mat4x4f construct_lookat_dir(const camera_view_t& i_desc)
@@ -26,7 +31,7 @@ mat4x4f construct_lookat_dir(const camera_view_t& i_desc)
 
 mat4x4f construct_lookat_point(const vec3f& upDir, const vec3f& camPos, const vec3f& lookAtPoint)
 {
-	vec3f lookAtDir = lookAtPoint - camPos;
+	vec3f lookAtDir = normalize(lookAtPoint - camPos);
 	return construct_lookat_dir(upDir, camPos, lookAtDir);
 }
 
