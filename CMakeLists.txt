@@ -5,6 +5,10 @@ project (floral C CXX)
 include_directories("${PROJECT_SOURCE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
+if (${ANDROID_BUILD})
+else()
+endif (${ANDROID_BUILD})
+
 if (${MSVC_PROJECT})
 	file (GLOB_RECURSE file_list
 		LIST_DIRECTORIES false
