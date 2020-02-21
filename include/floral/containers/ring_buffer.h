@@ -134,94 +134,305 @@ class inplaced_ring_buffer_mt_spsc {
 
 template <class t_type, class t_allocator, u32 t_capacity>
 class ring_buffer_st {
-	public:
-		ring_buffer_st()
-			: m_allocator(nullptr)
+public:
+	ring_buffer_st()
+		: m_allocator(nullptr)
+	{
+	}
+
+	ring_buffer_st(t_allocator* i_allocator)
+	{
+		init(i_allocator);
+	}
+
+	~ring_buffer_st()
+	{
+		if (m_data)
 		{
+			m_allocator->free(m_data);
 		}
+	}
 
-		ring_buffer_st(t_allocator* i_allocator)
-		{
-			init(i_allocator);
+	void init(t_allocator* i_allocator)
+	{
+		m_allocator = i_allocator;
+		m_write_slot = 0;
+		m_read_slot = 0;
+
+		m_data = m_allocator->template allocate_array<t_type>(t_capacity);
+		for (sidx i = 0; i < t_capacity; i++) {
+			m_data[i] = t_type();
 		}
+	}
 
-		~ring_buffer_st()
-		{
-			if (m_data)
-				m_allocator->free(m_data);
+	void push_back(const t_type& i_value)
+	{
+		sidx wslot = m_write_slot;
+		sidx rslot = m_read_slot;
+
+		m_data[wslot] = i_value;
+		wslot = (wslot + 1) % (sidx)t_capacity;
+		if (wslot == rslot) rslot = (rslot + 1) % (sidx)t_capacity;
+
+		m_write_slot = wslot;
+		m_read_slot = rslot;
+	}
+
+	const bool is_empty() const
+	{
+		return (m_write_slot == m_read_slot);
+	}
+
+	const bool is_full() const
+	{
+		return (((m_write_slot + 1) % (sidx)t_capacity) == m_read_slot);
+	}
+
+	void empty()
+	{
+		m_write_slot = 0;
+		m_read_slot = 0;
+	}
+
+	const bool pop_front_into(t_type& o_value)
+	{
+		if (!is_empty()) {
+			o_value = m_data[m_read_slot];
+			m_read_slot = (m_read_slot + 1) % (sidx)t_capacity;
+			return true;
 		}
+		return false;
+	}
 
-		void init(t_allocator* i_allocator)
-		{
-			m_allocator = i_allocator;
-			m_write_slot = 0;
-			m_read_slot = 0;
-
-			m_data = m_allocator->template allocate_array<t_type>(t_capacity);
-			for (sidx i = 0; i < t_capacity; i++) {
-				m_data[i] = t_type();
-			}
+	const bool peek_front_into(t_type& o_value)
+	{
+		if (!is_empty()) {
+			o_value = m_data[m_read_slot];
+			return true;
 		}
+		return false;
+	}
 
-		void push_back(const t_type& i_value)
-		{
-			sidx wslot = m_write_slot;
-			sidx rslot = m_read_slot;
+private:
+	t_allocator*						m_allocator;
 
-			m_data[wslot] = i_value;
-			wslot = (wslot + 1) % (sidx)t_capacity;
-			if (wslot == rslot) rslot = (rslot + 1) % (sidx)t_capacity;
+	t_type*								m_data;
 
-			m_write_slot = wslot;
-			m_read_slot = rslot;
+	sidx								m_write_slot;
+	sidx								m_read_slot;
+};
+
+template <class t_type, class t_allocator, u32 t_capacity>
+class fast_ring_buffer_st {
+public:
+	fast_ring_buffer_st()
+		: m_allocator(nullptr)
+	{
+	}
+
+	fast_ring_buffer_st(t_allocator* i_allocator)
+	{
+		init(i_allocator);
+	}
+
+	~fast_ring_buffer_st()
+	{
+	}
+
+	const ssize get_capacity()
+	{
+		return t_capacity;
+	}
+
+	void init(t_allocator* i_allocator)
+	{
+		m_allocator = i_allocator;
+		m_write_slot = 0;
+		m_read_slot = 0;
+
+		m_data = m_allocator->template allocate_array<t_type>(t_capacity);
+		for (sidx i = 0; i < t_capacity; i++) {
+			m_data[i] = t_type();
 		}
+	}
 
-		const bool is_empty() const
-		{
-			return (m_write_slot == m_read_slot);
-		}
-		
-		const bool is_full() const
-		{
-			return (((m_write_slot + 1) % (sidx)t_capacity) == m_read_slot);
-		}
+	void push_back(const t_type& i_value)
+	{
+		sidx wslot = m_write_slot;
+		sidx rslot = m_read_slot;
 
-		void empty()
-		{
-			m_write_slot = 0;
-			m_read_slot = 0;
-		}
+		m_data[wslot] = i_value;
+		wslot = (wslot + 1) % (sidx)t_capacity;
+		if (wslot == rslot) rslot = (rslot + 1) % (sidx)t_capacity;
 
-		const bool pop_front_into(t_type& o_value)
+		m_write_slot = wslot;
+		m_read_slot = rslot;
+	}
+
+	const bool is_empty() const
+	{
+		return (m_write_slot == m_read_slot);
+	}
+
+	const bool is_full() const
+	{
+		return (((m_write_slot + 1) % (sidx)t_capacity) == m_read_slot);
+	}
+
+	void empty()
+	{
+		m_write_slot = 0;
+		m_read_slot = 0;
+	}
+
+	const u32 for_each(void (*i_processFunc)(const t_type&, voidptr), voidptr i_userData)
+	{
+		u32 processedEntries = 0;
+		sidx rslot = m_read_slot;
+		sidx wslot = m_write_slot;
+		while (rslot != wslot)
 		{
-			if (!is_empty()) {
-				o_value = m_data[m_read_slot];
-				m_read_slot = (m_read_slot + 1) % (sidx)t_capacity;
-				return true;
-			}
+			const t_type& val = m_data[rslot];
+			i_processFunc(val, i_userData);
+			processedEntries++;
+			rslot = (rslot + 1) % (sidx)t_capacity;
+		}
+		return processedEntries;
+	}
+
+	const bool pop_front_into(t_type& o_value)
+	{
+		if (!is_empty()) {
+			o_value = m_data[m_read_slot];
+			m_read_slot = (m_read_slot + 1) % (sidx)t_capacity;
+			return true;
+		}
+		return false;
+	}
+
+	const bool peek_front_into(t_type& o_value)
+	{
+		if (!is_empty()) {
+			o_value = m_data[m_read_slot];
+			return true;
+		}
+		return false;
+	}
+
+private:
+	t_allocator*						m_allocator;
+
+	t_type*								m_data;
+
+	sidx								m_write_slot;
+	sidx								m_read_slot;
+};
+
+template <class t_type, ssize t_capacity>
+class inplaced_ring_buffer_mt
+{
+	typedef t_type								value_t;
+	typedef ssize								index_t;
+
+public:
+	inplaced_ring_buffer_mt()
+		: m_head(0)
+		, m_tail(0)
+	{
+	}
+
+	void clear()
+	{
+		lock_guard guard(m_data_mtx);
+		m_head = 0;
+		m_tail = 0;
+	}
+
+	// non-block
+	const bool try_pop_into(value_t& o_value)
+	{
+		if (is_empty())
+		{
 			return false;
 		}
 
-		const bool peek_front_into(t_type& o_value)
 		{
-			if (!is_empty()) {
-				o_value = m_data[m_read_slot];
-				return true;
-			}
-			return false;
+			lock_guard guard(m_data_mtx);
+			o_value = m_data[m_head];
+			m_head = (m_head + 1) % t_capacity;
 		}
+		m_not_full_cv.notify_one();
+		return true;
+	}
 
-	private:
-		t_allocator*						m_allocator;
+	value_t wait_and_pop()
+	{
+		value_t retValue;
+		{
+			lock_guard guard(m_data_mtx);
+			while (m_head == m_tail)
+			{
+				m_not_empty_cv.wait(m_data_mtx);
+			}
+			retValue = m_data[m_head];
+			m_head = (m_head + 1) % t_capacity;
+		}
+		m_not_full_cv.notify_one();
+		return retValue;
+	}
 
-		t_type*								m_data;
-		
-		sidx								m_write_slot;
-		sidx								m_read_slot;
+	const bool is_empty()
+	{
+		lock_guard guard(m_data_mtx);
+		return (m_head == m_tail);
+	}
+
+	// non-block
+	const bool push(const value_t& i_value)
+	{
+		{
+			lock_guard guard(m_data_mtx);
+			index_t newTail = (m_tail + 1) % t_capacity;
+			if (newTail == m_head)
+			{
+				return false;
+			}
+
+			m_data[m_tail] = i_value;
+			m_tail = newTail;
+		}
+		m_not_empty_cv.notify_one();
+		return true;
+	}
+
+	void wait_and_push(const value_t& i_value)
+	{
+		{
+			lock_guard guard(m_data_mtx);
+			while ((m_tail + 1) % t_capacity == m_head)
+			{
+				m_not_full_cv.wait(m_data_mtx);
+			}
+
+			m_data[m_tail] = i_value;
+			m_tail = (m_tail + 1) % t_capacity;
+		}
+		m_not_empty_cv.notify_one();
+	}
+
+private:
+	value_t										m_data[t_capacity];
+	index_t										m_head;
+	index_t										m_tail;
+
+	mutex										m_data_mtx;
+	condition_variable							m_not_full_cv;
+	condition_variable							m_not_empty_cv;
 };
 
 template <class t_type, class t_allocator, u32 t_size>
-class ring_buffer_mt {
+class ring_buffer_mt
+{
 	typedef t_type							value_t;
 	typedef value_t&						reference_t;
 	typedef value_t*						pointer_t;

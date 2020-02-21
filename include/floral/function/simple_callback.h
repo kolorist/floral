@@ -84,6 +84,7 @@ private:
 // WARNING: DO NOT USE THIS AS THEY ARE WRONG
 // Why they are wrong? Because we are trying to assign a run-time function pointer to
 // a compile-time template parameter. It simply does not work!
+
 #if 0
 	template <typename t_object, typename t_ret, typename t_func>
 simple_callback<t_ret> make_simple_callback<t_ret(t_object::*t_func)()>(t_object* pObj)

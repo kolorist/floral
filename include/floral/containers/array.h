@@ -212,7 +212,7 @@ public:
 		m_size = 0;
 		
 		FLORAL_ASSERT_MSG((int)i_capacity > 0, "Cannot create an non-positive-capacity array");
-		m_data = m_allocator->template allocate_array<value_t>(m_capacity);
+		m_data = m_allocator->template allocate_array<value_t>(m_capacity, "fixed_array");
 		for (ssize i = 0; i < m_capacity; i++)
 		{
 			m_data[i] = value_t();
@@ -232,7 +232,7 @@ public:
 		m_size = 0;
 		
 		FLORAL_ASSERT_MSG((int)i_capacity > 0, "Cannot create an non-positive-capacity array");
-		m_data = m_allocator->template allocate_array<value_t>(m_capacity);
+		m_data = m_allocator->template allocate_array<value_t>(m_capacity, "fixed_array");
 		for (ssize i = 0; i < m_capacity; i++)
 		{
 			m_data[i] = value_t();
