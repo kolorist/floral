@@ -2,7 +2,7 @@
 
 #include "floral/stdaliases.h"
 
-#if defined(PLATFORM_WINDOWS)
+#if defined(FLORAL_PLATFORM_WINDOWS)
 #include "windows_mutex.h"
 #elif defined(PLATFORM_POSIX)
 #include "posix_mutex.h"
@@ -10,7 +10,7 @@
 
 namespace floral {
 
-#if defined(PLATFORM_WINDOWS)
+#if defined(FLORAL_PLATFORM_WINDOWS)
 	typedef windows_mutex						mutex;
 #elif defined(PLATFORM_POSIX)
 	typedef posix_mutex							mutex;

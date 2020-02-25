@@ -5,7 +5,7 @@
 
 #include <cstring>
 
-#if defined(PLATFORM_WINDOWS)
+#if defined(FLORAL_PLATFORM_WINDOWS)
 #define NOMINMAX
 #include <Windows.h>
 #else
@@ -19,7 +19,7 @@
 namespace floral
 {
 
-#if defined(PLATFORM_WINDOWS)
+#if defined(FLORAL_PLATFORM_WINDOWS)
 struct file_info {
 	HANDLE									file_handle;
 	size									file_size;				// in bytes
@@ -73,7 +73,7 @@ public:
 	template <typename t_type>
 	void write(const t_type& i_from)
 	{
-#if defined(PLATFORM_WINDOWS)
+#if defined(FLORAL_PLATFORM_WINDOWS)
 		DWORD byteWritten = 0;
 		WriteFile(
 				info.file_handle,

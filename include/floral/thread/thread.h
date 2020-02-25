@@ -3,7 +3,7 @@
 #include "floral/stdaliases.h"
 
 #include "thread_base.h"
-#if defined(PLATFORM_WINDOWS)
+#if defined(FLORAL_PLATFORM_WINDOWS)
 #include "windows_thread.h"
 #elif defined(PLATFORM_POSIX)
 #include "posix_thread.h"
@@ -11,7 +11,7 @@
 
 namespace floral {
 
-#if defined(PLATFORM_WINDOWS)
+#if defined(FLORAL_PLATFORM_WINDOWS)
 	typedef windows_thread						thread;
 #elif defined(PLATFORM_POSIX)
 	typedef posix_thread						thread;
