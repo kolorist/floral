@@ -5,7 +5,7 @@
 #include "thread_base.h"
 #if defined(FLORAL_PLATFORM_WINDOWS)
 #include "windows_thread.h"
-#elif defined(PLATFORM_POSIX)
+#elif defined(FLORAL_PLATFORM_POSIX)
 #include "posix_thread.h"
 #endif
 
@@ -13,7 +13,7 @@ namespace floral {
 
 #if defined(FLORAL_PLATFORM_WINDOWS)
 	typedef windows_thread						thread;
-#elif defined(PLATFORM_POSIX)
+#elif defined(FLORAL_PLATFORM_POSIX)
 	typedef posix_thread						thread;
 #endif
 

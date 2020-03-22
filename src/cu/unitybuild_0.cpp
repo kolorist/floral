@@ -17,7 +17,7 @@
 #include "src/thread/windows_thread.cpp"
 #include "src/thread/windows_mutex.cpp"
 #include "src/thread/windows_condition_variable.cpp"
-#elif defined(PLATFORM_POSIX)
+#elif defined(FLORAL_PLATFORM_POSIX)
 #include "src/thread/posix_thread.cpp"
 #include "src/thread/posix_mutex.cpp"
 #include "src/thread/posix_condition_variable.cpp"
@@ -30,7 +30,7 @@
 #include "src/assert/StackWalker.cpp"
 
 #include "src/io/nativeio.cpp"
-#elif defined(PLATFORM_POSIX)
+#elif defined(FLORAL_PLATFORM_POSIX)
 #include "src/io/nativeio_posix.cpp"
 #else
 // TODO: not supported

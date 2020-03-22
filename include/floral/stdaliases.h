@@ -54,7 +54,7 @@ typedef size32									aptr;
 #	else
 // TODO: not supported
 #	endif
-#elif defined(PLATFORM_POSIX)
+#elif defined(FLORAL_PLATFORM_POSIX)
 #	if defined(POSIX64)
 typedef size64									size;
 typedef usize64									usize;
