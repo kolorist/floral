@@ -13,7 +13,7 @@
 
 #include "src/thread/thread.cpp"
 #include "src/thread/mutex.cpp"
-#if defined(PLATFORM_WINDOWS)
+#if defined(FLORAL_PLATFORM_WINDOWS)
 #include "src/thread/windows_thread.cpp"
 #include "src/thread/windows_mutex.cpp"
 #include "src/thread/windows_condition_variable.cpp"
@@ -25,7 +25,7 @@
 // TODO: not supported
 #endif
 
-#if defined(PLATFORM_WINDOWS)
+#if defined(FLORAL_PLATFORM_WINDOWS)
 #include "src/assert/assert.cpp"
 #include "src/assert/StackWalker.cpp"
 

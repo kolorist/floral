@@ -35,7 +35,7 @@ typedef u32										uidx32;
 typedef s32										sidx32;
 typedef u64										uidx64;
 typedef s64										sidx64;
-#if defined(PLATFORM_WINDOWS)
+#if defined(FLORAL_PLATFORM_WINDOWS)
 // MSVC 64-bit compiler will defined both _WIN32 and _WIN64
 #	if defined(_WIN32) && defined(_WIN64)
 typedef size64									size;

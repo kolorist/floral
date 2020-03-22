@@ -6,7 +6,7 @@
 
 namespace floral {
 
-#if defined(PLATFORM_WINDOWS)
+#if defined(FLORAL_PLATFORM_WINDOWS)
 
 	enum class assert_action_e {
 		abort = 0,
