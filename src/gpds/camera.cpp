@@ -7,6 +7,19 @@ namespace floral {
 
 mat4x4f construct_lookat_dir(const vec3f& upDir, const vec3f& camPos, const vec3f& lookAtDir)
 {
+#if 1
+	mat4x4f tMat;
+	tMat = construct_translation3d(-camPos);
+	mat4x4f lMat(1.0f);
+	vec3f lookAtDirNorm = -normalize(lookAtDir);
+	vec3f rightDirNorm = normalize(cross(upDir, -lookAtDir));
+	vec3f topDirNorm = normalize(cross(-lookAtDir, rightDirNorm));
+	lMat[0][0] = rightDirNorm.x;	lMat[0][1] = topDirNorm.x;	lMat[0][2] = lookAtDirNorm.x;
+	lMat[1][0] = rightDirNorm.y;	lMat[1][1] = topDirNorm.y;	lMat[1][2] = lookAtDirNorm.y;
+	lMat[2][0] = rightDirNorm.z;	lMat[2][1] = topDirNorm.z;	lMat[2][2] = lookAtDirNorm.z;
+	return (lMat * tMat);	// rotate first then translate the coordinate
+#else
+	// TODO: ray tracing can only use this, why?
 	mat4x4f localToWorld;
 	// translation
 	localToWorld[3][0] = camPos.x;
@@ -22,6 +35,7 @@ mat4x4f construct_lookat_dir(const vec3f& upDir, const vec3f& camPos, const vec3
 	localToWorld[0][1] = rightDirNorm.y;	localToWorld[1][1] = topDirNorm.y;	localToWorld[2][1] = lookAtDirNorm.y;
 	localToWorld[0][2] = rightDirNorm.z;	localToWorld[1][2] = topDirNorm.z;	localToWorld[2][2] = lookAtDirNorm.z;
 	return localToWorld.get_inverse();
+#endif
 }
 
 mat4x4f construct_lookat_dir(const camera_view_t& i_desc)
