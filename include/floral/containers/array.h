@@ -241,10 +241,10 @@ public:
 
 	// C++11 move constructor
 	fixed_array(fixed_array&& i_other) 
-		: m_capacity(i_other.m_capacity)
-		, m_size(i_other.m_size)
-		, m_allocator(i_other.m_allocator)
+		: m_size(i_other.m_size)
+		, m_capacity(i_other.m_capacity)
 		, m_data(i_other.m_data)
+		, m_allocator(i_other.m_allocator)
 	{
 		i_other.m_capacity = 0;
 		i_other.m_size = 0;
