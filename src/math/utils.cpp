@@ -75,5 +75,34 @@ const u32 compute_crc32_naive(const_cstr nullTerminatedStr)
 	return remainder;
 }
 
+const size32 next_pow2(const size32 i_value32)
+{
+	// run-time reallocate => round (up) to the nearest power of 2
+	// http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+	size32 po2Value = i_value32;
+	po2Value--;
+	po2Value |= po2Value >> 1;
+	po2Value |= po2Value >> 2;
+	po2Value |= po2Value >> 4;
+	po2Value |= po2Value >> 8;
+	po2Value |= po2Value >> 16;
+	po2Value++;
+	return po2Value;
+}
+
+const size64 next_pow2(const size64 i_value64)
+{
+	size64 po2Value = i_value64;
+	po2Value--;
+	po2Value |= po2Value >> 1;
+	po2Value |= po2Value >> 2;
+	po2Value |= po2Value >> 4;
+	po2Value |= po2Value >> 8;
+	po2Value |= po2Value >> 16;
+	po2Value |= po2Value >> 32;
+	po2Value++;
+	return po2Value;
+}
+
 // ---------------------------------------------
 }

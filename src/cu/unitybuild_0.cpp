@@ -1,5 +1,6 @@
 #include "src/cmds/path.cpp"
 #include "src/cmds/crc_string.cpp"
+#include "src/cmds/string.cpp"
 
 #include "src/gpds/geometry.cpp"
 #include "src/gpds/camera.cpp"

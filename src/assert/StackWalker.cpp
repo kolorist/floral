@@ -666,11 +666,13 @@ private:
 				case SymSym:
 					szSymType = "SYM";
 					break;
-				case 8: //SymVirtual:
+				case SymVirtual:
 					szSymType = "Virtual";
 					break;
-				case 9: // SymDia:
+				case SymDia:
 					szSymType = "DIA";
+					break;
+				default:
 					break;
 				}
 			}

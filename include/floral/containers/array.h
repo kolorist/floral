@@ -2,6 +2,7 @@
 
 #include "floral/stdaliases.h"
 #include "floral/assert/assert.h"
+#include "floral/math/utils.h"
 
 // NOTE: 	as a trade-off for high performance, those array implementations are considered un-safe
 //			for both single-threaded (range check, type check) and multi-threaded (synchronization) purposes
@@ -424,50 +425,49 @@ private:
 	allocator_ptr_t							m_allocator;
 };
 
-// FIXME: template type naming convention
+// ----------------------------------------------------------------------------
+
 template <class t_value, class t_allocator>
-class dynamic_array {
+class dynamic_array
+{
 	typedef			t_value					value_t;
 	typedef			const t_value			const_value_t;
 	typedef			t_value*				pointer_t;
 	typedef			const t_value*			const_pointer_t;
-	typedef			t_value&				reference_t;
-	typedef			const t_value&			const_reference_t;
 	typedef			t_allocator				allocator_t;
 	typedef			allocator_t*			allocator_ptr_t;
 
 public:
-
 	dynamic_array()
 		: m_size(0)
 		, m_capacity(0)
 		, m_data(nullptr)
 		, m_allocator(nullptr)
 	{ }
-	
-	explicit dynamic_array(t_allocator* myAllocator)
+
+	explicit dynamic_array(allocator_ptr_t i_myAllocator)
 		: m_size(0)
 		, m_capacity(0)
 		, m_data(nullptr)
-		, m_allocator(myAllocator)
+		, m_allocator(i_myAllocator)
 	{
 		
 	}
 
-	dynamic_array(const u32 capacity, t_allocator* myAllocator)
+	dynamic_array(const size i_capacity, allocator_ptr_t i_myAllocator)
 		: m_size(0)
-		, m_capacity(capacity)
-		, m_allocator(myAllocator)
+		, m_capacity(i_capacity)
+		, m_allocator(i_myAllocator)
 	{
-		FLORAL_ASSERT_MSG((int)capacity > 0, "Cannot create an non-positive-capacity array");
-		m_data = m_allocator->template allocate_array<value_t>(m_capacity);
-		for (u32 i = 0; i < m_capacity; i++) {
+		FLORAL_ASSERT_MSG(m_capacity > 0, "Cannot create an non-positive-capacity array");
+		reserve(i_capacity);
+		for (size i = 0; i < m_capacity; i++)
+		{
 			m_data[i] = value_t();
 		}
 	}
 
-	// C++11 move constructor
-	dynamic_array(dynamic_array&& i_other) 
+	dynamic_array(dynamic_array&& i_other)
 		: m_size(i_other.m_size)
 		, m_capacity(i_other.m_capacity)
 		, m_data(i_other.m_data)
@@ -481,85 +481,107 @@ public:
 
 	~dynamic_array()
 	{
+		for (size i = 0; i < m_size; i++)
+		{
+			m_data[i].~value_t();
+		}
 		m_allocator->free(m_data);
 	}
 
-	void push_back(const_reference_t v) {
-		if (m_size + 1 > m_capacity) {
-			resize(m_capacity << 1);			// strategy: double capacity growth
+	void push_back(const_value_t& v)
+	{
+		if (m_size + 1 > m_capacity)
+		{
+			// double capacity growth
+			reserve(m_capacity << 1);
 		}
 		m_data[m_size] = v;
 		m_size++;
 	}
-	
-	t_value pop_back() {
+
+	t_value pop_back()
+	{
 		FLORAL_ASSERT_MSG(m_size > 0, "Cannot pop_back an empty array");
 		t_value retVal = m_data[m_size - 1];
 		m_size--;
 		return retVal;
 	}
 	
-	void empty() {
+	void empty()
+	{
 		m_size = 0;
 	}
 
-	void clear() {
-		for (u32 i = 0; i < m_size; i++) {
+	void clear()
+	{
+		for (size i = 0; i < m_size; i++)
+		{
 			m_data[i] = value_t();
 		}
 		m_size = 0;
 	}
 
-	const u32								get_size() const					{ return m_size; }
-	const u32								get_capacity() const				{ return m_capacity; }
-	const u32								get_terminated_index() const		{ return m_size; }
-	inline reference_t at(const u32 index) const {
+	const size								get_size() const					{ return m_size; }
+	const size								get_capacity() const				{ return m_capacity; }
+	const size								get_terminated_index() const		{ return m_size; }
+
+	inline value_t& at(const size index) const
+	{
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
 
-	const u32 find(const_reference_t value, 
-		bool (*cmpFunc)(const_reference_t, const_reference_t),
-		const u32 fromId = 0, const u32 toId = 0) const 
+	const size find(const value_t& value, bool (*cmpFunc)(const value_t&, const value_t&),
+		const size fromId = 0, const size toId = 0) const 
 	{
-		u32 from = fromId;
-		u32 to = toId > 0 ? toId : m_size;
+		size from = fromId;
+		size to = toId > 0 ? toId : m_size;
 
-		for (u32 i = from; i < to; i++) {
+		for (size i = from; i < to; i++)
+		{
 			if (cmpFunc(m_data[i], value))
+			{
 				return i;
+			}
 		}
 		return m_size;
 	}
 	
-	const u32 find(const_reference_t value, const u32 fromId = 0, const u32 toId = 0) const {
-		u32 from = fromId;
-		u32 to = toId > 0 ? toId : m_size;
+	const size find(const value_t& value, const size fromId = 0, const size toId = 0) const
+	{
+		size from = fromId;
+		size to = toId > 0 ? toId : m_size;
 
-		for (u32 i = from; i < to; i++) {
+		for (size i = from; i < to; i++)
+		{
 			if (m_data[i] == value)
+			{
 				return i;
+			}
 		}
 		return m_size;
 	}
 
-	// operator overloading
-	reference_t operator[](const u32 index) {
+	value_t& operator[](const size index)
+	{
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
 
-	const_reference_t operator[](const u32 index) const {
+	const value_t& operator[](const size index) const
+	{
 		FLORAL_ASSERT_MSG((int)index >= 0 && index < m_size, "Array access violation (out of range)");
 		return m_data[index];
 	}
 
-	// copy assignment
-	dynamic_array& operator=(const dynamic_array& i_other) {
-		if (this != &i_other) {
+	dynamic_array& operator=(const dynamic_array& i_other)
+	{
+		if (this != &i_other)
+		{
 			FLORAL_ASSERT_MSG(m_capacity >= i_other.m_size, "Not enough capacity in destination array");
 			empty();
-			for (u32 i = 0; i < i_other.m_size; i++) {
+			for (size i = 0; i < i_other.m_size; i++)
+			{
 				m_data[i] = i_other.m_data[i];
 			}
 			m_size = i_other.m_size;
@@ -567,7 +589,6 @@ public:
 		return *this;
 	}
 
-	// move assignment
 	dynamic_array& operator=(dynamic_array&& i_other)
 	{
 		m_capacity = i_other.m_capacity;
@@ -580,6 +601,39 @@ public:
 		i_other.m_allocator = nullptr;
 		i_other.m_data = nullptr;
 		return *this;
+	}
+	
+	void reserve(const size i_newSize, allocator_ptr_t i_myAllocator)
+	{
+		FLORAL_ASSERT_MSG(m_allocator == nullptr, "An allocator already exists, please use reserve(newSize) instead");
+		m_allocator = i_myAllocator;
+		reserve(i_newSize);
+	}
+
+	void reserve(const size i_newSize)
+	{
+		FLORAL_ASSERT_MSG(m_allocator != nullptr, "No allocator, please use reserve(newSize, allocator) instead");
+		if (i_newSize > m_capacity)
+		{
+			size po2Size = next_pow2(i_newSize);
+			size newMemSize = po2Size * sizeof(value_t);
+			size oldMemEffectiveSize = m_size * sizeof(value_t);
+
+			pointer_t data = (pointer_t)m_allocator->allocate(newMemSize);
+			if (m_data)
+			{
+				memcpy(data, m_data, oldMemEffectiveSize);
+				m_allocator->free(m_data);
+			}
+			m_capacity = po2Size;
+			m_data = data;
+		}
+
+		m_size = i_newSize;
+	}
+
+	void resize(const size i_newSize)
+	{
 	}
 
 	// TODO: cannot sure if this works correctly, need to compare with std::vector or something similar
@@ -594,7 +648,8 @@ private:
 	template <s32 (*t_compare_func)(t_value&, t_value&)>
 	void partition(s32 lo, s32 hi)
 	{
-		if (lo >= hi) {
+		if (lo >= hi)
+		{
 			return;
 		}
 		// we choose pivot to be the center element (not the median-value) because of the simplicity
@@ -603,79 +658,37 @@ private:
 		t_value pivotVal = m_data[pivot];
 		//s32 i = lo - 1, j = hi + 1;
 		s32 i = lo, j = hi;
-		while (i <= j) {
-			while (t_compare_func(m_data[i], pivotVal) > 0) i++;
-			while (t_compare_func(m_data[j], pivotVal) < 0) j--;
-			if (i <= j) {
-				if (i < j) {
+		while (i <= j)
+		{
+			while (t_compare_func(m_data[i], pivotVal) > 0)
+			{
+				i++;
+			}
+			
+			while (t_compare_func(m_data[j], pivotVal) < 0)
+			{
+				j--;
+			}
+			
+			if (i <= j)
+			{
+				if (i < j)
+				{
 					t_value tmp = m_data[i];
 					m_data[i] = m_data[j];
 					m_data[j] = tmp;
 				}
-				i++; j--;
+				i++;
+				j--;
 			}
 		}
 		partition<t_compare_func>(lo, j);
 		partition<t_compare_func>(i, hi);
 	}
 
-
-public:
-
-	void resize_ex(const u32 newSize) {
-		if (newSize > m_capacity) {
-			// run-time reallocate => round (up) to the nearest power of 2
-			// http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-			u32 po2Size = newSize;
-			po2Size--;
-			po2Size |= po2Size >> 1;
-			po2Size |= po2Size >> 2;
-			po2Size |= po2Size >> 4;
-			po2Size |= po2Size >> 8;
-			po2Size |= po2Size >> 16;
-			po2Size++;
-
-			pointer_t data = m_allocator->template allocate_array<value_t>(po2Size);
-			for (u32 i = 0; i < po2Size; i++) {
-				data[i] = value_t();
-			}
-			// copy data
-			for (u32 i = 0; i < m_size; i++) {
-				data[i] = m_data[i];
-			}
-			// free old data
-			if (m_data)
-				m_allocator->free(m_data);
-			m_capacity = po2Size;
-			m_data = data;
-		}
-
-		m_size = newSize;
-	}
-
-	void resize(const u32 newCapacity) {
-		if (newCapacity <= m_capacity)
-			return;
-	
-		pointer_t data = m_allocator->template allocate_array<value_t>(newCapacity);
-		for (u32 i = 0; i < newCapacity; i++) {
-			data[i] = value_t();
-		}
-		// copy data
-		for (u32 i = 0; i < m_size; i++) {
-			data[i] = m_data[i];
-		}
-		// free old data
-		if (m_data)
-			m_allocator->free(m_data);
-		
-		m_capacity = newCapacity;
-		m_data = data;
-	}
-
 private:
-	u32										m_size;
-	u32										m_capacity;
+	size									m_size;
+	size									m_capacity;
 
 	pointer_t								m_data;
 	allocator_ptr_t							m_allocator;
