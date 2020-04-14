@@ -2,13 +2,13 @@
 
 #include "floral/stdaliases.h"
 
-namespace floral {
+#include "floral/types/condition.h"
+
+namespace floral
+{
 
 constexpr f32 pi = 3.1415926525898f;
 constexpr f32 half_pi = 1.5707963267948966f;
-#ifndef PI
-#define PI										3.1415926525898f
-#endif
 
 #ifndef TEST_BIT
 #define		TEST_BIT(target, bitmask)			(target & bitmask)
@@ -23,18 +23,21 @@ constexpr f32 half_pi = 1.5707963267948966f;
 #define		CLEAR_BIT(target, bitmask)			(target = target & (~bitmask))
 #endif
 
-template <class DType>
-DType min(DType lhs, DType rhs) {
+template <class t_type>
+t_type min(t_type lhs, t_type rhs)
+{
 	return (lhs > rhs ? rhs : lhs);
 }
 
-template <class DType>
-DType max(DType lhs, DType rhs) {
+template <class t_type>
+t_type max(t_type lhs, t_type rhs)
+{
 	return (lhs > rhs ? lhs : rhs);
 }
 
-template <class DType>
-DType clamp(DType d, DType minValue, DType maxValue) {
+template <class t_type>
+t_type clamp(t_type d, t_type minValue, t_type maxValue)
+{
 	return min(maxValue, max(d, minValue));
 }
 
@@ -48,5 +51,19 @@ const u32 compute_crc32_naive(const_cstr nullTerminatedStr);
 
 const size32 next_pow2(const size32 i_value32);
 const size64 next_pow2(const size64 i_value64);
+
+template <class t_type>
+inline const bool test_bit_pos(const t_type i_bitSet, const size i_pos)
+{
+	using RoundedType = conditional_t<sizeof(t_type) < sizeof(u32), u32, u64>;
+	return (RoundedType(i_bitSet) & (RoundedType(1) << i_pos)) != 0;
+}
+
+template <class t_type>
+inline const bool test_bit_mask(const t_type i_bitSet, const t_type i_bitMask)
+{
+	using RoundedType = conditional_t<sizeof(t_type) < sizeof(u32), u32, u64>;
+	return (RoundedType(i_bitSet) & RoundedType(i_bitMask)) != 0;
+}
 
 }

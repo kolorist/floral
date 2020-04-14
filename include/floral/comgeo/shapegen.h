@@ -15,7 +15,8 @@ enum class geo_vertex_format_e : s32
 {
 	position									= 1,
 	normal										= position << 1,
-	tex_coord									= normal << 1
+	tangent										= normal << 1,
+	tex_coord									= tangent << 1
 };
 
 inline geo_vertex_format_e operator|(const geo_vertex_format_e i_lhs, const geo_vertex_format_e i_rhs)

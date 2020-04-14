@@ -10,14 +10,14 @@ namespace floral
 
 f32 to_radians(f32 degree)
 {
-	return (degree / 180.0f * PI);
+	return (degree / 180.0f * pi);
 }
 
 // ---------------------------------------------
 
 f32 to_degree(f32 radians)
 {
-	return (radians / PI * 180.0f);
+	return (radians / pi * 180.0f);
 }
 
 // ---------------------------------------------
