@@ -66,16 +66,6 @@ public:
 		// do nothing
 	}
 
-	// deprecated
-	void init(const ssize i_capacity, allocator_ptr_t i_allocator)
-	{
-		FLORAL_ASSERT_MSG((int)i_capacity > 0, "Cannot create an non-positive-capacity array");
-		m_capacity = i_capacity;
-		m_allocator = i_allocator;
-		m_size = 0;
-		m_data = m_allocator->template allocate_array<value_t>(m_capacity);
-	}
-
 	void reserve(const ssize i_capacity, allocator_ptr_t i_newAllocator)
 	{
 		m_allocator = i_newAllocator;
@@ -113,6 +103,21 @@ public:
 	inline void clear()
 	{
 		m_size = 0;
+	}
+
+	inline void invalidate()
+	{
+		if (m_allocator)
+		{
+			if (m_data)
+			{
+				m_allocator->free(m_data);
+			}
+			m_size = 0;
+			m_capacity = 0;
+			m_data = nullptr;
+			m_allocator = nullptr;
+		}
 	}
 
 	inline const ssize							get_size() const					{ return m_size; }
@@ -277,7 +282,7 @@ public:
 		, m_data(nullptr)
 		, m_allocator(i_myAllocator)
 	{
-		
+
 	}
 
 	fast_dynamic_array(const size i_newSize, allocator_ptr_t i_myAllocator)
@@ -333,7 +338,7 @@ public:
 		m_size--;
 		return retVal;
 	}
-	
+
 	void empty()
 	{
 		m_size = 0;
@@ -350,7 +355,7 @@ public:
 	}
 
 	const size find(const value_t& value, bool (*cmpFunc)(const value_t&, const value_t&),
-		const size fromId = 0, const size toId = 0) const 
+		const size fromId = 0, const size toId = 0) const
 	{
 		size from = fromId;
 		size to = toId > 0 ? toId : m_size;
@@ -364,7 +369,7 @@ public:
 		}
 		return m_size;
 	}
-	
+
 	const size find(const value_t& value, const size fromId = 0, const size toId = 0) const
 	{
 		size from = fromId;
@@ -420,7 +425,7 @@ public:
 		i_other.m_data = nullptr;
 		return *this;
 	}
-	
+
 	void reserve(const size i_newCapacity, allocator_ptr_t i_myAllocator)
 	{
 		FLORAL_ASSERT_MSG(m_allocator == nullptr, "An allocator already exists, please use reserve(newSize) instead");
@@ -496,12 +501,12 @@ private:
 			{
 				i++;
 			}
-			
+
 			while (t_compare_func(m_data[j], pivotVal) < 0)
 			{
 				j--;
 			}
-			
+
 			if (i <= j)
 			{
 				if (i < j)

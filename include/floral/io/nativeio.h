@@ -68,6 +68,8 @@ public:
 	output_file_stream();
 	~output_file_stream();
 
+	void										seek_begin(const size i_offset);
+	const size									get_pointer_position();
 	void										write_bytes(voidptr i_buffer, const size i_count);
 
 	template <typename t_type>

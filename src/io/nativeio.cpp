@@ -90,15 +90,27 @@ output_file_stream::~output_file_stream()
 {
 }
 
+void output_file_stream::seek_begin(const size i_offset)
+{
+	LARGE_INTEGER li;
+	li.QuadPart = i_offset;
+	
+	SetFilePointer(info.file_handle, li.LowPart, &li.HighPart, FILE_BEGIN);
+}
+
+const size output_file_stream::get_pointer_position()
+{
+	LARGE_INTEGER li;
+	li.QuadPart = 0;
+	
+	li.LowPart = SetFilePointer(info.file_handle, li.LowPart, &li.HighPart, FILE_CURRENT);
+	return size(li.QuadPart);
+}
+
 void output_file_stream::write_bytes(voidptr i_buffer, const size i_count)
 {
 	DWORD byteWritten = 0;
-	WriteFile(
-			info.file_handle,
-			i_buffer,
-			(DWORD)i_count,
-			&byteWritten,
-			NULL);
+	WriteFile(info.file_handle, i_buffer, (DWORD)i_count, &byteWritten, NULL);
 }
 
 // ---------------------------------------------
