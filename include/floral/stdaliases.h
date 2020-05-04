@@ -20,6 +20,7 @@ typedef signed long long int                    s64;
 typedef unsigned long long int                  u64;
 
 // floating point number
+typedef u16										f16;
 typedef float                                   f32;
 typedef double                                  f64;
 

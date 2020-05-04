@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string.h>
+
 #include "floral/stdaliases.h"
 
 #include "floral/types/condition.h"
@@ -65,5 +67,7 @@ inline const bool test_bit_mask(const t_type i_bitSet, const t_type i_bitMask)
 	using RoundedType = conditional_t<sizeof(t_type) < sizeof(u32), u32, u64>;
 	return (RoundedType(i_bitSet) & RoundedType(i_bitMask)) != 0;
 }
+
+f16 float_to_half_full(f32 i_value);
 
 }

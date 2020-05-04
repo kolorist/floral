@@ -63,7 +63,7 @@ public:
 
 	~fast_fixed_array()
 	{
-		// do nothing
+		// !!! IMPORTANT: do not free data
 	}
 
 	void reserve(const ssize i_capacity, allocator_ptr_t i_newAllocator)
@@ -285,15 +285,15 @@ public:
 
 	}
 
-	fast_dynamic_array(const size i_newSize, allocator_ptr_t i_myAllocator)
-		: m_size(i_newSize)
-		, m_capacity(i_newSize)
+	fast_dynamic_array(const size i_capacity, allocator_ptr_t i_myAllocator)
+		: m_size(0)
+		, m_capacity(0)
 		, m_allocatedCapacity(0)
+		, m_data(nullptr)
 		, m_allocator(i_myAllocator)
 	{
-		FLORAL_ASSERT_MSG(m_capacity > 0, "Cannot create an non-positive-capacity array");
-		reserve(m_capacity);
-		resize(m_size);
+		FLORAL_ASSERT_MSG(i_capacity > 0, "Cannot create an non-positive-capacity array");
+		reserve(i_capacity);
 	}
 
 	fast_dynamic_array(fast_dynamic_array&& i_other)
@@ -310,7 +310,7 @@ public:
 
 	~fast_dynamic_array()
 	{
-		// no free?
+		// !!! IMPORTANT: do not free data
 	}
 
 	void push_back(const_value_t& v)

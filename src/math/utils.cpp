@@ -104,5 +104,72 @@ const size64 next_pow2(const size64 i_value64)
 	return po2Value;
 }
 
+f16 float_to_half_full(f32 i_value)
+{
+	// source: https://gist.github.com/rygorous/2156668
+	union fp16
+	{
+		u16 u;
+		struct
+		{
+			u32 mantissa : 10;
+			u32 exponent : 5;
+			u32 sign : 1;
+		};
+	};
+	
+	union fp32
+	{
+		u32 u;
+		f32 f;
+		struct
+		{
+			u32 mantissa : 23;
+			u32 exponent : 8;
+			u32 sign : 1;
+		};
+	};
+	
+    fp16 o = { 0 };
+	fp32 f;
+	f.f = i_value;
+
+    // Based on ISPC reference code (with minor modifications)
+    if (f.exponent == 0) // Signed zero/denormal (which will underflow)
+        o.exponent = 0;
+    else if (f.exponent == 255) // Inf or NaN (all exponent bits set)
+    {
+        o.exponent = 31;
+        o.mantissa = f.mantissa ? 0x200 : 0; // NaN->qNaN and Inf->Inf
+    }
+    else // Normalized number
+    {
+        // exponent unbias the single, then bias the halfp
+        int newexp = f.exponent - 127 + 15;
+        if (newexp >= 31) // Overflow, return signed infinity
+            o.exponent = 31;
+        else if (newexp <= 0) // Underflow
+        {
+            if ((14 - newexp) <= 24) // mantissa might be non-zero
+            {
+                u32 mant = f.mantissa | 0x800000; // Hidden 1 bit
+                o.mantissa = mant >> (14 - newexp);
+                if ((mant >> (13 - newexp)) & 1) // Check for rounding
+                    o.u++; // Round, might overflow into exp bit, but this is OK
+            }
+        }
+        else
+        {
+            o.exponent = newexp;
+            o.mantissa = f.mantissa >> 13;
+            if (f.mantissa & 0x1000) // Check for rounding
+                o.u++; // Round, might overflow to inf, this is OK
+        }
+    }
+
+    o.sign = f.sign;
+    return o.u;
+}
+
 // ---------------------------------------------
 }
