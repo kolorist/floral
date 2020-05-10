@@ -26,11 +26,13 @@
 // TODO: not supported
 #endif
 
+#include "src/io/filesystem.cpp"
 #if defined(FLORAL_PLATFORM_WINDOWS)
 #include "src/assert/assert.cpp"
 #include "src/assert/StackWalker.cpp"
 
 #include "src/io/nativeio.cpp"
+#include "src/io/filesystem_windows.cpp"
 #elif defined(FLORAL_PLATFORM_POSIX)
 #include "src/io/nativeio_posix.cpp"
 #else
