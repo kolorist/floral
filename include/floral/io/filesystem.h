@@ -64,10 +64,16 @@ template <class t_allocator>
 filesystem<t_allocator>*						create_filesystem(const absolute_path& i_workingDir, t_allocator* i_allocator);
 
 template <class t_allocator>
+void											destroy_filesystem(filesystem<t_allocator>** i_fs);
+
+template <class t_allocator>
 const absolute_path&							get_working_directory(const filesystem<t_allocator>* i_fs);
 
 template <class t_allocator>
 file_info										open_file_read(const filesystem<t_allocator>* i_fs, const relative_path& i_relPath);
+
+template <class t_allocator>
+file_info										open_file_write(const filesystem<t_allocator>* i_fs, const relative_path& i_relPath);
 
 // -------------------------------------------------------------------
 }

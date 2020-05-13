@@ -85,12 +85,7 @@ const bool file_stream::is_eos()
 	return (rpos >= info.file_size);
 }
 
-// -----------------------------------------
-
-void set_working_directory(const_cstr i_path)
-{
-	s_working_dir = i_path;
-}
+// -------------------------------------------------------------------
 
 output_file_stream::output_file_stream()
 {
@@ -98,6 +93,31 @@ output_file_stream::output_file_stream()
 
 output_file_stream::~output_file_stream()
 {
+}
+
+void output_file_stream::seek_begin(const size i_offset)
+{
+}
+
+const size output_file_stream::get_pointer_position()
+{
+	return 0;
+}
+
+void output_file_stream::write_bytes(voidptr i_buffer, const size i_count)
+{
+}
+
+// -------------------------------------------------------------------
+
+void set_working_directory(const_cstr i_path)
+{
+	s_working_dir = i_path;
+}
+
+const_cstr get_working_directory()
+{
+	return s_working_dir;
 }
 
 file_info open_file(const_cstr filePath)
@@ -158,9 +178,9 @@ void mmap_all_file(const file_info& fileInfo, voidptr buffer)
 {
 }
 
-void map_output_file(const file_info& i_fileInfo, output_file_stream& o_fileStream)
+void map_output_file(const file_info& i_fileInfo, output_file_stream* o_fileStream)
 {
-	o_fileStream.info = i_fileInfo;
+	o_fileStream->info = i_fileInfo;
 }
 
 void close_file(file_info& fileInfo)

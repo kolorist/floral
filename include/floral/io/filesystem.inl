@@ -12,11 +12,24 @@ filesystem<t_allocator>* create_filesystem(const absolute_path& i_workingDir, t_
 	return fs;
 }
 
+// -------------------------------------------------------------------
+
+template <class t_allocator>
+void destroy_filesystem(filesystem<t_allocator>** i_fs)
+{
+	(*i_fs)->allocator->free_all();
+	*i_fs = nullptr;
+}
+
+// -------------------------------------------------------------------
+
 template <class t_allocator>
 const absolute_path& get_working_directory(const filesystem<t_allocator>* i_fs)
 {
 	return i_fs->workingStack[i_fs->workingStack.get_size() - 1];
 }
+
+// -------------------------------------------------------------------
 
 template <class t_allocator>
 file_info open_file_read(const filesystem<t_allocator>* i_fs, const relative_path& i_relPath)
@@ -30,6 +43,22 @@ file_info open_file_read(const filesystem<t_allocator>* i_fs, const relative_pat
 	get_as_cstr(absPathCstr, *absPath);
 	i_fs->allocator->free(absPath);
 	return open_file(absPathCstr);
+}
+
+// -------------------------------------------------------------------
+
+template <class t_allocator>
+file_info open_file_write(const filesystem<t_allocator>* i_fs, const relative_path& i_relPath)
+{
+	absolute_path* absPath = i_fs->allocator->template allocate<absolute_path>();
+	*absPath = get_working_directory(i_fs);
+	concat_path(absPath, i_relPath);
+
+	// TODO: make open_file accept absolute_path as parameter
+	c8 absPathCstr[MAX_PATH_LENGTH];
+	get_as_cstr(absPathCstr, *absPath);
+	i_fs->allocator->free(absPath);
+	return open_output_file(absPathCstr);
 }
 
 // -------------------------------------------------------------------

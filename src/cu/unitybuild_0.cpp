@@ -35,6 +35,7 @@
 #include "src/io/filesystem_windows.cpp"
 #elif defined(FLORAL_PLATFORM_POSIX)
 #include "src/io/nativeio_posix.cpp"
+#include "src/io/filesystem_posix.cpp"
 #else
 // TODO: not supported
 #endif

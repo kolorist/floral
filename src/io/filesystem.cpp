@@ -66,7 +66,10 @@ relative_path build_relative_path(const_cstr i_pathStr)
 			FLORAL_ASSERT(entryLen > 0 && entryLen < MAX_ENTRY_NAME_LENGTH);
 			memset(path.entries[i], 0, MAX_ENTRY_NAME_LENGTH);
 			memcpy(path.entries[i], lastSlash, entryLen);
-			nextCh++;
+			if (*nextCh != 0)
+			{
+				nextCh++;
+			}
 			lastSlash = nextCh;
 			i++;
 		}

@@ -180,9 +180,9 @@ void mmap_all_file(const file_info& fileInfo, voidptr buffer)
 {
 }
 
-void map_output_file(const file_info& i_fileInfo, output_file_stream& o_fileStream)
+void map_output_file(const file_info& i_fileInfo, output_file_stream* o_fileStream)
 {
-	o_fileStream.info = i_fileInfo;
+	o_fileStream->info = i_fileInfo;
 }
 
 void close_file(file_info& fileInfo)

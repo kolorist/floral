@@ -93,6 +93,7 @@ public:
 
 // -----------------------------------------
 void											set_working_directory(const_cstr i_path);
+const_cstr										get_working_directory();
 
 file_info										open_file(const_cstr filePath);
 file_info										open_file(path i_filePath);
@@ -101,7 +102,7 @@ file_info										open_output_file(const_cstr i_filePath);
 void											read_all_file(const file_info& fileInfo, voidptr buffer);
 void											read_all_file(const file_info& fileInfo, file_stream& fileStream);
 void											mmap_all_file(const file_info& fileInfo, voidptr buffer);
-void											map_output_file(const file_info& i_fileInfo, output_file_stream& o_fileStream);
+void											map_output_file(const file_info& i_fileInfo, output_file_stream* o_fileStream);
 
 void											close_file(file_info& fileInfo);
 
