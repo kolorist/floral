@@ -97,15 +97,17 @@ output_file_stream::~output_file_stream()
 
 void output_file_stream::seek_begin(const size i_offset)
 {
+	fseek(info.file_handle, i_offset, SEEK_SET);
 }
 
 const size output_file_stream::get_pointer_position()
 {
-	return 0;
+	return ftell(info.file_handle);
 }
 
 void output_file_stream::write_bytes(voidptr i_buffer, const size i_count)
 {
+	fwrite(i_buffer, i_count, 1, info.file_handle);
 }
 
 // -------------------------------------------------------------------
@@ -113,11 +115,6 @@ void output_file_stream::write_bytes(voidptr i_buffer, const size i_count)
 void set_working_directory(const_cstr i_path)
 {
 	s_working_dir = i_path;
-}
-
-const_cstr get_working_directory()
-{
-	return s_working_dir;
 }
 
 file_info open_file(const_cstr filePath)

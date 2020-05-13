@@ -77,13 +77,10 @@ public:
 	{
 #if defined(FLORAL_PLATFORM_WINDOWS)
 		DWORD byteWritten = 0;
-		WriteFile(
-				info.file_handle,
-				&i_from,
-				sizeof(t_type),
-				&byteWritten,
-				NULL);
+		WriteFile(info.file_handle, &i_from, sizeof(t_type), &byteWritten, NULL);
 #else
+		size_t elemWritten = 0;
+		elemWritten = fwrite(&i_from, sizeof(t_type), 1, info.file_handle);
 #endif
 	}
 
@@ -93,7 +90,6 @@ public:
 
 // -----------------------------------------
 void											set_working_directory(const_cstr i_path);
-const_cstr										get_working_directory();
 
 file_info										open_file(const_cstr filePath);
 file_info										open_file(path i_filePath);
