@@ -66,6 +66,12 @@ filesystem<t_allocator>*						create_filesystem(const absolute_path& i_workingDi
 template <class t_allocator>
 void											destroy_filesystem(filesystem<t_allocator>** i_fs);
 
+template <class t_filesystem>
+void											push_directory(t_filesystem* io_fs, const relative_path& i_relPath);
+
+template <class t_filesystem>
+void											pop_directory(t_filesystem* io_fs);
+
 template <class t_allocator>
 const absolute_path&							get_working_directory(const filesystem<t_allocator>* i_fs);
 

@@ -23,6 +23,24 @@ void destroy_filesystem(filesystem<t_allocator>** i_fs)
 
 // -------------------------------------------------------------------
 
+template <class t_filesystem>
+void push_directory(t_filesystem* io_fs, const relative_path& i_relPath)
+{
+	absolute_path absPath = get_working_directory(io_fs);
+	concat_path(&absPath, i_relPath);
+	io_fs->workingStack.push_back(absPath);
+}
+
+// -------------------------------------------------------------------
+
+template <class t_filesystem>
+void pop_directory(t_filesystem* io_fs)
+{
+	io_fs->workingStack.pop_back();
+}
+
+// -------------------------------------------------------------------
+
 template <class t_allocator>
 const absolute_path& get_working_directory(const filesystem<t_allocator>* i_fs)
 {
