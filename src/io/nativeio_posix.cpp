@@ -108,6 +108,7 @@ const size output_file_stream::get_pointer_position()
 void output_file_stream::write_bytes(voidptr i_buffer, const size i_count)
 {
 	fwrite(i_buffer, i_count, 1, info.file_handle);
+	fflush(info.file_handle);
 }
 
 // -------------------------------------------------------------------
