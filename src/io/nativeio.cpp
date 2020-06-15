@@ -111,6 +111,7 @@ void output_file_stream::write_bytes(voidptr i_buffer, const size i_count)
 {
 	DWORD byteWritten = 0;
 	WriteFile(info.file_handle, i_buffer, (DWORD)i_count, &byteWritten, NULL);
+	FlushFileBuffers(info.file_handle);
 }
 
 // ---------------------------------------------

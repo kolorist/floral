@@ -32,6 +32,6 @@ namespace floral {
 
 	void set_current_thread_name(const_cstr i_name)
 	{
-		// posix system, do nothing
+		pthread_setname_np(pthread_self(), i_name);
 	}
 }
