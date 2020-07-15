@@ -26,6 +26,7 @@ public:
 	void init()
 	{
 		m_size = 0;
+		m_capacity = t_capacity;
 		
 		FLORAL_ASSERT_MSG((int)m_capacity > 0, "Cannot create an non-positive-capacity array");
 		for (ssize i = 0; i < m_capacity; i++) {
@@ -107,7 +108,13 @@ public:
 
 	// copy assignment
 	inplace_array& operator=(const inplace_array& i_other) {
-		if (this != &i_other) {
+		if (this != &i_other)
+		{
+			if (m_capacity == 0)
+			{
+				init();
+			}
+
 			FLORAL_ASSERT_MSG(m_capacity >= i_other.m_size, "Not enough capacity in destination array");
 			empty();
 			for (ssize i = 0; i < i_other.m_size; i++) {
