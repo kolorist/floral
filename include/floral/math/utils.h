@@ -51,8 +51,10 @@ const bool solve_rtquadratic(f32 A, f32 B, f32 C, f32& t0, f32& t1);
 // compute crc32 naive way
 const u32 compute_crc32_naive(const_cstr nullTerminatedStr);
 
-const size32 next_pow2(const size32 i_value32);
-const size64 next_pow2(const size64 i_value64);
+const u32 next_pow2(const u32 i_value32);
+const s32 next_pow2(const s32 i_value32);
+const u64 next_pow2(const u64 i_value64);
+const s64 next_pow2(const s64 i_value64);
 
 template <class t_type>
 inline const bool test_bit_pos(const t_type i_bitSet, const size i_pos)
