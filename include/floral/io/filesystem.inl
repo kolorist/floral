@@ -56,10 +56,18 @@ file_info open_file_read(const filesystem<t_allocator>* i_fs, const relative_pat
 	*absPath = get_working_directory(i_fs);
 	concat_path(absPath, i_relPath);
 
-	// TODO: make open_file accept absolute_path as parameter
-	c8 absPathCstr[MAX_PATH_LENGTH];
-	get_as_cstr(absPathCstr, *absPath);
+	file_info fileInfo = open_file_read(i_fs, *absPath);
 	i_fs->allocator->free(absPath);
+	return fileInfo;
+}
+
+// -------------------------------------------------------------------
+
+template <class t_allocator>
+file_info open_file_read(const filesystem<t_allocator>* i_fs, const absolute_path& i_absPath)
+{
+	c8 absPathCstr[MAX_PATH_LENGTH];
+	get_as_cstr(absPathCstr, i_absPath);
 	return open_file(absPathCstr);
 }
 
@@ -72,10 +80,18 @@ file_info open_file_write(const filesystem<t_allocator>* i_fs, const relative_pa
 	*absPath = get_working_directory(i_fs);
 	concat_path(absPath, i_relPath);
 
-	// TODO: make open_file accept absolute_path as parameter
-	c8 absPathCstr[MAX_PATH_LENGTH];
-	get_as_cstr(absPathCstr, *absPath);
+	file_info fileInfo = open_file_write(i_fs, *absPath); 
 	i_fs->allocator->free(absPath);
+	return fileInfo;
+}
+
+// -------------------------------------------------------------------
+
+template <class t_allocator>
+file_info open_file_write(const filesystem<t_allocator>* i_fs, const absolute_path& i_absPath)
+{
+	c8 absPathCstr[MAX_PATH_LENGTH];
+	get_as_cstr(absPathCstr, i_absPath);
 	return open_output_file(absPathCstr);
 }
 

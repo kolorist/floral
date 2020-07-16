@@ -10,7 +10,7 @@ namespace floral
 // -------------------------------------------------------------------
 
 #define MAX_PATH_LENGTH							1024
-#define MAX_ENTRY_NAME_LENGTH					32
+#define MAX_ENTRY_NAME_LENGTH					64
 #define MAX_DEPTH								32
 
 // copyable
@@ -79,7 +79,13 @@ template <class t_allocator>
 file_info										open_file_read(const filesystem<t_allocator>* i_fs, const relative_path& i_relPath);
 
 template <class t_allocator>
+file_info										open_file_read(const filesystem<t_allocator>* i_fs, const absolute_path& i_absPath);
+
+template <class t_allocator>
 file_info										open_file_write(const filesystem<t_allocator>* i_fs, const relative_path& i_relPath);
+
+template <class t_allocator>
+file_info										open_file_write(const filesystem<t_allocator>* i_fs, const absolute_path& i_absPath);
 
 // -------------------------------------------------------------------
 }
