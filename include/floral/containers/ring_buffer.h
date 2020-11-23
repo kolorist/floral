@@ -212,6 +212,21 @@ public:
 		}
 		return false;
 	}
+	
+	t_type* get_data() const
+	{
+		return m_data;
+	}
+	
+	const sidx get_write_slot() const
+	{
+		return m_write_slot;
+	}
+	
+	const sidx get_read_slot() const
+	{
+		return m_read_slot;
+	}
 
 private:
 	t_allocator*						m_allocator;
@@ -317,6 +332,21 @@ public:
 			return true;
 		}
 		return false;
+	}
+
+	t_type* get_data() const
+	{
+		return m_data;
+	}
+	
+	const sidx get_write_slot() const
+	{
+		return m_write_slot;
+	}
+	
+	const sidx get_read_slot() const
+	{
+		return m_read_slot;
 	}
 
 private:
