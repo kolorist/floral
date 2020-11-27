@@ -302,7 +302,7 @@ template <typename t_type> const bool equal(const vec3<t_type>& a, const vec3<t_
 template <class t_type>
 struct vec4 {
 	vec4()										: x(0), y(0), z(0), w(0) {}
-	vec4(const t_type val)					: x(val), y(val), z(val), w(val) {}
+	explicit vec4(const t_type val)					: x(val), y(val), z(val), w(val) {}
 	vec4(const vec4& other)					: x(other.x), y(other.y), z(other.z), w(other.w) {}
 	vec4(const t_type x, const t_type y, const t_type z, const t_type w) : x(x), y(y), z(z), w(w) {}
 	vec4(const vec3<t_type>& other, const t_type w) : x(other.x), y(other.y), z(other.z), w(w) {}

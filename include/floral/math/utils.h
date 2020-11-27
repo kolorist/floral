@@ -43,6 +43,13 @@ t_type clamp(t_type d, t_type minValue, t_type maxValue)
 	return min(maxValue, max(d, minValue));
 }
 
+template<typename t_type>
+t_type smoothstep(t_type edge0, t_type edge1, t_type x)
+{
+  x = clamp((x - edge0) / (edge1 - edge0), t_type(0.0f), t_type(1.0f));
+  return x * x * (3.0f - 2.0f * x);
+}
+
 f32 to_radians(f32 degree);
 f32 to_degree(f32 radians);
 // solve ray-tracing quadratic, only success when we have 2 real solutions
