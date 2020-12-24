@@ -165,6 +165,22 @@ mat4x4f construct_perspective_rh(const f32 i_near, const f32 i_far, const f32 i_
 
 // ------------------------------------------------------------------
 
+mat4x4f construct_infinity_perspective_rh(const f32 i_near, const f32 i_fovy, const f32 i_aspectRatio)
+{
+	const f32 tanHalfFovY = tanf(floral::to_radians(i_fovy / 2.0f));
+
+	floral::mat4x4f m;
+	m[0][0] = 1.0f / (i_aspectRatio * tanHalfFovY);
+	m[1][1] = 1.0f / tanHalfFovY;
+	m[2][2] = -1;
+	m[2][3] = -1.0f;
+	m[3][2] = -2.0f * i_near;
+
+	return m;
+}
+
+// ------------------------------------------------------------------
+
 mat4x4f construct_perspective_lh(const f32 i_near, const f32 i_far, const f32 i_fovy, const f32 i_aspectRatio)
 {
 	const f32 tanHalfFovY = tanf(floral::to_radians(i_fovy / 2.0f));
@@ -175,6 +191,22 @@ mat4x4f construct_perspective_lh(const f32 i_near, const f32 i_far, const f32 i_
 	m[2][2] = (i_far + i_near) / (i_far - i_near);
 	m[2][3] = 1.0f;
 	m[3][2] = -2.0f * i_far * i_near / (i_far - i_near);
+
+	return m;
+}
+
+// ------------------------------------------------------------------
+
+mat4x4f construct_infinity_perspective_lh(const f32 i_near, const f32 i_fovy, const f32 i_aspectRatio)
+{
+	const f32 tanHalfFovY = tanf(floral::to_radians(i_fovy / 2.0f));
+
+	floral::mat4x4f m;
+	m[0][0] = 1.0f / (i_aspectRatio * tanHalfFovY);
+	m[1][1] = 1.0f / tanHalfFovY;
+	m[2][2] = 1.0f;
+	m[2][3] = 1.0f;
+	m[3][2] = -2.0f * i_near;
 
 	return m;
 }

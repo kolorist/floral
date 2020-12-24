@@ -61,8 +61,11 @@ mat4x4f construct_orthographic_lh(const camera_ortho_t& i_desc);
 
 // fovy (degrees)
 // near and far must be positive
+// TODO: epsilon offset for infinity projection matrix?
 mat4x4f construct_perspective_rh(const f32 i_near, const f32 i_far, const f32 i_fovy, const f32 i_aspectRatio);
+mat4x4f construct_infinity_perspective_rh(const f32 i_near, const f32 i_fovy, const f32 i_aspectRatio);
 mat4x4f construct_perspective_lh(const f32 i_near, const f32 i_far, const f32 i_fovy, const f32 i_aspectRatio);
+mat4x4f construct_infinity_perspective_lh(const f32 i_near, const f32 i_fovy, const f32 i_aspectRatio);
 mat4x4f construct_perspective_rh(const camera_persp_t& i_desc);
 mat4x4f construct_perspective_lh(const camera_persp_t& i_desc);
 
