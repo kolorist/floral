@@ -77,5 +77,9 @@ mat4x4f construct_perspective_lh(const camera_persp_t& i_desc);
 #define construct_perspective					construct_perspective_rh
 #endif
 
+#ifndef construct_infinity_perspective
+#define construct_infinity_perspective			construct_infinity_perspective_rh
+#endif
+
 // ------------------------------------------------------------------
 }
