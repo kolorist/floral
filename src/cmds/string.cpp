@@ -20,7 +20,7 @@ static string_db s_string_db;
 
 cstr allocate_string(size_t i_length)
 {
-
+	return nullptr;
 }
 
 void free_string(cstr i_str)

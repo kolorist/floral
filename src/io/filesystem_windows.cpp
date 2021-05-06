@@ -10,7 +10,7 @@ namespace platform
 
 const bool get_application_directory(cstr o_buffer, const size i_maxLength)
 {
-	size ret = GetCurrentDirectory(i_maxLength, o_buffer);
+	size ret = GetCurrentDirectory((DWORD)i_maxLength, o_buffer);
 	// replace all '\' with '/'
 	if (ret > 0 && ret < i_maxLength)
 	{

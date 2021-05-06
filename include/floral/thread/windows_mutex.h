@@ -3,10 +3,6 @@
 
 #include "floral/stdaliases.h"
 
-#define WIN32_LEAN_AND_MEAN
-// NOTE: we have to define NOMINMAX when including Windows.h because the min(), max()
-// function of Windows API may conflict with floral::min() and floral::max()
-#define NOMINMAX
 #include <Windows.h>
 
 namespace floral {

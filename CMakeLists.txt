@@ -30,7 +30,16 @@ endif ()
 if (${TARGET_PLATFORM} STREQUAL "arm64-v8a" OR ${TARGET_PLATFORM} STREQUAL "arm-v7a")
 	# nothing, because we use unity build
 else ()
-	# nothing, because we use unity build
+	set (posix_file_list
+		"${PROJECT_SOURCE_DIR}/include/floral/thread/posix_condition_variable.h"
+		"${PROJECT_SOURCE_DIR}/include/floral/thread/posix_mutex.h"
+		"${PROJECT_SOURCE_DIR}/include/floral/thread/posix_thread.h"
+		"${PROJECT_SOURCE_DIR}/src/thread/posix_condition_variable.cpp"
+		"${PROJECT_SOURCE_DIR}/src/thread/posix_mutex.cpp"
+		"${PROJECT_SOURCE_DIR}/src/thread/posix_thread.cpp"
+		"${PROJECT_SOURCE_DIR}/src/io/filesystem_posix.cpp"
+		"${PROJECT_SOURCE_DIR}/src/io/nativeio_posix.cpp")
+	list (REMOVE_ITEM file_list ${posix_file_list})
 endif ()
 
 # 5. specify target

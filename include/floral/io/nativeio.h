@@ -6,7 +6,6 @@
 #include <cstring>
 
 #if defined(FLORAL_PLATFORM_WINDOWS)
-#define NOMINMAX
 #include <Windows.h>
 #else
 #include <stdio.h>
