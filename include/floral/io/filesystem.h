@@ -70,6 +70,9 @@ template <class t_filesystem>
 void											push_directory(t_filesystem* io_fs, const relative_path& i_relPath);
 
 template <class t_filesystem>
+void											push_directory(t_filesystem* io_fs, const absolute_path& i_path);
+
+template <class t_filesystem>
 void											pop_directory(t_filesystem* io_fs);
 
 template <class t_allocator>
